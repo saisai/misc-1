@@ -1,0 +1,14 @@
+======
+elflib
+======
+
+elflib is a Python library for working with ELF (Executable and Linking
+Format) files.  Being implemented in pure Python, it is OS independent,
+although only useful on operations systems which use ELF.
+
+
+Note:
+-----
+
+The project Development Status is 1 - Planning, only very limited
+functionality has been implemented so far.

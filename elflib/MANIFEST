@@ -1,0 +1,9 @@
+AUTHORS
+CHANGE_LOG
+LICENSE
+MANIFEST
+README
+TODO
+setup.py
+elflib/__init__.py
+elflib/header.py
