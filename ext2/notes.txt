@@ -1,0 +1,3 @@
+http://perl.plover.com/classes/ext2fs/
+http://e2fsprogs.sourceforge.net/ext2intro.html
+http://en.wikipedia.org/wiki/Ext2
