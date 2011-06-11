@@ -1,3 +1,8 @@
+/*
+    How to run this program:
+    $ gcc -Wall -O3 main.c
+    $ ./a.out
+*/
 #include <stdio.h>
 #include <sys/types.h>
 
