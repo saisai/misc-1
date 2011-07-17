@@ -1,0 +1,14 @@
+Import registry hooks in EPD
+============================
+
+Starting with EPD 7.1 (including EPD Free), we have added an import
+hook registry mechanism to the core Python interpreter.  This mechanism
+is based on the not very well known sys.meta_path list of finder objects,
+see PEP 302 for the original specification.  By default sys.meta_path is
+an empty list, in any regular Python and EPD.  However, when setting the
+environment variable EPDREGISTRY to a special registry file, the new
+registry mechanism is activated, and sys.meta_path now contains an
+instance of our new PackageRegistry object.  As sys.meta_path is searched
+before any implicit default finders or sys.path, the mechanism allows
+using modules and packages which take precedence over the ones already
+installed into site-packages.
