@@ -9,7 +9,9 @@ For example, it is possible to set up one environment in which numpy 1.5.1
 and pyzmq 2.1.7 are present, and another environment in which numpy 1.6.0
 and no pyzmq is present.  This can be useful is may different scenarios,
 e.g. testing ipython with or without different versions of optional
-dependencies installed.
+dependencies installed.  The alternative would be to set up multiple
+Python interpreters and install the desired packages into each one.
+virtualenv can help here, but adds it's own set of problems.
 
 This mechanism is based on the not very well known sys.meta_path list
 of finder objects, see PEP 302 for the original specification.  By
@@ -27,3 +29,41 @@ imp.load_module for the actual importing.  The code can be found in
 <sys.prefix>/lib/python2.7/custom_tools/hooks.py, which also defines a
 main function for setting up the hook, which is called from Python's
 site.py.
+
+Let's return to the above example, suppose you want to have two environments:
+env1: numpy 1.5.1, pyzmq 2.1.7
+env2: numpy 1.6.0, no pyzmq
+
+First, you need to download (or create) the corresponding eggs.  Now these
+eggs need to be installed in a special location (not into site-packages,
+or any other directory on the PYTHONPATH):
+
+  $ egginst --hook numpy-1.5.1-2.egg
+  $ egginst --hook numpy-1.6.0-4.egg
+  $ egginst --hook pyzmq-2.1.7-1.egg
+
+This will install the eggs into directories in <sys.prefix>/pkgs.  During
+the install process egginst also creates a registry file for each package,
+e.g. <sys.prefix>/pkgs/numpy-1.5.1-2/EGG-INFO/registry.txt.  Now simply
+concatenate the desired registry files to create the registry file
+EPDREGISTRY is going to point to:
+
+  $ cd <sys.prefix>
+  $ cat pkgs/numpy-1.5.1-2/EGG-INFO/registry.txt > registry1.txt
+  $ cat pkgs/pyzmq-2.1.7-1/EGG-INFO/registry.txt >> registry1.txt
+  $ cp pkgs/numpy-1.6.0-4/EGG-INFO/registry.txt registry2.txt
+  $ EPDREGISTRY=registry1.txt python
+  >>> import numpy
+  >>> numpy.__version__
+  1.5.1
+  >>> import pyzmq
+  >>> exit()
+  $ EPDREGISTRY=registry2.txt python
+  >>> import numpy
+  >>> numpy.__version__
+  1.6.0
+  >>> import pyzmq
+  Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+  ImportError: No module names pyzmq
+
