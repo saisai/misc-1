@@ -51,10 +51,10 @@ or any other directory on the PYTHONPATH):
   $ egginst --hook numpy-1.6.0-4.egg
   $ egginst --hook pyzmq-2.1.7-1.egg
 
-This will install the eggs into directories in <sys.prefix>/pkgs.  During
-the install process egginst also creates a registry file for each package,
-e.g. <sys.prefix>/pkgs/numpy-1.5.1-2/EGG-INFO/registry.txt.  Now simply
-concatenate the desired registry files to create the registry file
+This will install the eggs into versioned directories in <sys.prefix>/pkgs.
+During the install process egginst also creates a registry file for each
+package, e.g. <sys.prefix>/pkgs/numpy-1.5.1-2/EGG-INFO/registry.txt.
+Now simply concatenate the desired registry files to create the registry file
 EPDREGISTRY is going to point to:
 
   $ cd <sys.prefix>
@@ -79,3 +79,12 @@ EPDREGISTRY is going to point to:
 The files registry1.txt and registry2.txt do not have to reside in sys.prefix,
 they can be anywhere on your system.  All that is important is that
 EPDREGISTRY points to their path.
+
+We have tested the new import registry mechanism with all packages in EPD
+and were initially considering to install all EPD packages in this manner.
+However Robert Kern was against it, and we came to the realization that
+he was right.  The multiversion directory layout for packages is not good
+for development, as one is never really sure what versions are active.
+This is the same reason I created egginst in the first place, with the
+ability to install packages "splatted out" into site-packages and remove
+them or upgrade them cleanly.
