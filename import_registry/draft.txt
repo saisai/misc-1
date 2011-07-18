@@ -3,12 +3,12 @@ Import registry hooks in EPD
 
 At the end of April (2011), Travis and I were playing with Python import
 hooks.  The goal was to create an import registry mechanism which would
-easily allow switching between different versions of already installed
-Python packages.  This idea is not new, setuptools provides such a mechanism
-by installing packages into egg directories and using the easy-install.pth
-file.  However, as EPD packages are (as of EPD 5.0) not being installed
-using setuptools anymore (because of all the problems we had with it),
-we were looking for an alternative.
+allow multiple versions of a package to be installed and easily switching
+between those versions.  The idea is not new, setuptools provides such a
+mechanism by installing packages into egg directories and using the
+easy-install.pth file.  However, as EPD packages are (as of EPD 5.0) not
+being installed using setuptools anymore (because of all the problems we
+had with it), we were looking for a better alternative.
 
 Starting with EPD 7.1 (including EPD Free), we have added an import
 hook registry mechanism to the core Python interpreter.  This mechanism
