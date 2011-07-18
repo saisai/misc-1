@@ -48,7 +48,7 @@ eggs need to be installed in a special location (not into site-packages,
 or any other directory on the PYTHONPATH):
 
   $ egginst --hook numpy-1.5.1-2.egg
-  $ egginst --hook numpy-1.6.0-4.egg
+  $ egginst --hook numpy-1.6.0-5.egg
   $ egginst --hook pyzmq-2.1.7-1.egg
 
 This will install the eggs into versioned directories in <sys.prefix>/pkgs.
@@ -60,21 +60,21 @@ EPDREGISTRY is going to point to:
   $ cd <sys.prefix>
   $ cat pkgs/numpy-1.5.1-2/EGG-INFO/registry.txt > registry1.txt
   $ cat pkgs/pyzmq-2.1.7-1/EGG-INFO/registry.txt >> registry1.txt
-  $ cp pkgs/numpy-1.6.0-4/EGG-INFO/registry.txt registry2.txt
+  $ cp pkgs/numpy-1.6.0-5/EGG-INFO/registry.txt registry2.txt
   $ EPDREGISTRY=registry1.txt python
   >>> import numpy
   >>> numpy.__version__
   1.5.1
-  >>> import pyzmq
+  >>> import zmq
   >>> exit()
   $ EPDREGISTRY=registry2.txt python
   >>> import numpy
   >>> numpy.__version__
   1.6.0
-  >>> import pyzmq # this is supposed to fail
+  >>> import zmq # this is supposed to fail
   Traceback (most recent call last):
     File "<stdin>", line 1, in <module>
-  ImportError: No module names pyzmq
+  ImportError: No module names zmq
 
 The files registry1.txt and registry2.txt do not have to reside in sys.prefix,
 they can be anywhere on your system.  All that is important is that
