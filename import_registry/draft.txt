@@ -1,7 +1,7 @@
 Import registry hooks in EPD
 ============================
 
-About two month ago, Travis and I were playing with Python import
+At the end of April (2011), Travis and I were playing with Python import
 hooks.  The goal was to create an import registry mechanism which would
 easily allow switching between different versions of already installed
 Python packages.  This idea is not new, setuptools provides such a mechanism
