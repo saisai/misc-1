@@ -1,0 +1,107 @@
+<spam>
+<h1>Import registry hooks in EPD</h1>
+<p>
+  At the end of April (2011), Travis and I were playing with Python import
+  hooks.  The goal was to create an import registry mechanism which would
+  allow multiple versions of a package to be installed and easily switching
+  between those versions.  The idea is not new, setuptools provides such a
+  mechanism by installing packages into egg directories and using the
+  easy-install.pth file.  However, as EPD packages are (as of EPD 5.0) not
+  being installed using setuptools anymore (because of all the problems we
+  had with it), we were looking for a better alternative.
+</p>
+<p>
+  Starting with EPD 7.1 (including EPD Free), we have added an import
+  hook registry mechanism to the core Python interpreter.  This mechanism
+  is useful for setting up different environments, i.e. Python runtime
+  environments in which a specific set of packages are importable.
+  For example, it is possible to set up one environment in which numpy 1.5.1
+  and pyzmq 2.1.7 are present, and another environment in which numpy 1.6.0
+  and no pyzmq is present.  This can be useful is may different scenarios,
+  e.g. testing ipython with or without different versions of optional
+  dependencies installed.  The alternative would be to set up multiple
+  Python interpreters and install the desired packages into each one.
+  virtualenv can help here, but adds it's own set of problems.
+</p>
+<p>
+  This mechanism is based on the not very well
+  known <code>sys.meta_path</code> list
+  of finder objects, see <a href="">PEP 302</a>
+  for the original specification.  By default <code>sys.meta_path</code> is
+  an empty list,
+  in any regular Python and EPD.
+  However, when adding a file <code>&lt;sys.prefix&gt;/registry.txt</code>
+  (or setting the environment variable <code>EPDREGISTRY</code> to a special
+  registry file), the new
+  registry mechanism is activated, and <code>sys.meta_path</code> now contains
+  an instance of our new PackageRegistry object.  As <code>sys.meta_path</code>
+  is searched before any implicit default finders or sys.path, the
+  mechanism allows importing different modules (and packages) than the
+  ones installed into site-packages.  The PackageRegistry class is quite
+  simple.  Basically, the find_module method checks whether the module
+  name is contained in the registry, and the load_module method uses
+  imp.load_module for the actual importing.  The code can be found in
+  <code>&lt;sys.prefix&gt;/lib/python2.7/custom_tools/hooks.py</code>,
+  which also defines a
+  main function for setting up the hook, which is called from Python's
+  site.py.
+</p>
+<p>
+  Let's return to the above example, suppose you want to have two environments:
+  env1: numpy 1.5.1, pyzmq 2.1.7
+  env2: numpy 1.6.0, no pyzmq
+</p>
+<p>
+  First, you need to download (or create) the corresponding eggs.  Now these
+  eggs need to be installed in a special location (not into site-packages,
+  or any other directory on the <code>PYTHONPATH</code>):
+</p>
+<pre>$ egginst --hook numpy-1.5.1-2.egg
+$ egginst --hook numpy-1.6.0-5.egg
+$ egginst --hook pyzmq-2.1.7-1.egg
+</pre>
+<p>
+  This will install the eggs into versioned directories in
+  <code>&lt;sys.prefix&gt;/pkgs</code>.
+  During the install process egginst also creates a registry file for each
+  package, e.g.
+  <code>&lt;sys.prefix&gt;/pkgs/numpy-1.5.1-2/EGG-INFO/registry.txt</code>.
+  Now simply concatenate the desired registry files to create the registry file
+  <code>EPDREGISTRY</code> is going to point to:
+</p>
+
+<pre>$ cd &lt;sys.prefix&gt;
+$ cat pkgs/numpy-1.5.1-2/EGG-INFO/registry.txt &gt; registry1.txt
+$ cat pkgs/pyzmq-2.1.7-1/EGG-INFO/registry.txt &gt;&gt; registry1.txt
+$ cp pkgs/numpy-1.6.0-5/EGG-INFO/registry.txt registry2.txt
+$ EPDREGISTRY=registry1.txt python
+&gt;&gt;&gt; import numpy
+&gt;&gt;&gt; numpy.version
+'1.5.1'
+&gt;&gt;&gt; import zmq
+&gt;&gt;&gt; exit()
+$ EPDREGISTRY=registry2.txt python
+&gt;&gt;&gt; import numpy
+&gt;&gt;&gt; numpy.version
+'1.6.0'
+&gt;&gt;&gt; import zmq # this is supposed to fail
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+ImportError: No module names zmq
+</pre>
+<p>
+  The files registry1.txt and registry2.txt do not have to reside in sys.prefix,
+  they can be anywhere on your system.  All that is important is that
+  <code>EPDREGISTRY</code> points to their path.
+</p>
+<p>
+  We have tested the new import registry mechanism with all packages in EPD
+  and were initially considering to install all EPD packages in this manner.
+  However Robert Kern was against it, and we came to the realization that
+  he was right.  The multiversion directory layout for packages is not good
+  for development, as one is never really sure what versions are active.
+  This is the same reason I created egginst in the first place, with the
+  ability to install packages "splatted out" into site-packages and remove
+  them or upgrade them cleanly.
+</p>
+</spam>
