@@ -1,6 +1,15 @@
 Import registry hooks in EPD
 ============================
 
+About two month ago, Travis and I were playing with Python import
+hooks.  The goal was to create an import registry mechanism which would
+easily allow switching between different versions of already installed
+Python packages.  This idea is not new, setuptools provides such a mechanism
+by installing packages into egg directories and using the easy-install.pth
+file.  However, as EPD packages are (as of EPD 5.0) not being installed
+using setuptools anymore (because of all the problems we had with it),
+we were looking for an alternative.
+
 Starting with EPD 7.1 (including EPD Free), we have added an import
 hook registry mechanism to the core Python interpreter.  This mechanism
 is useful for setting up different environments, i.e. Python runtime
@@ -62,7 +71,7 @@ EPDREGISTRY is going to point to:
   >>> import numpy
   >>> numpy.__version__
   1.6.0
-  >>> import pyzmq # this should fail
+  >>> import pyzmq # this is supposed to fail
   Traceback (most recent call last):
     File "<stdin>", line 1, in <module>
   ImportError: No module names pyzmq
