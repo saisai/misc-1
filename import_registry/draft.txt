@@ -62,8 +62,11 @@ EPDREGISTRY is going to point to:
   >>> import numpy
   >>> numpy.__version__
   1.6.0
-  >>> import pyzmq
+  >>> import pyzmq # this should fail
   Traceback (most recent call last):
     File "<stdin>", line 1, in <module>
   ImportError: No module names pyzmq
 
+The files registry1.txt and registry2.txt do not have to reside in sys.prefix,
+they can be anywhere on your system.  All that is important is that
+EPDREGISTRY points to their path.
