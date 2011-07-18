@@ -3,12 +3,27 @@ Import registry hooks in EPD
 
 Starting with EPD 7.1 (including EPD Free), we have added an import
 hook registry mechanism to the core Python interpreter.  This mechanism
-is based on the not very well known sys.meta_path list of finder objects,
-see PEP 302 for the original specification.  By default sys.meta_path is
-an empty list, in any regular Python and EPD.  However, when adding a file
-<sys.prefix>/registry.txt (or setting the environment variable EPDREGISTRY
-to a special registry file), the new registry mechanism is activated, and
-sys.meta_path now contains an instance of our new PackageRegistry object.
-As sys.meta_path is searched before any implicit default finders or sys.path,
-the mechanism allows importing different modules and packages than the ones
-installed into site-packages.
+is useful for setting up different environments, i.e. Python runtime
+environments in which a specific set of packages are importable.
+For example, it is possible to set up one environment in which numpy 1.5.1
+and pyzmq 2.1.7 are present, and another environment in which numpy 1.6.0
+and no pyzmq is present.  This can be useful is may different scenarios,
+e.g. testing ipython with or without different versions of optional
+dependencies installed.
+
+This mechanism is based on the not very well known sys.meta_path list
+of finder objects, see PEP 302 for the original specification.  By
+default sys.meta_path is an empty list, in any regular Python and EPD.
+However, when adding a file <sys.prefix>/registry.txt (or setting the
+environment variable EPDREGISTRY to a special registry file), the new
+registry mechanism is activated, and sys.meta_path now contains an
+instance of our new PackageRegistry object.  As sys.meta_path is
+searched before any implicit default finders or sys.path, the
+mechanism allows importing different modules (and packages) than the
+ones installed into site-packages.  The PackageRegistry class is quite
+simple.  Basically, the find_module method checks whether the module
+name is contained in the registry, and the load_module method uses
+imp.load_module for the actual importing.  The code can be found in
+<sys.prefix>/lib/python2.7/custom_tools/hooks.py, which also defines a
+main function for setting up the hook, which is called from Python's
+site.py.
