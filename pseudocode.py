@@ -52,7 +52,7 @@ def __import__(name, globals, locals, fromlist, level):
         # With sys.meta_path, built-ins, and frozen modules checked, now look
         # at sys.path or parent.__path__.
         search_path = path if path else sys.path
-        for path_entry in search_path
+        for path_entry in search_path:
             # Look for a cached importer.
             if path_entry in sys.path_importer_cache:
                 importer = sys.path_importer_cache[path_entry]
