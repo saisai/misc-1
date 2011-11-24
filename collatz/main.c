@@ -1,5 +1,5 @@
 /*
-    How to run this program:
+    How to run this C program:
     $ gcc -Wall -O3 main.c
     $ ./a.out
 */
