@@ -81,7 +81,7 @@ class Elf_Shdr(Base_hdr):
         ('Word', 'sh_type',      'Section type'),
         ('Word', 'sh_flags',     'Section flags'),
         ('Addr', 'sh_addr',      'Section virtual addr at execution'),
-        ('Off',	 'sh_offset',    'Section file offset'),
+        ('Off',  'sh_offset',    'Section file offset'),
         ('Word', 'sh_size',      'Section size in bytes'),
         ('Word', 'sh_link',      'Link to another section'),
         ('Word', 'sh_info',      'Additional section information'),
