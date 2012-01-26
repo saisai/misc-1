@@ -1,0 +1,1 @@
+http://tech.blog.aknin.name/2010/07/22/pythons-innards-interpreter-stacks/
