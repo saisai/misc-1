@@ -2,7 +2,3 @@
 import sys, compiler
 
 compiler.compileFile(sys.argv[1])
-
-# Local Variables:
-# mode: python
-# End:

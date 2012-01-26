@@ -1,4 +1,6 @@
-import operator, dis, sys
+import dis
+import operator
+
 
 suppress = False
 verbose = 0

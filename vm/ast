@@ -30,9 +30,3 @@ pp.pprint(st)
 #code = parser.compileast(ast)
 
 #exec(code)
-
-
-
-# Local Variables:
-# mode: python
-# End:

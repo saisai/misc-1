@@ -359,8 +359,3 @@ bytecode is disassembled into XML, missing the header information.
 
 if __name__ == "__main__":
     main()
-
-
-# Local Variables:
-# mode: python
-# End:
