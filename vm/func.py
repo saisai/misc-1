@@ -6,7 +6,7 @@ def mkadder(n):
     def adder(m):
         c = 3 + b
         return n + m
-    
+
     return adder
 
 
