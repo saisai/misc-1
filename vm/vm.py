@@ -100,8 +100,8 @@ class Function:
 
 class VirtualMachine:
     def __init__(self, opts):
-        self._frames = [] # list of stack frames
-        self._stack  = [] # stack
+        self.frames = [] # list of stack frames
+        self.stack  = [] # stack
         self.returnValue = None
         self.f_globals = {}
 
@@ -114,7 +114,7 @@ class VirtualMachine:
             print 'loadCode:', code.co_name
             print '    f_locals: %s' % f_locals
 
-        self._frames.append(Frame(code, f_locals, self))
+        self.frames.append(Frame(code, f_locals, self))
 
     def getInst(self):
         """Get instruction and argument (if present) from top frame and
@@ -125,7 +125,7 @@ class VirtualMachine:
 
         opCode = ord(byte)
         opName = dis.opname[opCode]
-        if verbose: print '%2s %-20s' % (len(self._frames),  opName),
+        if verbose: print '%2s %-20s' % (len(self.frames),  opName),
 
         if opCode >= dis.HAVE_ARGUMENT:
             opArg = frame.f_code.co_code[frame.f_lasti:frame.f_lasti+2]
@@ -171,7 +171,7 @@ class VirtualMachine:
 
 
     def run(self):
-        while self._frames:
+        while self.frames:
             # pre will go here
             opName, has_arg, arg = self.getInst()
 
@@ -181,7 +181,7 @@ class VirtualMachine:
             elif opName.startswith('BINARY_'):
                 self.binaryOperator(opName)
 
-            elif opName.count('SLICE+'):
+            elif 'SLICE+' in opName:
                 self.sliceOperator(opName)
 
             else:
@@ -195,11 +195,11 @@ class VirtualMachine:
                     opFunc()
 
             if opName == 'RETURN_VALUE':
-                self._frames.pop()
+                self.frames.pop()
                 self.push(self.returnValue)
 
             if verbose == 2:
-                print 'Stack:', self._stack
+                print 'Stack:', self.stack
                 if self.frame():
                     print 'Block:', self.frame().blockstack
 
@@ -207,17 +207,18 @@ class VirtualMachine:
 
 
     def frame(self):
-        return self._frames and self._frames[-1] or None
+        if self.frames:
+            return self.frames[-1]
 
     def pop(self, n=1):
         if n==1:
-            return self._stack.pop()
+            return self.stack.pop()
         else:
             for i in xrange(n):
-                self._stack.pop()
+                self.stack.pop()
 
     def push(self, item):
-        self._stack.append(item)
+        self.stack.append(item)
 
     def unaryOperator(self, op):
         op = op[6:]
@@ -258,29 +259,29 @@ class VirtualMachine:
         self.pop()
 
     def op_DUP_TOP(self):
-        self.push(self._stack[-1])
+        self.push(self.stack[-1])
 
     def op_ROT_TWO(self):
-        self._stack[-1], self._stack[-2] = self._stack[-2], self._stack[-1]
+        self.stack[-1], self.stack[-2] = self.stack[-2], self.stack[-1]
 
     def op_ROT_THREE(self):
-        self._stack[-1], self._stack[-2], self._stack[-3] = \
-        self._stack[-2], self._stack[-3], self._stack[-1]
+        self.stack[-1], self.stack[-2], self.stack[-3] = \
+        self.stack[-2], self.stack[-3], self.stack[-1]
 
     def op_ROT_FOUR(self):
-        self._stack[-1], self._stack[-2], self._stack[-3], self._stack[-4] = \
-        self._stack[-2], self._stack[-3], self._stack[-4], self._stack[-1]
+        self.stack[-1], self.stack[-2], self.stack[-3], self.stack[-4] = \
+        self.stack[-2], self.stack[-3], self.stack[-4], self.stack[-1]
 
     def op_STORE_SUBSCR(self):
-        w = self._stack[-1]
-        v = self._stack[-2]
-        u = self._stack[-3]
+        w = self.stack[-1]
+        v = self.stack[-2]
+        u = self.stack[-3]
         v[w] = u
         self.pop(3)
 
     def op_DELETE_SUBSCR(self):
-        w = self._stack[-1]
-        v = self._stack[-2]
+        w = self.stack[-1]
+        v = self.stack[-2]
         del v[w]
         self.pop(2)
 
@@ -373,11 +374,11 @@ class VirtualMachine:
         self.push(COMPARE_OPERATORS[opnum](v, u))
 
     def op_JUMP_IF_TRUE(self, jump):
-        if self._stack[-1]:
+        if self.stack[-1]:
             self.frame().f_lasti = jump
 
     def op_JUMP_IF_FALSE(self, jump):
-        if not self._stack[-1]:
+        if not self.stack[-1]:
             self.frame().f_lasti = jump
 
     def op_JUMP_FORWARD(self, jump):
@@ -433,7 +434,7 @@ class VirtualMachine:
         self.push(iter(self.pop()))
 
     def op_FOR_ITER(self, jump):
-        iterobj = self._stack[-1]
+        iterobj = self.stack[-1]
         try:
             v = iterobj.next()
             self.push(v)
