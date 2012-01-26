@@ -132,4 +132,5 @@ Pythom virtual machine -- FILE may be
         print
 
 
-main()
+if __name__ == '__main__':
+    main()

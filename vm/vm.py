@@ -89,12 +89,9 @@ class Function:
             res[var] = val
 
         res.update(kw)
-
         if verbose == 2:
             print '   result  :', res
-
         assert len(res) == len(argnames)
-
         return res
 
 
