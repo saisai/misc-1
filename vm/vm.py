@@ -68,7 +68,7 @@ class Function:
 
     def init_locals(self, args, kw):
         argnames = self.code.co_varnames[:self.code.co_argcount]
-        pos = len(argnames)-len(self.defargs)
+        pos = len(argnames) - len(self.defargs)
         if verbose == 2:
             print 'init_locals'
             print '   argnames:', argnames
@@ -131,7 +131,7 @@ class VirtualMachine:
             opArg = frame.f_code.co_code[frame.f_lasti:frame.f_lasti+2]
             frame.f_lasti += 2
 
-            intArg = ord(opArg[0]) + 256*ord(opArg[1])
+            intArg = ord(opArg[0]) + 256 * ord(opArg[1])
             if verbose: print '%4s' % intArg,
 
             if opName.startswith('CALL_FUNCTION'):
