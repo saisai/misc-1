@@ -314,7 +314,7 @@ class VirtualMachine:
     def op_STORE_NAME(self, name):
         item = self.pop()
         self.frame().f_locals[name] = item
-        self.frame().f_globals[name] = item
+        self.frame().f_globals[name] = item # XXX
 
     def op_STORE_GLOBAL(self, name):
         self.frame().f_globals[name] = self.pop()
@@ -340,15 +340,16 @@ class VirtualMachine:
 
     def op_LOAD_NAME(self, name):
         frame = self.frame()
-        if name in frame.f_locals:
+        try:
             item = frame.f_locals[name]
-
-        elif name in frame.f_globals:
-            item = frame.f_globals[name]
-
-        elif name in frame.f_builtins:
-            item = frame.f_builtins[name]
-
+        except KeyError:
+            try:
+                item = frame.f_globals[name]
+            except KeyError:
+                try:
+                    item = frame.f_builtins[name]
+                except KeyError:
+                    print "NameError:", name
         self.push(item)
 
     def op_BUILD_TUPLE(self, count):
