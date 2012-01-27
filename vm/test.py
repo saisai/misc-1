@@ -1,9 +1,10 @@
-
 for i in xrange(5):
-    print 2*i == i+i
+    print 2 * i == i + i
 
 def fac(n):
-    return 1 if n<2 else fac(n-1)*n
+    return 1 if n < 2 else fac(n - 1) * n
+
+print fac(2) == 2
 
 t = 1
 for n in xrange(5):
@@ -40,7 +41,7 @@ print lst == [2, 50]
 lst[:] = [77]
 print lst == [77]
 
-d = {1:'a', 2:'b'}
+d = {1: 'a', 2: 'b'}
 print d[1] == 'a'
 del d[1]
 print len(d) == 1

@@ -96,6 +96,7 @@ class Function:
 
 
 class VirtualMachine:
+
     def __init__(self, opts):
         self.frames = [] # list of stack frames
         self.stack  = [] # stack
@@ -207,6 +208,9 @@ class VirtualMachine:
         if self.frames:
             return self.frames[-1]
 
+    def top(self):
+        return self.stack[-1]
+
     def pop(self, n=1):
         if n==1:
             return self.stack.pop()
@@ -256,7 +260,7 @@ class VirtualMachine:
         self.pop()
 
     def op_DUP_TOP(self):
-        self.push(self.stack[-1])
+        self.push(self.top())
 
     def op_ROT_TWO(self):
         self.stack[-1], self.stack[-2] = self.stack[-2], self.stack[-1]
@@ -306,24 +310,9 @@ class VirtualMachine:
     def op_POP_BLOCK(self):
         self.frame().blockstack.pop()
 
-    def op_LIST_APPEND(self):
+    def op_LIST_APPEND(self, n):
         w = self.pop()
-        v = self.pop()
-        v.append(w)
-
-    def op_STORE_NAME(self, name):
-        item = self.pop()
-        self.frame().f_locals[name] = item
-        self.frame().f_globals[name] = item # XXX
-
-    def op_STORE_GLOBAL(self, name):
-        self.frame().f_globals[name] = self.pop()
-
-    def op_DELETE_NAME(self, name):
-        del self.frame().f_locals[name]
-
-    def op_DELETE_GLOBAL(self, name):
-        del self.frame().f_globals[name]
+        v = self.stack[-n].append(w)
 
     def op_UNPACK_SEQUENCE(self, count):
         items = list(self.pop())
@@ -338,6 +327,8 @@ class VirtualMachine:
     def op_LOAD_CONST(self, const):
         self.push(const)
 
+    # ------------ scope -------------
+
     def op_LOAD_NAME(self, name):
         frame = self.frame()
         try:
@@ -346,11 +337,41 @@ class VirtualMachine:
             try:
                 item = frame.f_globals[name]
             except KeyError:
-                try:
-                    item = frame.f_builtins[name]
-                except KeyError:
-                    print "NameError:", name
+                item = frame.f_builtins[name]
         self.push(item)
+
+    def op_STORE_NAME(self, name):
+        item = self.pop()
+        self.frame().f_locals[name] = item
+        self.frame().f_globals[name] = item # XXX
+
+    def op_DELETE_NAME(self, name):
+        del self.frame().f_locals[name]
+
+    def op_LOAD_FAST(self, name):
+        self.push(self.frame().f_locals[name])
+
+    def op_STORE_FAST(self, name):
+        self.frame().f_locals[name] = self.pop()
+
+    def op_DELETE_FAST(self, name):
+        del self.frame().f_locals[name]
+
+    def op_LOAD_GLOBAL(self, name):
+        frame = self.frame()
+        try:
+            item = frame.f_globals[name]
+        except KeyError:
+            item = frame.f_builtins[name]
+        self.push(item)
+
+    def op_STORE_GLOBAL(self, name):
+        self.frame().f_globals[name] = self.pop()
+
+    def op_DELETE_GLOBAL(self, name):
+        del self.frame().f_globals[name]
+
+    # --------------------------
 
     def op_BUILD_TUPLE(self, count):
         lst = [self.pop() for i in xrange(count)]
@@ -362,21 +383,25 @@ class VirtualMachine:
         lst.reverse()
         self.push(lst)
 
-    def op_BUILD_MAP(self, zero):
-        assert zero == 0
+    def op_BUILD_MAP(self, size):
         self.push({})
+
+    def op_STORE_MAP(self):
+        w = self.pop()
+        u = self.pop()
+        self.top()[w] = u
 
     def op_COMPARE_OP(self, opnum):
         u = self.pop()
         v = self.pop()
         self.push(COMPARE_OPERATORS[opnum](v, u))
 
-    def op_JUMP_IF_TRUE(self, jump):
-        if self.stack[-1]:
+    def op_POP_JUMP_IF_TRUE(self, jump):
+        if self.pop():
             self.frame().f_lasti = jump
 
-    def op_JUMP_IF_FALSE(self, jump):
-        if not self.stack[-1]:
+    def op_POP_JUMP_IF_FALSE(self, jump):
+        if not self.pop():
             self.frame().f_lasti = jump
 
     def op_JUMP_FORWARD(self, jump):
@@ -385,22 +410,8 @@ class VirtualMachine:
     def op_JUMP_ABSOLUTE(self, jump):
         self.frame().f_lasti = jump
 
-    def op_LOAD_GLOBAL(self, name):
-        f = self.frame()
-        if name in f.f_globals:
-            self.push(f.f_globals[name])
-
-        elif name in f.f_builtins:
-            self.push(f.f_builtins[name])
-
     def op_SETUP_LOOP(self, dest):
         self.frame().blockstack.append(('loop', dest))
-
-    def op_LOAD_FAST(self, name):
-        self.push(self.frame().f_locals[name])
-
-    def op_STORE_FAST(self, name):
-        self.frame().f_locals[name] = self.pop()
 
     def op_LOAD_DEREF(self, name):
         self.push(self.frame()._cells[name].get())
@@ -432,7 +443,7 @@ class VirtualMachine:
         self.push(iter(self.pop()))
 
     def op_FOR_ITER(self, jump):
-        iterobj = self.stack[-1]
+        iterobj = self.top()
         try:
             v = iterobj.next()
             self.push(v)
