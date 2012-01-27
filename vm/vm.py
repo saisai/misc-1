@@ -44,6 +44,7 @@ class Frame:
 
         self.f_lasti = 0
         self.blockstack = []
+        self.freevars = {}
 
         if verbose == 2:
             print self
@@ -371,6 +372,15 @@ class VirtualMachine:
     def op_DELETE_GLOBAL(self, name):
         del self.frame().f_globals[name]
 
+    def op_LOAD_DEREF(self, n):
+        self.push(self.frame().freevars[n])
+
+    def op_STORE_DEREF(self, n):
+        self.frame().freevars[n] = self.pop()
+
+    def op_LOAD_CLOSURE(self, n):
+        self.push(self.frame().freevars[n])
+
     # --------------------------
 
     def op_BUILD_TUPLE(self, count):
@@ -412,9 +422,6 @@ class VirtualMachine:
 
     def op_SETUP_LOOP(self, dest):
         self.frame().blockstack.append(('loop', dest))
-
-    def op_LOAD_DEREF(self, name):
-        self.push(self.frame()._cells[name].get())
 
     def op_CALL_FUNCTION(self, (lenPosPar, lenKWPar)):
         kw = {}
