@@ -110,15 +110,10 @@ class Function:
     def __call__(self, *args, **kw):
         if len(args) < self.func_code.co_argcount:
             if not self.func_defaults:
-                if self.func_code.co_argcount == 0:
-                    argCount = 'no arguments'
-                elif self.func_code.co_argcount == 1:
-                    argCount = 'exactly 1 argument'
-                else:
-                    argCount = ('exactly %i arguments' %
-                                self.func_code.co_argcount)
-                raise TypeError('%s() takes %s (%s given)' % (
-                        self.func_name, argCount, len(args)))
+                raise TypeError('%s() takes exactly %s arguments (%s given)' %
+                                (self.func_name,
+                                 self.func_code.co_argcount,
+                                 len(args)))
             else:
                 defArgCount = len(self.func_defaults)
                 args.extend(self.func_defaults[
@@ -126,34 +121,6 @@ class Function:
 
         self._vm.loadCode(self.func_code, args, kw,
                           self.func_globals, self.func_dict)
-
-    def init_locals(self, args, kw):
-        argnames = self.code.co_varnames[:self.code.co_argcount]
-        pos = len(argnames) - len(self.defargs)
-        if verbose == 2:
-            print 'init_locals'
-            print '   argnames:', argnames
-            print '   args, kw:', args, kw
-            print '   defargs :', self.defargs, pos
-
-        for k in kw:
-            if k not in argnames:
-                exit('%s() got an unexpected keyword argument %r' %
-                     (self.name, k))
-        res = {}
-        for i, val in enumerate(self.defargs):
-            var = argnames[i+pos]
-            res[var] = val
-
-        for i, val in enumerate(args):
-            var = argnames[i]
-            res[var] = val
-
-        res.update(kw)
-        if verbose == 2:
-            print '   result  :', res
-        assert len(res) == len(argnames)
-        return res
 
 
 class Class:
@@ -167,7 +134,7 @@ class Class:
         return Object(self, self._name, self._bases, self._locals, args, kw)
 
     def __str__(self):
-        return '<class %s at %s>' % (self._name, 
+        return '<class %s at %s>' % (self._name,
                                      hex(id(self))[2:].upper().zfill(8))
 
     def isparent(self, obj):
@@ -546,7 +513,7 @@ class VirtualMachine:
     def op_LOAD_CLOSURE(self, name):
         self.push(self.frame()._cells[name])
 
-    # ------------------------- import 
+    # ------------------------- import
 
     def op_IMPORT_NAME(self, name):
         self.push(__import__(name))

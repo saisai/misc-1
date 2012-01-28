@@ -149,7 +149,7 @@ class Class:
     def __call__(self, *args, **kw):
         return Object(self, self._name, self._bases, self._locals, args, kw)
     def __str__(self):
-        return '<class %s at %s>' % (self._name, 
+        return '<class %s at %s>' % (self._name,
                                      hex(id(self))[2:].upper().zfill(8))
     __repr__ = __str__
     def isparent(self, obj):
@@ -173,7 +173,7 @@ class Object:
         return '<%s instance at %s>' % (self._name,
                                         hex(id(self))[2:].upper().zfill(8))
     __repr__ = __str__
-        
+
 class Method:
     readOnly = ['im_self', 'im_class', 'im_func']
     def __init__(self, object, _class, func):
@@ -226,7 +226,7 @@ INPLACE_OPERATORS = { # these are execed
     'XOR':      'x^=y',
     'OR':       'x|=y',
 }
-    
+
 COMPARE_OPERATORS = [
     operator.lt,
     operator.le,
@@ -240,7 +240,7 @@ COMPARE_OPERATORS = [
     lambda x,y: x is not y,
     lambda x,y: issubclass(x, Exception) and (x is y)
 ]
-    
+
 class VirtualMachine:
     def __init__(self):
         self._frames = [] # list of current stack frames
@@ -361,7 +361,7 @@ class VirtualMachine:
                         self._frames.pop()
                         if not self._frames():
                             break
-                
+
         if self._lastException[0]:
             e1, e2, e3 = self._lastException
             raise e1, e2, e3
@@ -539,7 +539,7 @@ class VirtualMachine:
         else:
             self.lastException = (NameError, NameError("name '%s' not found" % name),
                                   None) # can't do tb object yet
-                                  
+
             self.raiseException()
             return
         self.push(item)
@@ -607,7 +607,7 @@ class VirtualMachine:
             self.lastException = (NameError, NameError("name '%s' is not defined" % name),
                                   None)
             self.raiseException()
-        
+
 
     def byte_SETUP_LOOP(self, dest):
         self.frame()._blockStack.append(('loop', dest))
@@ -775,8 +775,8 @@ def inputCodeObject():
         else:
             break
     return compile(c, '<input>', 'exec')
-        
- 
+
+
 while 1:
     try:
         codeObject = inputCodeObject()

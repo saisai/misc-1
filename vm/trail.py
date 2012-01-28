@@ -18,7 +18,7 @@ def makeAdder(base):
 add5 = makeAdder(5)
 assert add5(6) == 11
 
-class Foo:
+class Foo(object):
     x = 1
     def __init__(self, y):
         self.y = y
