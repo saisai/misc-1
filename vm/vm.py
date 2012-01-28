@@ -35,7 +35,7 @@ COMPARE_OPERATORS = [
     operator.ge,
 ]
 
-class Cell:
+class Cell(object):
 
     def __init__(self):
         self._deref = None
@@ -47,7 +47,7 @@ class Cell:
         return self._deref
 
 
-class Frame:
+class Frame(object):
 
     def __init__(self, f_code, f_globals, f_locals, vm):
         self.f_code = f_code
@@ -92,7 +92,7 @@ class Frame:
         return '<frame at 0x%s>' % hex(id(self))[2:]
 
 
-class Function:
+class Function(object):
 
     def __init__(self, func_code, func_doc, func_defaults, func_closure, vm):
         self._vm = vm
@@ -115,7 +115,6 @@ class Function:
                                  self.func_code.co_argcount,
                                  len(args)))
             else:
-                defArgCount = len(self.func_defaults)
                 args.extend(self.func_defaults[
                         - (self.func_code.co_argcount - len(args)):])
 
@@ -123,7 +122,7 @@ class Function:
                           self.func_globals, self.func_dict)
 
 
-class Class:
+class Class(object):
 
     def __init__(self, name, bases, methods):
         self._name = name
@@ -147,7 +146,7 @@ class Class:
         return 0
 
 
-class Object:
+class Object(object):
 
     def __init__(self, _class, name, bases, methods, args, kw):
         self._class = _class
@@ -162,7 +161,7 @@ class Object:
                                         hex(id(self))[2:].upper().zfill(8))
 
 
-class Method:
+class Method(object):
 
     def __init__(self, object, _class, func):
         self.im_self = object
@@ -179,7 +178,7 @@ class Method:
                                                self.im_func.func_name)
 
 
-class VirtualMachine:
+class VirtualMachine(object):
 
     def __init__(self, opts):
         self.frames = [] # list of stack frames
@@ -436,7 +435,7 @@ class VirtualMachine:
 
     def op_LIST_APPEND(self, n):
         w = self.pop()
-        v = self.stack[-n].append(w)
+        self.stack[-n].append(w)
 
     def op_UNPACK_SEQUENCE(self, count):
         items = list(self.pop())
@@ -589,7 +588,6 @@ class VirtualMachine:
         args.reverse()
 
         func = self.pop()
-        frame = self.frame()
         if hasattr(func, 'im_func'): # method
             if func.im_self:
                 args.insert(0, func.im_self)
@@ -603,9 +601,6 @@ class VirtualMachine:
             self.loadCode(func.func_code, args, kw)
             if func.func_code.co_flags & 32: #CO_GENERATOR:
                 raise NotImplementedError("cannot do generators ATM")
-                gen = Generator(self.frame(), self)
-                self._frames.pop()._generator = gen
-                self.push(gen)
         else:
             self.push(func(*args, **kw))
 
