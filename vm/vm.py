@@ -35,16 +35,54 @@ COMPARE_OPERATORS = [
     operator.ge,
 ]
 
-class Frame:
-    def __init__(self, f_code, f_locals, vm):
-        self.f_code = f_code
-        self.f_locals = f_locals
-        self.f_globals = vm.f_globals
-        self.f_builtins = globals()['__builtins__']
+class Cell:
 
+    def __init__(self):
+        self._deref = None
+
+    def set(self, deref):
+        self._deref = deref
+
+    def get(self):
+        return self._deref
+
+
+class Frame:
+
+    def __init__(self, f_code, f_globals, f_locals, vm):
+        self.f_code = f_code
+        self.f_globals = f_globals
+        self.f_locals = f_locals
+        self.f_back = vm.frame()
+        if self.f_back:
+            self.f_builtins = self.f_back.f_builtins
+        else:
+            self.f_builtins = f_locals['__builtins__']
+            if hasattr(self.f_builtins, '__dict__'):
+                self.f_builtins = self.f_builtins.__dict__
+
+        self.f_restricted = 1
+        self.f_lineno = f_code.co_firstlineno
         self.f_lasti = 0
+
+        if f_code.co_cellvars:
+            self._cells = {}
+            if not self.f_back._cells:
+                self.f_back._cells = {}
+            for var in f_code.co_cellvars:
+                self.f_back._cells[var] = self._cells[var] = Cell()
+                if self.f_locals.has_key(var):
+                    self._cells[var].set(self.f_locals[var])
+        else:
+            self._cells = None
+
+        if f_code.co_freevars:
+            if not self._cells:
+                self._cells = {}
+            for var in f_code.co_freevars:
+                self._cells[var] = self.f_back._cells[var]
+
         self.blockstack = []
-        self.freevars = {}
 
         if verbose == 2:
             print self
@@ -55,17 +93,39 @@ class Frame:
 
 
 class Function:
-    def __init__(self, code, defargs, vm):
-        self.code = code
-        self.name = code.co_name
-        self.defargs = defargs
 
-        if verbose == 2:
-            print self
-            print '    defargs: %s' % defargs
+    def __init__(self, func_code, func_doc, func_defaults, func_closure, vm):
+        self._vm = vm
+        self.func_code = func_code
+        self.func_name = func_code.co_name
+        self.func_doc = func_doc
+        self.func_defaults = func_defaults
+        self.func_globals = vm.frame().f_globals
+        self.func_dict = vm.frame().f_locals
+        self.func_closure = func_closure
 
     def __str__(self):
-        return '<function %s at 0x%s>' % (self.code.co_name, hex(id(self))[2:])
+        return '<function %s at 0x%s>' % (self.func_name, hex(id(self))[2:])
+
+    def __call__(self, *args, **kw):
+        if len(args) < self.func_code.co_argcount:
+            if not self.func_defaults:
+                if self.func_code.co_argcount == 0:
+                    argCount = 'no arguments'
+                elif self.func_code.co_argcount == 1:
+                    argCount = 'exactly 1 argument'
+                else:
+                    argCount = ('exactly %i arguments' %
+                                self.func_code.co_argcount)
+                raise TypeError('%s() takes %s (%s given)' % (
+                        self.func_name, argCount, len(args)))
+            else:
+                defArgCount = len(self.func_defaults)
+                args.extend(self.func_defaults[
+                        - (self.func_code.co_argcount - len(args)):])
+
+        self._vm.loadCode(self.func_code, args, kw,
+                          self.func_globals, self.func_dict)
 
     def init_locals(self, args, kw):
         argnames = self.code.co_varnames[:self.code.co_argcount]
@@ -96,6 +156,62 @@ class Function:
         return res
 
 
+class Class:
+
+    def __init__(self, name, bases, methods):
+        self._name = name
+        self._bases = bases
+        self._locals = methods
+
+    def __call__(self, *args, **kw):
+        return Object(self, self._name, self._bases, self._locals, args, kw)
+
+    def __str__(self):
+        return '<class %s at %s>' % (self._name, 
+                                     hex(id(self))[2:].upper().zfill(8))
+
+    def isparent(self, obj):
+        if not isinstance(obj, Object):
+            return 0
+        if obj._class is self:
+            return 1
+        if self in obj._bases:
+            return 1
+        return 0
+
+
+class Object:
+
+    def __init__(self, _class, name, bases, methods, args, kw):
+        self._class = _class
+        self._name = name
+        self._bases = bases
+        self._locals = methods
+        if methods.has_key('__init__'):
+            methods['__init__'](self, *args, **kw)
+
+    def __str__(self):
+        return '<%s instance at %s>' % (self._name,
+                                        hex(id(self))[2:].upper().zfill(8))
+
+
+class Method:
+
+    def __init__(self, object, _class, func):
+        self.im_self = object
+        self.im_class = _class
+        self.im_func = func
+
+    def __str__(self):
+        if self.im_self:
+            return '<bound method %s.%s of %s>' % (self.im_self._name,
+                                                   self.im_func.func_name,
+                                                   str(self.im_self))
+        else:
+            return '<unbound method %s.%s>' % (self.im_class._name,
+                                               self.im_func.func_name)
+
+
 class VirtualMachine:
 
     def __init__(self, opts):
@@ -108,12 +224,37 @@ class VirtualMachine:
         suppress = opts.suppress
         verbose  = opts.verbose
 
-    def loadCode(self, code, f_locals={}):
+    def loadCode(self, code, args=[], kw={}, f_globals=None, f_locals=None):
+        if f_globals:
+            f_globals = f_globals
+            if not f_locals:
+                f_locals = f_globals
+        elif self.frame():
+            f_globals = self.frame().f_globals
+            f_locals = {}
+        else:
+            f_globals = f_locals = globals()
+
+        for i in xrange(code.co_argcount):
+            name = code.co_varnames[i]
+            if i < len(args):
+                if kw.has_key(name):
+                    raise TypeError("got multiple values for keyword "
+                                    "argument '%s'" % name)
+                else:
+                    f_locals[name] = args[i]
+            else:
+                if kw.has_key(name):
+                    locals[name] = kw[name]
+                else:
+                    raise TypeError("did not get value for argument "
+                                    "'%s'" % name)
+
         if verbose == 2:
             print 'loadCode:', code.co_name
             print '    f_locals: %s' % f_locals
 
-        self.frames.append(Frame(code, f_locals, self))
+        self.frames.append(Frame(code, f_globals, f_locals, self))
 
     def getInst(self):
         """Get instruction and argument (if present) from top frame and
@@ -140,6 +281,13 @@ class VirtualMachine:
             elif opCode in dis.hasconst:
                 arg = frame.f_code.co_consts[intArg]
                 if verbose: print 'hasconst',
+
+            elif opCode in dis.hasfree:
+                if intArg < len(frame.f_code.co_cellvars):
+                    arg = frame.f_code.co_cellvars[intArg]
+                else:
+                    arg = frame.f_code.co_freevars[
+                            intArg-len(frame.f_code.co_cellvars)]
 
             elif opCode in dis.hasname:
                 arg = frame.f_code.co_names[intArg]
@@ -173,12 +321,13 @@ class VirtualMachine:
         while self.frames:
             # pre will go here
             opName, has_arg, arg = self.getInst()
+            finished = 0
 
             if opName.startswith('UNARY_'):
-                self.unaryOperator(opName)
+                self.unaryOperator(opName[6:])
 
             elif opName.startswith('BINARY_'):
-                self.binaryOperator(opName)
+                self.binaryOperator(opName[7:])
 
             elif 'SLICE+' in opName:
                 self.sliceOperator(opName)
@@ -188,19 +337,23 @@ class VirtualMachine:
                 if not opFunc:
                     raise ValueError, "unknown opcode type: %s" % opName
 
-                if has_arg:
-                    opFunc(arg)
-                else:
-                    opFunc()
+                arguments = [arg] if has_arg else []
+                finished = opFunc(*arguments)
 
-            if opName == 'RETURN_VALUE':
+            if finished:
                 self.frames.pop()
                 self.push(self.returnValue)
 
+#            if opName == 'RETURN_VALUE':
+#                self.frames.pop()
+#                self.push(self.returnValue)
+
             if verbose == 2:
                 print 'Stack:', self.stack
-                if self.frame():
-                    print 'Block:', self.frame().blockstack
+                frame = self.frame()
+                if frame:
+                    print 'Block:', frame.blockstack
+                    print 'Cells:', frame._cells
 
         return self.returnValue
 
@@ -223,12 +376,10 @@ class VirtualMachine:
         self.stack.append(item)
 
     def unaryOperator(self, op):
-        op = op[6:]
         u = self.pop()
         self.push(UNARY_OPERATORS[op](u))
 
     def binaryOperator(self, op):
-        op = op[7:]
         u = self.pop()
         v = self.pop()
         self.push(BINARY_OPERATORS[op](v, u))
@@ -307,6 +458,11 @@ class VirtualMachine:
 
     def op_RETURN_VALUE(self):
         self.returnValue = self.pop()
+        func = self.top()
+        if isinstance(func, Object):
+            self.frames.pop()
+        else:
+            return 1
 
     def op_POP_BLOCK(self):
         self.frame().blockstack.pop()
@@ -328,6 +484,18 @@ class VirtualMachine:
     def op_LOAD_CONST(self, const):
         self.push(const)
 
+    def op_LOAD_ATTR(self, attr):
+        obj = self.pop()
+        if isinstance(obj, (Object, Class)):
+            val = obj._locals[attr]
+        else:
+            val = getattr(obj, attr)
+        if isinstance(obj, Object) and isinstance(val, Function):
+            val = Method(obj, obj._class, val)
+        elif isinstance(obj, Class) and isinstance(val, Function):
+            val = Method(None, obj, val)
+        self.push(val)
+
     # ------------ scope -------------
 
     def op_LOAD_NAME(self, name):
@@ -342,9 +510,7 @@ class VirtualMachine:
         self.push(item)
 
     def op_STORE_NAME(self, name):
-        item = self.pop()
-        self.frame().f_locals[name] = item
-        self.frame().f_globals[name] = item # XXX
+        self.frame().f_locals[name] = self.pop()
 
     def op_DELETE_NAME(self, name):
         del self.frame().f_locals[name]
@@ -372,16 +538,26 @@ class VirtualMachine:
     def op_DELETE_GLOBAL(self, name):
         del self.frame().f_globals[name]
 
-    def op_LOAD_DEREF(self, n):
-        self.push(self.frame().freevars[n])
+    def op_LOAD_DEREF(self, name):
+        self.push(self.frame()._cells[name].get())
 
-    def op_STORE_DEREF(self, n):
-        self.frame().freevars[n] = self.pop()
+    def op_STORE_DEREF(self, name):
+        self.frame().freevars[name] = self.pop()
 
-    def op_LOAD_CLOSURE(self, n):
-        self.push(self.frame().freevars[n])
+    def op_LOAD_CLOSURE(self, name):
+        self.push(self.frame()._cells[name])
 
-    # --------------------------
+    # ------------------------- import 
+
+    def op_IMPORT_NAME(self, name):
+        self.push(__import__(name))
+
+    def op_IMPORT_FROM(self, name):
+        mod = self.pop()
+        self.push(mod)
+        self.push(getattr(mod, name))
+
+    # -------------------------
 
     def op_BUILD_TUPLE(self, count):
         lst = [self.pop() for i in xrange(count)]
@@ -400,6 +576,16 @@ class VirtualMachine:
         w = self.pop()
         u = self.pop()
         self.top()[w] = u
+
+    def op_BUILD_CLASS(self):
+        methods = self.pop()
+        bases = self.pop()
+        name = self.pop()
+        self.push(Class(name, bases, methods))
+
+    def op_STORE_ATTR(self, name):
+        obj = self.pop()
+        setattr(obj, name, self.pop())
 
     def op_COMPARE_OP(self, opnum):
         u = self.pop()
@@ -423,28 +609,56 @@ class VirtualMachine:
     def op_SETUP_LOOP(self, dest):
         self.frame().blockstack.append(('loop', dest))
 
-    def op_CALL_FUNCTION(self, (lenPosPar, lenKWPar)):
+    def op_SETUP_EXCEPT(self, dest):
+        self.frame().blockstack.append(('except', dest))
+
+    def op_CALL_FUNCTION(self, (lenPos, lenKw)):
         kw = {}
-        for i in xrange(lenKWPar):
+        for i in xrange(lenKw):
             val = self.pop()
             key = self.pop()
             kw[key] = val
 
-        args = [self.pop() for i in xrange(lenPosPar)]
+        args = [self.pop() for i in xrange(lenPos)]
         args.reverse()
 
         func = self.pop()
-
-        if isinstance(func, Function):
-            self.loadCode(func.code, func.init_locals(args, kw))
+        frame = self.frame()
+        if hasattr(func, 'im_func'): # method
+            if func.im_self:
+                args.insert(0, func.im_self)
+            if not func.im_class.isparent(args[0]):
+                raise TypeError('unbound method %s() must be called with %s '
+                                'instance as first argument (got %s instead)'
+                                % (func.im_func.func_name,
+                                   func.im_class._name, type(args[0])))
+            func = func.im_func
+        if hasattr(func, 'func_code'):
+            self.loadCode(func.func_code, args, kw)
+            if func.func_code.co_flags & 32: #CO_GENERATOR:
+                raise NotImplementedError("cannot do generators ATM")
+                gen = Generator(self.frame(), self)
+                self._frames.pop()._generator = gen
+                self.push(gen)
         else:
             self.push(func(*args, **kw))
 
     def op_MAKE_FUNCTION(self, argc):
-        code = self.pop()
         defargs = [self.pop() for i in xrange(argc)]
         defargs.reverse()
-        self.push(Function(code, defargs, self))
+        code = self.pop()
+        self.push(Function(code, None, defargs, None, self))
+
+    def op_MAKE_CLOSURE(self, argc):
+        code = self.pop()
+        defaults = []
+        for i in xrange(argc):
+            defaults.insert(0, self.pop())
+        closure = []
+        if code.co_freevars:
+            for i in code.co_freevars:
+                closure.insert(0, self.pop())
+        self.push(Function(code, None, defaults, closure, self))
 
     def op_GET_ITER(self):
         self.push(iter(self.pop()))
