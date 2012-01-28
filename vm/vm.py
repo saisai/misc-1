@@ -526,11 +526,10 @@ class VirtualMachine:
 
     def op_LOAD_GLOBAL(self, name):
         frame = self.frame()
-        try:
-            item = frame.f_globals[name]
-        except KeyError:
-            item = frame.f_builtins[name]
-        self.push(item)
+        if name in frame.f_globals:
+            self.push(frame.f_globals[name])
+        elif name in frame.f_builtins:
+            self.push(frame.f_builtins[name])
 
     def op_STORE_GLOBAL(self, name):
         self.frame().f_globals[name] = self.pop()

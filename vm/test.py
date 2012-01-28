@@ -1,10 +1,14 @@
 for i in xrange(5):
     print 2 * i == i + i
 
+print "HEJ"
+
 def fac(n):
     return 1 if n < 2 else fac(n - 1) * n
 
 print fac(2) == 2
+
+print "AJK"
 
 t = 1
 for n in xrange(5):
