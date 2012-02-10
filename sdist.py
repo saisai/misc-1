@@ -37,8 +37,7 @@ def get_name_version(path='.'):
 
 
 def main():
-    p = OptionParser(usage="usage: %prog [options]",
-                     description=__doc__)
+    p = OptionParser(usage="usage: %prog [options]", description=__doc__)
     p.add_option("--dst", action="store")
     opts, args = p.parse_args()
     if opts.dst and not opts.dst.endswith('.tar.gz'):
