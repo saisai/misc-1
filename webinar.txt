@@ -18,9 +18,24 @@ start installing EPD (7.2-2 on 32-bit MacOSX)
       - custom_tools/log.txt
 
 stepping (running) through some packages
-  - numpy
-  - scipy
+  - enstaller
+      $ enpkg -l
+      $ enpkg -s
+      $ enpkg --config
+      $ enpkg --userpass
+      $ enpkg basemap
+
   - ipython
+      $ ipython
+      $ ipython-qtconsole --pylab
+
+  - numpy
+      - MKL vs. ATLAS linkage
+      
+  - scipy
+
   - matplotlib
+
   - basemap
+
   - sympy
