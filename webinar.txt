@@ -1,0 +1,15 @@
+Stepping Through EPD
+====================
+
+introducing myself
+
+explain what EPD is
+  - show web-page
+  - EPD change log
+
+start installing EPD (7.2-2 on 32-bit MacOSX)
+  - mention 32 vs. 64-bit on Mac
+  - show sys.prefix:
+      - custom_tools/log.txt
+      - site-packages
+
