@@ -11,7 +11,7 @@ explain what EPD is
   - show build matrix
 
 start installing EPD (7.2-2 on 32-bit MacOSX)
-  - mention 32 vs. 64-bit on Mac
+  - 32 vs. 64-bit on Mac
   - show sys.prefix:
       - bin   (added to PATH environment variable, mention PYTHONPATH also)
       - lib
@@ -25,19 +25,28 @@ stepping (running) through some packages
       $ enpkg -s
       $ enpkg --config
       $ enpkg --userpass
-      $ enpkg basemap
+      $ sudo enpkg basemap
 
   - ipython
       $ ipython
       $ ipython-qtconsole --pylab
 
   - numpy
+      - ndarray
       - MKL vs. ATLAS linkage
 
-  - scipy
-
   - matplotlib
+      Examples/matplotlib-1.1.0/axes_grid/scatter_hist.py
 
   - basemap
+      Examples/basemap-1.0.1/plotmap.py
+      Examples/basemap-1.0.1/nytolondon.py
+      Examples/basemap-1.0.1/testgdal.py
 
-  - sympy
+  - chaco
+      Examples/chaco-4.1.0/demo/basic/zoomable_colorbar.py
+      Examples/chaco-4.1.0/demo/advanced/spectrum.py
+
+  - mayavi
+      Examples/mayavi-4.1.0/mayavi/interactive/coil_design_application.py
+      Examples/mayavi-4.1.0/mayavi/interactive/lorenz_ui.py
