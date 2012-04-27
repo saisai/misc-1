@@ -8,6 +8,7 @@ explain what EPD is
   - EPD change log
   - mention all platforms
   - EPD free vs EPD
+  - show build matrix
 
 start installing EPD (7.2-2 on 32-bit MacOSX)
   - mention 32 vs. 64-bit on Mac
