@@ -13,7 +13,7 @@ explain what EPD is
 start installing EPD (7.2-2 on 32-bit MacOSX)
   - mention 32 vs. 64-bit on Mac
   - show sys.prefix:
-      - bin   (added to PATH environment variable)
+      - bin   (added to PATH environment variable, mention PYTHONPATH also)
       - lib
       - site-packages
       - show linkage using "otool -L"
