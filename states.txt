@@ -3,7 +3,7 @@ Alaska          AK
 Arizona         AZ x 96    98             03 04 05 06       09
 Arkansas        AR x                01                   08       11
 California      CA x 96                         05 06    08          12
-Colorado        CO x       98 99    01 02 03 04 05 06
+Colorado        CO x       98 99    01 02 03 04 05 06                12
 Connecticut     CT x                            05 06
 Delaware        DE x    97
 District        DC y    97                      05 06
@@ -29,12 +29,12 @@ Nebraska        NE x                               06
 Nevada          NV x                         04 05       08 09 10
 New Hampshire   NH x                               06
 New Jersey      NJ x    97          01          05
-New Mexico      NM x       98 99 00 01 02 03 04 05 06
+New Mexico      NM x       98 99 00 01 02 03 04 05 06                12
 New York        NY x    97          01 02       05 06 07             12
 North Carolina  NC x                                  07 08    10
 North Dakota    ND x 96
 Ohio            OH x    97
-Oklahoma        OK x             00       03 04          08 09    11
+Oklahoma        OK x             00       03 04          08 09    11 12
 Oregon          OR x 96
 Pennsylvania    PA x    97                      05
 Rhode Island    RI x                               06
