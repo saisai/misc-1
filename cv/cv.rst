@@ -1,11 +1,9 @@
 ILAN SCHNELL
 ------------
 
-| Enthought, Inc.
-| 515 Congress Avenue
-| Suite 2100
-| Austin, TX 78701
-| ischnell@enthought.com
+| 1221 South Congress Avenue, Apt. 1317
+| Austin, TX 78704
+| ilanschnell@gmail.com
 
 
 Education
