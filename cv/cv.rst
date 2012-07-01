@@ -17,7 +17,7 @@ Education
 Experience
 ----------
 
-  * Software Developer, Enthought, Inc., Austin, Texas, 2008-present
+  * Software Developer, Enthought, Inc., Austin, Texas, June 2008 - June 2012
   * Freelance Programmer, 2006-2008
   * Postdotorial Research Associate, Georgetown University, Washington, D.C.,
     2005-2006
