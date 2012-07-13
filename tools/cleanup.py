@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import os
 from os.path import basename, join, isfile, isdir
 from optparse import OptionParser

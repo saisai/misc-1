@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """\
 Create a source tarball of a Python project from a (local) source tree.
 All this command doing is packing up the source tree (ignoring .git,
@@ -32,7 +33,7 @@ def get_name_version(path='.'):
     cmd = [sys.executable, 'setup.py', '--fullname']
     p = Popen(cmd, cwd=path, stdout=PIPE, stderr=PIPE)
     fullname = p.communicate()[0].split()[-1]
-    name, version = fullname.split('-')
+    name, version = fullname.rsplit('-', 1)
     return dict(name=name, version=version.rstrip('.dev'))
 
 
