@@ -24,7 +24,7 @@ def exclude_func(path):
             return True
         if parts[1] in ('build', 'dist'):
             return True
-        if '.svn' in parts:
+        if '.svn' in parts or '.git' in parts:
             return True
     return False
 
