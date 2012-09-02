@@ -6,6 +6,9 @@ from optparse import OptionParser
 
 ASCII_ONLY = False
 
+# file extensions which are cleaned when using the -r option
+FILE_EXT = '.py', '.txt', '.c', '.pyx', '.pxi'
+
 
 def cleanup(data, expand_tabs=True):
     if data == '':
@@ -53,7 +56,7 @@ def clean_dir(dir_path, dry_run=False):
         if '.svn' in parts or '.git' in parts:
             continue
         for fn in files:
-            if fn.endswith(('.py', '.txt', '.c', '.pyx', '.pxi')):
+            if fn.endswith(FILE_EXT):
                 path = join(root, fn)
                 clean_file(path, dry_run)
 
