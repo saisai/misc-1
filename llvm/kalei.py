@@ -32,133 +32,143 @@ g_binop_precedence = {}
 # Creates an alloca instruction in the entry block of the function. This is used
 # for mutable variables.
 def CreateEntryBlockAlloca(function, var_name):
-   entry = function.get_entry_basic_block()
-   builder = Builder.new(entry)
-   builder.position_at_beginning(entry)
-   return builder.alloca(Type.double(), var_name)
+    entry = function.get_entry_basic_block()
+    builder = Builder.new(entry)
+    builder.position_at_beginning(entry)
+    return builder.alloca(Type.double(), var_name)
 
 # The lexer yields one of these types for each token.
 class EOFToken(object):
-   pass
+    pass
+
 class DefToken(object):
-   pass
+    pass
+
 class ExternToken(object):
-   pass
+    pass
+
 class IfToken(object):
-   pass
+    pass
+
 class ThenToken(object):
-   pass
+    pass
+
 class ElseToken(object):
-   pass
+    pass
+
 class ForToken(object):
-   pass
+    pass
+
 class InToken(object):
-   pass
+    pass
+
 class BinaryToken(object):
-   pass
+    pass
+
 class UnaryToken(object):
-   pass
+    pass
+
 class VarToken(object):
-   pass
+    pass
 
 class IdentifierToken(object):
-   def __init__(self, name):
-      self.name = name
+    def __init__(self, name):
+        self.name = name
 
 class NumberToken(object):
-   def __init__(self, value):
-      self.value = value
+    def __init__(self, value):
+        self.value = value
 
 class CharacterToken(object):
-   def __init__(self, char):
-      self.char = char
-   def __eq__(self, other):
-      return isinstance(other, CharacterToken) and self.char == other.char
-   def __ne__(self, other):
-      return not self == other
+    def __init__(self, char):
+        self.char = char
+    def __eq__(self, other):
+        return isinstance(other, CharacterToken) and self.char == other.char
+    def __ne__(self, other):
+        return not self == other
 
 # Regular expressions that tokens and comments of our language.
 REGEX_NUMBER = re.compile('[0-9]+(?:\.[0-9]+)?')
-REGEX_IDENTIFIER = re.compile('[a-zA-Z][a-zA-Z0-9] *')
+REGEX_IDENTIFIER = re.compile('[a-zA-Z][a-zA-Z0-9]*')
 REGEX_COMMENT = re.compile('#.*')
 
 def Tokenize(string):
-   while string:
-      # Skip whitespace.
-      if string[0].isspace():
-         string = string[1:]
-         continue
+    while string:
+        # Skip whitespace.
+        if string[0].isspace():
+            string = string[1:]
+            continue
 
-      # Run regexes.
-      comment_match = REGEX_COMMENT.match(string)
-      number_match = REGEX_NUMBER.match(string)
-      identifier_match = REGEX_IDENTIFIER.match(string)
+        # Run regexes.
+        comment_match = REGEX_COMMENT.match(string)
+        number_match = REGEX_NUMBER.match(string)
+        identifier_match = REGEX_IDENTIFIER.match(string)
 
-      # Check if any of the regexes matched and yield the appropriate result.
-      if comment_match:
-         comment = comment_match.group(0)
-         string = string[len(comment):]
-      elif number_match:
-         number = number_match.group(0)
-         yield NumberToken(float(number))
-         string = string[len(number):]
-      elif identifier_match:
-         identifier = identifier_match.group(0)
-         # Check if we matched a keyword.
-         if identifier == 'def':
-            yield DefToken()
-         elif identifier == 'extern':
-            yield ExternToken()
-         elif identifier == 'if':
-            yield IfToken()
-         elif identifier == 'then':
-            yield ThenToken()
-         elif identifier == 'else':
-            yield ElseToken()
-         elif identifier == 'for':
-            yield ForToken()
-         elif identifier == 'in':
-            yield InToken()
-         elif identifier == 'binary':
-            yield BinaryToken()
-         elif identifier == 'unary':
-            yield UnaryToken()
-         elif identifier == 'var':
-            yield VarToken()
-         else:
-            yield IdentifierToken(identifier)
-         string = string[len(identifier):]
-      else:
-         # Yield the ASCII value of the unknown character.
-         yield CharacterToken(string[0])
-         string = string[1:]
+        # Check if any of the regexes matched and yield the appropriate result.
+        if comment_match:
+            comment = comment_match.group(0)
+            string = string[len(comment):]
+        elif number_match:
+            number = number_match.group(0)
+            yield NumberToken(float(number))
+            string = string[len(number):]
+        elif identifier_match:
+            identifier = identifier_match.group(0)
+            # Check if we matched a keyword.
+            if identifier == 'def':
+                yield DefToken()
+            elif identifier == 'extern':
+                yield ExternToken()
+            elif identifier == 'if':
+                yield IfToken()
+            elif identifier == 'then':
+                yield ThenToken()
+            elif identifier == 'else':
+                yield ElseToken()
+            elif identifier == 'for':
+                yield ForToken()
+            elif identifier == 'in':
+                yield InToken()
+            elif identifier == 'binary':
+                yield BinaryToken()
+            elif identifier == 'unary':
+                yield UnaryToken()
+            elif identifier == 'var':
+                yield VarToken()
+            else:
+                yield IdentifierToken(identifier)
+            string = string[len(identifier):]
+        else:
+            # Yield the ASCII value of the unknown character.
+            yield CharacterToken(string[0])
+            string = string[1:]
 
-   yield EOFToken()
+    yield EOFToken()
 
 # Base class for all expression nodes.
 class ExpressionNode(object):
-   pass
+    pass
 
 # Expression class for numeric literals like "1.0".
 class NumberExpressionNode(ExpressionNode):
 
-   def __init__(self, value):
-      self.value = value
+    def __init__(self, value):
+        self.value = value
 
-   def CodeGen(self):
-      return Constant.real(Type.double(), self.value)
+    def CodeGen(self):
+        return Constant.real(Type.double(), self.value)
 
 # Expression class for referencing a variable, like "a".
 class VariableExpressionNode(ExpressionNode):
 
-   def __init__(self, name):
-      self.name = name
+    def __init__(self, name):
+        self.name = name
 
-   def CodeGen(self):
-      if self.name in g_named_values:
-         return g_llvm_builder.load(g_named_values[self.name], self.name)
-      else:
-         raise RuntimeError('Unknown variable name: ' + self.name)
+    def CodeGen(self):
+        if self.name in g_named_values:
+            return g_llvm_builder.load(g_named_values[self.name], self.name)
+        else:
+            raise RuntimeError('Unknown variable name: ' + self.name)
 
 # Expression class for a binary operator.
 class BinaryOperatorExpressionNode(ExpressionNode):
@@ -169,7 +179,8 @@ class BinaryOperatorExpressionNode(ExpressionNode):
       self.right = right
 
    def CodeGen(self):
-      # A special case for '=' because we don't want to emit the LHS as an # expression.
+      # A special case for '=' because we don't want to emit the LHS as an
+      # expression.
       if self.operator == '=':
          # Assignment requires the LHS to be an identifier.
          if not isinstance(self.left, VariableExpressionNode):
