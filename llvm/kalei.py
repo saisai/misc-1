@@ -443,9 +443,9 @@ class VarExpressionNode(ExpressionNode):
         # Return the body computation.
         return body
 
-# This class represents the "prototype" for a function, which captures its name,
-# and its argument names (thus implicitly the number of arguments the function
-# takes), as well as if it is an operator.
+# This class represents the "prototype" for a function, which captures its
+# name, and its argument names (thus implicitly the number of arguments the
+# function takes), as well as if it is an operator.
 class PrototypeNode(object):
 
     def __init__(self, name, args, is_operator=False, precedence=0):
@@ -690,7 +690,8 @@ class Parser(object):
             self.Next()  # eat ','.
 
             if not isinstance(self.current, IdentifierToken):
-                raise RuntimeError('Expected identifier after "," in a var expression.')
+                raise RuntimeError('Expected identifier after "," in a var '
+                                   'expression.')
 
         # At this point, we have to have 'in'.
         if not isinstance(self.current, InToken):
