@@ -817,8 +817,8 @@ class Parser(object):
             raise RuntimeError('Invalid number of arguments for a unary '
                                'operator.')
         elif kind == 'binary' and len(arg_names) != 2:
-           raise RuntimeError('Invalid number of arguments for a binary '
-                              'operator.')
+            raise RuntimeError('Invalid number of arguments for a binary '
+                               'operator.')
 
         return PrototypeNode(function_name, arg_names, kind != 'normal',
                              precedence)
