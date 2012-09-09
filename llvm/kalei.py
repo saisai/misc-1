@@ -769,55 +769,59 @@ class Parser(object):
     #   ::= binary LETTER number? (id, id)
     #   ::= unary LETTER (id)
     def ParsePrototype(self):
-      precedence = None
-      if isinstance(self.current, IdentifierToken):
-         kind = 'normal'
-         function_name = self.current.name
-         self.Next() #  eat function name.
-      elif isinstance(self.current, UnaryToken):
-         kind = 'unary'
-         self.Next() #  eat 'unary'.
-         if not isinstance(self.current, CharacterToken):
-            raise RuntimeError('Expected an operator after "unary".')
-         function_name = 'unary' + self.current.char
-         self.Next() # eat the operator.
-      elif isinstance(self.current, BinaryToken):
-         kind = 'binary'
-         self.Next() #  eat 'binary'.
-         if not isinstance(self.current, CharacterToken):
-            raise RuntimeError('Expected an operator after "binary".')
-         function_name = 'binary' + self.current.char
-         self.Next() # eat the operator.
-         if isinstance(self.current, NumberToken):
-            if not 1 <= self.current.value <= 100:
-               raise RuntimeError('Invalid precedence: must be in range [1, 100].')
-            precedence = self.current.value
-            self.Next()  # eat the precedence.
-      else:
-         raise RuntimeError('Expected function name, "unary" or "binary" in '
-                            'prototype.')
+        precedence = None
+        if isinstance(self.current, IdentifierToken):
+            kind = 'normal'
+            function_name = self.current.name
+            self.Next() #  eat function name.
+        elif isinstance(self.current, UnaryToken):
+            kind = 'unary'
+            self.Next() #  eat 'unary'.
+            if not isinstance(self.current, CharacterToken):
+                raise RuntimeError('Expected an operator after "unary".')
+            function_name = 'unary' + self.current.char
+            self.Next() # eat the operator.
+        elif isinstance(self.current, BinaryToken):
+            kind = 'binary'
+            self.Next() #  eat 'binary'.
+            if not isinstance(self.current, CharacterToken):
+                raise RuntimeError('Expected an operator after "binary".')
+            function_name = 'binary' + self.current.char
+            self.Next() # eat the operator.
+            if isinstance(self.current, NumberToken):
+                if not 1 <= self.current.value <= 100:
+                    raise RuntimeError('Invalid precedence: must be in '
+                                       'range [1, 100].')
+                precedence = self.current.value
+                self.Next()  # eat the precedence.
+        else:
+            raise RuntimeError('Expected function name, "unary" or "binary" in '
+                               'prototype.')
 
-      if self.current != CharacterToken('('):
-         raise RuntimeError('Expected "(" in prototype.')
-      self.Next()  # eat '('.
+        if self.current != CharacterToken('('):
+            raise RuntimeError('Expected "(" in prototype.')
+        self.Next()  # eat '('.
 
-      arg_names = []
-      while isinstance(self.current, IdentifierToken):
-         arg_names.append(self.current.name)
-         self.Next()
+        arg_names = []
+        while isinstance(self.current, IdentifierToken):
+            arg_names.append(self.current.name)
+            self.Next()
 
-      if self.current != CharacterToken(')'):
-         raise RuntimeError('Expected ")" in prototype.')
+        if self.current != CharacterToken(')'):
+            raise RuntimeError('Expected ")" in prototype.')
 
-      # Success.
-      self.Next()  # eat ')'.
+        # Success.
+        self.Next()  # eat ')'.
 
-      if kind == 'unary' and len(arg_names) != 1:
-         raise RuntimeError('Invalid number of arguments for a unary operator.')
-      elif kind == 'binary' and len(arg_names) != 2:
-         raise RuntimeError('Invalid number of arguments for a binary operator.')
+        if kind == 'unary' and len(arg_names) != 1:
+            raise RuntimeError('Invalid number of arguments for a unary '
+                               'operator.')
+        elif kind == 'binary' and len(arg_names) != 2:
+           raise RuntimeError('Invalid number of arguments for a binary '
+                              'operator.')
 
-      return PrototypeNode(function_name, arg_names, kind != 'normal', precedence)
+        return PrototypeNode(function_name, arg_names, kind != 'normal',
+                             precedence)
 
     # definition ::= 'def' prototype expression
     def ParseDefinition(self):
