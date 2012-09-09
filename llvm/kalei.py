@@ -448,98 +448,100 @@ class VarExpressionNode(ExpressionNode):
 # takes), as well as if it is an operator.
 class PrototypeNode(object):
 
-   def __init__(self, name, args, is_operator=False, precedence=0):
-      self.name = name
-      self.args = args
-      self.is_operator = is_operator
-      self.precedence = precedence
+    def __init__(self, name, args, is_operator=False, precedence=0):
+        self.name = name
+        self.args = args
+        self.is_operator = is_operator
+        self.precedence = precedence
 
-   def IsBinaryOp(self):
-      return self.is_operator and len(self.args) == 2
+    def IsBinaryOp(self):
+        return self.is_operator and len(self.args) == 2
 
-   def GetOperatorName(self):
-      assert self.is_operator
-      return self.name[-1]
+    def GetOperatorName(self):
+        assert self.is_operator
+        return self.name[-1]
 
-   def CodeGen(self):
-      # Make the function type, eg. double(double,double).
-      funct_type = Type.function(
-         Type.double(), [Type.double()] * len(self.args), False)
+    def CodeGen(self):
+        # Make the function type, eg. double(double,double).
+        funct_type = Type.function(Type.double(),
+                                   [Type.double()] * len(self.args), False)
 
-      function = Function.new(g_llvm_module, funct_type, self.name)
+        function = Function.new(g_llvm_module, funct_type, self.name)
 
-      # If the name conflicted, there was already something with the same name.
-      # If it has a body, don't allow redefinition or reextern.
-      if function.name != self.name:
-         function.delete()
-         function = g_llvm_module.get_function_named(self.name)
+        # If the name conflicted, there was already something with the same
+        # name. If it has a body, don't allow redefinition or reextern.
+        if function.name != self.name:
+            function.delete()
+            function = g_llvm_module.get_function_named(self.name)
 
-         # If the function already has a body, reject this.
-         if not function.is_declaration:
-            raise RuntimeError('Redefinition of function.')
+            # If the function already has a body, reject this.
+            if not function.is_declaration:
+                raise RuntimeError('Redefinition of function.')
 
-         # If the function took a different number of args, reject.
-         if len(function.args) != len(self.args):
-            raise RuntimeError('Redeclaration of a function with different number '
-                               'of args.')
+            # If the function took a different number of args, reject.
+            if len(function.args) != len(self.args):
+                raise RuntimeError('Redeclaration of a function with '
+                                   'different number of args.')
 
-      # Set names for all arguments and add them to the variables symbol table.
-      for arg, arg_name in zip(function.args, self.args):
-          arg.name = arg_name
-      return function
+        # Set names for all arguments and add them to the variables symbol
+        # table.
+        for arg, arg_name in zip(function.args, self.args):
+            arg.name = arg_name
+        return function
 
-   # Create an alloca for each argument and register the argument in the symbol
-   # table so that references to it will succeed.
-   def CreateArgumentAllocas(self, function):
-      for arg_name, arg in zip(self.args, function.args):
-         alloca = CreateEntryBlockAlloca(function, arg_name)
-         g_llvm_builder.store(arg, alloca)
-         g_named_values[arg_name] = alloca
+    # Create an alloca for each argument and register the argument in the symbol
+    # table so that references to it will succeed.
+    def CreateArgumentAllocas(self, function):
+        for arg_name, arg in zip(self.args, function.args):
+            alloca = CreateEntryBlockAlloca(function, arg_name)
+            g_llvm_builder.store(arg, alloca)
+            g_named_values[arg_name] = alloca
 
 # This class represents a function definition itself.
 class FunctionNode(object):
 
-   def __init__(self, prototype, body):
-      self.prototype = prototype
-      self.body = body
+    def __init__(self, prototype, body):
+        self.prototype = prototype
+        self.body = body
 
-   def CodeGen(self):
-      # Clear scope.
-      g_named_values.clear()
+    def CodeGen(self):
+        # Clear scope.
+        g_named_values.clear()
 
-      # Create a function object.
-      function = self.prototype.CodeGen()
+        # Create a function object.
+        function = self.prototype.CodeGen()
 
-      # If this is a binary operator, install its precedence.
-      if self.prototype.IsBinaryOp():
-         operator = self.prototype.GetOperatorName()
-         g_binop_precedence[operator] = self.prototype.precedence
+        # If this is a binary operator, install its precedence.
+        if self.prototype.IsBinaryOp():
+            operator = self.prototype.GetOperatorName()
+            g_binop_precedence[operator] = self.prototype.precedence
 
-      # Create a new basic block to start insertion into.
-      block = function.append_basic_block('entry')
-      global g_llvm_builder
-      g_llvm_builder = Builder.new(block)
+        # Create a new basic block to start insertion into.
+        block = function.append_basic_block('entry')
+        global g_llvm_builder
+        g_llvm_builder = Builder.new(block)
 
-      # Add all arguments to the symbol table and create their allocas.
-      self.prototype.CreateArgumentAllocas(function)
+        # Add all arguments to the symbol table and create their allocas.
+        self.prototype.CreateArgumentAllocas(function)
 
-      # Finish off the function.
-      try:
-         return_value = self.body.CodeGen()
-         g_llvm_builder.ret(return_value)
+        # Finish off the function.
+        try:
+            return_value = self.body.CodeGen()
+            g_llvm_builder.ret(return_value)
 
-         # Validate the generated code, checking for consistency.
-         function.verify()
+            # Validate the generated code, checking for consistency.
+            function.verify()
 
-         # Optimize the function.
-         g_llvm_pass_manager.run(function)
-      except:
-         function.delete()
-         if self.prototype.IsBinaryOp():
-            del g_binop_precedence[self.prototype.GetOperatorName()]
-         raise
+            # Optimize the function.
+            g_llvm_pass_manager.run(function)
+        except:
+            function.delete()
+            if self.prototype.IsBinaryOp():
+                del g_binop_precedence[self.prototype.GetOperatorName()]
+            raise
 
-      return function
+        return function
+
 
 class Parser(object):
 
