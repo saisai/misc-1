@@ -586,186 +586,187 @@ class Parser(object):
         self.Next()  # eat ')'.
         return CallExpressionNode(identifier_name, args)
 
-   # numberexpr ::= number
-   def ParseNumberExpr(self):
-      result = NumberExpressionNode(self.current.value)
-      self.Next()  # consume the number.
-      return result
+    # numberexpr ::= number
+    def ParseNumberExpr(self):
+        result = NumberExpressionNode(self.current.value)
+        self.Next()  # consume the number.
+        return result
 
-   # parenexpr ::= '(' expression ')'
-   def ParseParenExpr(self):
-      self.Next()  # eat '('.
+    # parenexpr ::= '(' expression ')'
+    def ParseParenExpr(self):
+        self.Next()  # eat '('.
 
-      contents = self.ParseExpression()
+        contents = self.ParseExpression()
 
-      if self.current != CharacterToken(')'):
-         raise RuntimeError('Expected ")".')
-      self.Next()  # eat ')'.
+        if self.current != CharacterToken(')'):
+            raise RuntimeError('Expected ")".')
+        self.Next()  # eat ')'.
 
-      return contents
+        return contents
 
-   # ifexpr ::= 'if' expression 'then' expression 'else' expression
-   def ParseIfExpr(self):
-      self.Next()  # eat the if.
+    # ifexpr ::= 'if' expression 'then' expression 'else' expression
+    def ParseIfExpr(self):
+        self.Next()  # eat the if.
 
-      # condition.
-      condition = self.ParseExpression()
+        # condition.
+        condition = self.ParseExpression()
 
-      if not isinstance(self.current, ThenToken):
-         raise RuntimeError('Expected "then".')
-      self.Next()  # eat the then.
+        if not isinstance(self.current, ThenToken):
+            raise RuntimeError('Expected "then".')
+        self.Next()  # eat the then.
 
-      then_branch = self.ParseExpression()
+        then_branch = self.ParseExpression()
 
-      if not isinstance(self.current, ElseToken):
-         raise RuntimeError('Expected "else".')
-      self.Next()  # eat the else.
+        if not isinstance(self.current, ElseToken):
+            raise RuntimeError('Expected "else".')
+        self.Next()  # eat the else.
 
-      else_branch = self.ParseExpression()
+        else_branch = self.ParseExpression()
 
-      return IfExpressionNode(condition, then_branch, else_branch)
+        return IfExpressionNode(condition, then_branch, else_branch)
 
-   # forexpr ::= 'for' identifier '=' expr ',' expr (',' expr)? 'in' expression
-   def ParseForExpr(self):
-      self.Next()  # eat the for.
+    # forexpr ::= 'for' identifier '=' expr ',' expr (',' expr)? 'in' expression
+    def ParseForExpr(self):
+        self.Next()  # eat the for.
 
-      if not isinstance(self.current, IdentifierToken):
-         raise RuntimeError('Expected identifier after for.')
+        if not isinstance(self.current, IdentifierToken):
+            raise RuntimeError('Expected identifier after for.')
 
-      loop_variable = self.current.name
-      self.Next()  # eat the identifier.
+        loop_variable = self.current.name
+        self.Next()  # eat the identifier.
 
-      if self.current != CharacterToken('='):
-         raise RuntimeError('Expected "=" after for variable.')
-      self.Next()  # eat the '='.
+        if self.current != CharacterToken('='):
+            raise RuntimeError('Expected "=" after for variable.')
+        self.Next()  # eat the '='.
 
-      start = self.ParseExpression()
+        start = self.ParseExpression()
 
-      if self.current != CharacterToken(','):
-         raise RuntimeError('Expected "," after for start value.')
-      self.Next()  # eat the ','.
+        if self.current != CharacterToken(','):
+            raise RuntimeError('Expected "," after for start value.')
+        self.Next()  # eat the ','.
 
-      end = self.ParseExpression()
+        end = self.ParseExpression()
 
-      # The step value is optional.
-      if self.current == CharacterToken(','):
-         self.Next()  # eat the ','.
-         step = self.ParseExpression()
-      else:
-         step = None
+        # The step value is optional.
+        if self.current == CharacterToken(','):
+            self.Next()  # eat the ','.
+            step = self.ParseExpression()
+        else:
+            step = None
 
-      if not isinstance(self.current, InToken):
-         raise RuntimeError('Expected "in" after for variable specification.')
-      self.Next()  # eat 'in'.
+        if not isinstance(self.current, InToken):
+            raise RuntimeError('Expected "in" after for variable specification.')
+        self.Next()  # eat 'in'.
 
-      body = self.ParseExpression()
+        body = self.ParseExpression()
 
-      return ForExpressionNode(loop_variable, start, end, step, body)
+        return ForExpressionNode(loop_variable, start, end, step, body)
 
-   # varexpr ::= 'var' (identifier ('=' expression)?)+ 'in' expression
-   def ParseVarExpr(self):
-      self.Next()  # eat 'var'.
+    # varexpr ::= 'var' (identifier ('=' expression)?)+ 'in' expression
+    def ParseVarExpr(self):
+        self.Next()  # eat 'var'.
 
-      variables = {}
+        variables = {}
 
-      # At least one variable name is required.
-      if not isinstance(self.current, IdentifierToken):
-         raise RuntimeError('Expected identifier after "var".')
+        # At least one variable name is required.
+        if not isinstance(self.current, IdentifierToken):
+            raise RuntimeError('Expected identifier after "var".')
 
-      while True:
-         var_name = self.current.name
-         self.Next()  # eat the identifier.
+        while True:
+            var_name = self.current.name
+            self.Next()  # eat the identifier.
 
-         # Read the optional initializer.
-         if self.current == CharacterToken('='):
-            self.Next()  # eat '='.
-            variables[var_name] = self.ParseExpression()
-         else:
-            variables[var_name] = None
+            # Read the optional initializer.
+            if self.current == CharacterToken('='):
+                self.Next()  # eat '='.
+                variables[var_name] = self.ParseExpression()
+            else:
+                variables[var_name] = None
 
-         # End of var list, exit loop.
-         if self.current != CharacterToken(','):
-            break
-         self.Next()  # eat ','.
+            # End of var list, exit loop.
+            if self.current != CharacterToken(','):
+                break
+            self.Next()  # eat ','.
 
-         if not isinstance(self.current, IdentifierToken):
-            raise RuntimeError('Expected identifier after "," in a var expression.')
+            if not isinstance(self.current, IdentifierToken):
+                raise RuntimeError('Expected identifier after "," in a var expression.')
 
-      # At this point, we have to have 'in'.
-      if not isinstance(self.current, InToken):
-         raise RuntimeError('Expected "in" keyword after "var".')
-      self.Next()  # eat 'in'.
+        # At this point, we have to have 'in'.
+        if not isinstance(self.current, InToken):
+            raise RuntimeError('Expected "in" keyword after "var".')
+        self.Next()  # eat 'in'.
 
-      body = self.ParseExpression()
+        body = self.ParseExpression()
 
-      return VarExpressionNode(variables, body)
+        return VarExpressionNode(variables, body)
 
-   # primary ::=
-   # dentifierexpr | numberexpr | parenexpr | ifexpr | forexpr | varexpr
-   def ParsePrimary(self):
-      if isinstance(self.current, IdentifierToken):
-         return self.ParseIdentifierExpr()
-      elif isinstance(self.current, NumberToken):
-         return self.ParseNumberExpr()
-      elif isinstance(self.current, IfToken):
-         return self.ParseIfExpr()
-      elif isinstance(self.current, ForToken):
-         return self.ParseForExpr()
-      elif isinstance(self.current, VarToken):
-         return self.ParseVarExpr()
-      elif self.current == CharacterToken('('):
-         return self.ParseParenExpr()
-      else:
-         raise RuntimeError('Unknown token when expecting an expression.')
+    # primary ::=
+    # dentifierexpr | numberexpr | parenexpr | ifexpr | forexpr | varexpr
+    def ParsePrimary(self):
+        if isinstance(self.current, IdentifierToken):
+            return self.ParseIdentifierExpr()
+        elif isinstance(self.current, NumberToken):
+            return self.ParseNumberExpr()
+        elif isinstance(self.current, IfToken):
+            return self.ParseIfExpr()
+        elif isinstance(self.current, ForToken):
+            return self.ParseForExpr()
+        elif isinstance(self.current, VarToken):
+            return self.ParseVarExpr()
+        elif self.current == CharacterToken('('):
+            return self.ParseParenExpr()
+        else:
+            raise RuntimeError('Unknown token when expecting an expression.')
 
-   # unary ::= primary | unary_operator unary
-   def ParseUnary(self):
-      # If the current token is not an operator, it must be a primary expression.
-      if (not isinstance(self.current, CharacterToken) or
-            self.current in [CharacterToken('('), CharacterToken(',')]):
-         return self.ParsePrimary()
+    # unary ::= primary | unary_operator unary
+    def ParseUnary(self):
+        # If the current token is not an operator, it must be a primary expression.
+        if (not isinstance(self.current, CharacterToken) or
+               self.current in [CharacterToken('('), CharacterToken(',')]):
+            return self.ParsePrimary()
 
-      # If this is a unary operator, read it.
-      operator = self.current.char
-      self.Next()  # eat the operator.
-      return UnaryExpressionNode(operator, self.ParseUnary())
+        # If this is a unary operator, read it.
+        operator = self.current.char
+        self.Next()  # eat the operator.
+        return UnaryExpressionNode(operator, self.ParseUnary())
 
-   # binoprhs ::= (binary_operator unary)*
-   def ParseBinOpRHS(self, left, left_precedence):
-      # If this is a binary operator, find its precedence.
-      while True:
-         precedence = self.GetCurrentTokenPrecedence()
+    # binoprhs ::= (binary_operator unary)*
+    def ParseBinOpRHS(self, left, left_precedence):
+        # If this is a binary operator, find its precedence.
+        while True:
+            precedence = self.GetCurrentTokenPrecedence()
 
-         # If this is a binary operator that binds at least as tightly as the
-         # current one, consume it; otherwise we are done.
-         if precedence < left_precedence:
-            return left
+            # If this is a binary operator that binds at least as tightly as
+            # the current one, consume it; otherwise we are done.
+            if precedence < left_precedence:
+                return left
 
-         binary_operator = self.current.char
-         self.Next()  # eat the operator.
+            binary_operator = self.current.char
+            self.Next()  # eat the operator.
 
-         # Parse the unary expression after the binary operator.
-         right = self.ParseUnary()
+            # Parse the unary expression after the binary operator.
+            right = self.ParseUnary()
 
-         # If binary_operator binds less tightly with right than the operator after
-         # right, let the pending operator take right as its left.
-         next_precedence = self.GetCurrentTokenPrecedence()
-         if precedence < next_precedence:
-            right = self.ParseBinOpRHS(right, precedence + 1)
+            # If binary_operator binds less tightly with right than the
+            # operator after right, let the pending operator take right as
+            # its left.
+            next_precedence = self.GetCurrentTokenPrecedence()
+            if precedence < next_precedence:
+                right = self.ParseBinOpRHS(right, precedence + 1)
 
-         # Merge left/right.
-         left = BinaryOperatorExpressionNode(binary_operator, left, right)
+            # Merge left/right.
+            left = BinaryOperatorExpressionNode(binary_operator, left, right)
 
-   # expression ::= unary binoprhs
-   def ParseExpression(self):
-      left = self.ParseUnary()
-      return self.ParseBinOpRHS(left, 0)
+    # expression ::= unary binoprhs
+    def ParseExpression(self):
+        left = self.ParseUnary()
+        return self.ParseBinOpRHS(left, 0)
 
-   # prototype
-   #   ::= id '(' id* ')'
-   #   ::= binary LETTER number? (id, id)
-   #   ::= unary LETTER (id)
-   def ParsePrototype(self):
+    # prototype
+    #   ::= id '(' id* ')'
+    #   ::= binary LETTER number? (id, id)
+    #   ::= unary LETTER (id)
+    def ParsePrototype(self):
       precedence = None
       if isinstance(self.current, IdentifierToken):
          kind = 'normal'
@@ -816,51 +817,51 @@ class Parser(object):
 
       return PrototypeNode(function_name, arg_names, kind != 'normal', precedence)
 
-   # definition ::= 'def' prototype expression
-   def ParseDefinition(self):
-      self.Next()  # eat def.
-      proto = self.ParsePrototype()
-      body = self.ParseExpression()
-      return FunctionNode(proto, body)
+    # definition ::= 'def' prototype expression
+    def ParseDefinition(self):
+        self.Next()  # eat def.
+        proto = self.ParsePrototype()
+        body = self.ParseExpression()
+        return FunctionNode(proto, body)
 
-   # toplevelexpr ::= expression
-   def ParseTopLevelExpr(self):
-      proto = PrototypeNode('', [])
-      return FunctionNode(proto, self.ParseExpression())
+    # toplevelexpr ::= expression
+    def ParseTopLevelExpr(self):
+        proto = PrototypeNode('', [])
+        return FunctionNode(proto, self.ParseExpression())
 
-   # external ::= 'extern' prototype
-   def ParseExtern(self):
-      self.Next()  # eat extern.
-      return self.ParsePrototype()
+    # external ::= 'extern' prototype
+    def ParseExtern(self):
+        self.Next()  # eat extern.
+        return self.ParsePrototype()
 
-   # Top-Level parsing
-   def HandleDefinition(self):
-      self.Handle(self.ParseDefinition, 'Read a function definition:')
+    # Top-Level parsing
+    def HandleDefinition(self):
+        self.Handle(self.ParseDefinition, 'Read a function definition:')
 
-   def HandleExtern(self):
-      self.Handle(self.ParseExtern, 'Read an extern:')
+    def HandleExtern(self):
+        self.Handle(self.ParseExtern, 'Read an extern:')
 
-   def HandleTopLevelExpression(self):
-      try:
-         function = self.ParseTopLevelExpr().CodeGen()
-         result = g_llvm_executor.run_function(function, [])
-         print 'Evaluated to:', result.as_real(Type.double())
-      except Exception, e:
-         raise#print 'Error:', e
-         try:
-            self.Next()  # Skip for error recovery.
-         except:
-            pass
+    def HandleTopLevelExpression(self):
+        try:
+            function = self.ParseTopLevelExpr().CodeGen()
+            result = g_llvm_executor.run_function(function, [])
+            print 'Evaluated to:', result.as_real(Type.double())
+        except Exception, e:
+            raise#print 'Error:', e
+            try:
+                self.Next()  # Skip for error recovery.
+            except:
+                pass
 
-   def Handle(self, function, message):
-      try:
-         print message, function().CodeGen()
-      except Exception, e:
-         raise#print 'Error:', e
-         try:
-            self.Next()  # Skip for error recovery.
-         except:
-            pass
+    def Handle(self, function, message):
+        try:
+            print message, function().CodeGen()
+        except Exception, e:
+            raise#print 'Error:', e
+            try:
+                self.Next()  # Skip for error recovery.
+            except:
+                pass
 
 def main():
     # Set up the optimizer pipeline. Start with registering info about how the
