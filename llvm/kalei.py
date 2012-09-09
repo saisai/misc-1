@@ -858,52 +858,52 @@ class Parser(object):
             pass
 
 def main():
-   # Set up the optimizer pipeline. Start with registering info about how the
-   # target lays out data structures.
-   g_llvm_pass_manager.add(g_llvm_executor.target_data)
-   # Promote allocas to registers.
-   #g_llvm_pass_manager.add(PASS_PROMOTE_MEMORY_TO_REGISTER)
-   # Do simple "peephole" optimizations and bit-twiddling optzns.
-   g_llvm_pass_manager.add(PASS_INSTCOMBINE)
-   # Reassociate expressions.
-   g_llvm_pass_manager.add(PASS_REASSOCIATE)
-   # Eliminate Common SubExpressions.
-   g_llvm_pass_manager.add(PASS_GVN)
-   # Simplify the control flow graph (deleting unreachable blocks, etc).
-   g_llvm_pass_manager.add(PASS_SIMPLIFYCFG)
+    # Set up the optimizer pipeline. Start with registering info about how the
+    # target lays out data structures.
+    g_llvm_pass_manager.add(g_llvm_executor.target_data)
+    # Promote allocas to registers.
+    #g_llvm_pass_manager.add(PASS_PROMOTE_MEMORY_TO_REGISTER)
+    # Do simple "peephole" optimizations and bit-twiddling optzns.
+    g_llvm_pass_manager.add(PASS_INSTCOMBINE)
+    # Reassociate expressions.
+    g_llvm_pass_manager.add(PASS_REASSOCIATE)
+    # Eliminate Common SubExpressions.
+    g_llvm_pass_manager.add(PASS_GVN)
+    # Simplify the control flow graph (deleting unreachable blocks, etc).
+    g_llvm_pass_manager.add(PASS_SIMPLIFYCFG)
 
-   g_llvm_pass_manager.initialize()
+    g_llvm_pass_manager.initialize()
 
-   # Install standard binary operators.
-   # 1 is lowest possible precedence. 40 is the highest.
-   g_binop_precedence['='] = 2
-   g_binop_precedence['<'] = 10
-   g_binop_precedence['+'] = 20
-   g_binop_precedence['-'] = 20
-   g_binop_precedence['*'] = 40
+    # Install standard binary operators.
+    # 1 is lowest possible precedence. 40 is the highest.
+    g_binop_precedence['='] = 2
+    g_binop_precedence['<'] = 10
+    g_binop_precedence['+'] = 20
+    g_binop_precedence['-'] = 20
+    g_binop_precedence['*'] = 40
 
-   # Run the main "interpreter loop".
-   while True:
-      print 'ready>',
-      try:
-         raw = raw_input()
-      except KeyboardInterrupt:
-         break
-
-      parser = Parser(Tokenize(raw))
-      while True:
-         # top ::= definition | external | expression | EOF
-         if isinstance(parser.current, EOFToken):
+    # Run the main "interpreter loop".
+    while True:
+        print 'ready>',
+        try:
+            raw = raw_input()
+        except KeyboardInterrupt:
             break
-         if isinstance(parser.current, DefToken):
-            parser.HandleDefinition()
-         elif isinstance(parser.current, ExternToken):
-            parser.HandleExtern()
-         else:
-            parser.HandleTopLevelExpression()
 
-   # Print out all of the generated code.
-   print '', g_llvm_module
+        parser = Parser(Tokenize(raw))
+        while True:
+            # top ::= definition | external | expression | EOF
+            if isinstance(parser.current, EOFToken):
+                break
+            if isinstance(parser.current, DefToken):
+                parser.HandleDefinition()
+            elif isinstance(parser.current, ExternToken):
+                parser.HandleExtern()
+            else:
+                parser.HandleTopLevelExpression()
+
+    # Print out all of the generated code.
+    print '', g_llvm_module
 
 if __name__ ==  '__main__':
-   main()
+    main()
