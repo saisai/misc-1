@@ -16,8 +16,8 @@ g_llvm_module = Module.new('my cool jit')
 # The LLVM instruction builder. Created whenever a new function is entered.
 g_llvm_builder = None
 
-# A dictionary that keeps track of which values are defined in the current scope
-# and what their LLVM representation is.
+# A dictionary that keeps track of which values are defined in the current
+# scope and what their LLVM representation is.
 g_named_values = {}
 
 # The function optimization passes manager.
@@ -29,8 +29,8 @@ g_llvm_executor = ExecutionEngine.new(g_llvm_module)
 # The binary operator precedence chart.
 g_binop_precedence = {}
 
-# Creates an alloca instruction in the entry block of the function. This is used
-# for mutable variables.
+# Creates an alloca instruction in the entry block of the function. This is
+# used for mutable variables.
 def CreateEntryBlockAlloca(function, var_name):
     entry = function.get_entry_basic_block()
     builder = Builder.new(entry)
@@ -378,7 +378,7 @@ class ForExpressionNode(ExpressionNode):
 
         # Restore the unshadowed variable.
         if old_value is not None:
-           g_named_values[self.loop_variable] = old_value
+            g_named_values[self.loop_variable] = old_value
         else:
             del g_named_values[self.loop_variable]
 
@@ -655,7 +655,8 @@ class Parser(object):
             step = None
 
         if not isinstance(self.current, InToken):
-            raise RuntimeError('Expected "in" after for variable specification.')
+            raise RuntimeError('Expected "in" after for variable '
+                               'specification.')
         self.Next()  # eat 'in'.
 
         body = self.ParseExpression()
@@ -720,7 +721,8 @@ class Parser(object):
 
     # unary ::= primary | unary_operator unary
     def ParseUnary(self):
-        # If the current token is not an operator, it must be a primary expression.
+        # If the current token is not an operator, it must be a primary
+        # expression.
         if (not isinstance(self.current, CharacterToken) or
                self.current in [CharacterToken('('), CharacterToken(',')]):
             return self.ParsePrimary()
