@@ -545,46 +545,46 @@ class FunctionNode(object):
 
 class Parser(object):
 
-   def __init__(self, tokens):
-      self.tokens = tokens
-      self.Next()
+    def __init__(self, tokens):
+        self.tokens = tokens
+        self.Next()
 
-   # Provide a simple token buffer. Parser.current is the current token the
-   # parser is looking at. Parser.Next() reads another token from the lexer and
-   # updates Parser.current with its results.
-   def Next(self):
-      self.current = self.tokens.next()
+    # Provide a simple token buffer. Parser.current is the current token the
+    # parser is looking at. Parser.Next() reads another token from the lexer and
+    # updates Parser.current with its results.
+    def Next(self):
+        self.current = self.tokens.next()
 
-   # Gets the precedence of the current token, or -1 if the token is not a binary
-   # operator.
-   def GetCurrentTokenPrecedence(self):
-      if isinstance(self.current, CharacterToken):
-         return g_binop_precedence.get(self.current.char, -1)
-      else:
-         return -1
+    # Gets the precedence of the current token, or -1 if the token is not a
+    # binary operator.
+    def GetCurrentTokenPrecedence(self):
+        if isinstance(self.current, CharacterToken):
+            return g_binop_precedence.get(self.current.char, -1)
+        else:
+            return -1
 
-   # identifierexpr ::= identifier | identifier '(' expression* ')'
-   def ParseIdentifierExpr(self):
-      identifier_name = self.current.name
-      self.Next()  # eat identifier.
+    # identifierexpr ::= identifier | identifier '(' expression* ')'
+    def ParseIdentifierExpr(self):
+        identifier_name = self.current.name
+        self.Next()  # eat identifier.
 
-      if self.current != CharacterToken('('):  # Simple variable reference.
-         return VariableExpressionNode(identifier_name)
+        if self.current != CharacterToken('('):  # Simple variable reference.
+            return VariableExpressionNode(identifier_name)
 
-      # Call.
-      self.Next()  # eat '('.
-      args = []
-      if self.current != CharacterToken(')'):
-         while True:
-            args.append(self.ParseExpression())
-            if self.current == CharacterToken(')'):
-               break
-            elif self.current != CharacterToken(','):
-               raise RuntimeError('Expected ")" or "," in argument list.')
-            self.Next()
+        # Call.
+        self.Next()  # eat '('.
+        args = []
+        if self.current != CharacterToken(')'):
+            while True:
+                args.append(self.ParseExpression())
+                if self.current == CharacterToken(')'):
+                   break
+                elif self.current != CharacterToken(','):
+                   raise RuntimeError('Expected ")" or "," in argument list.')
+                self.Next()
 
-      self.Next()  # eat ')'.
-      return CallExpressionNode(identifier_name, args)
+        self.Next()  # eat ')'.
+        return CallExpressionNode(identifier_name, args)
 
    # numberexpr ::= number
    def ParseNumberExpr(self):
