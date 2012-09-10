@@ -914,7 +914,6 @@ def main():
     g_binop_precedence['*'] = 40
 
     if len(sys.argv) == 2:
-        code = deque()
         for line in open(sys.argv[1]):
             handle(line.strip())
     else:
