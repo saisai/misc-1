@@ -1,6 +1,5 @@
 import sys
 import re
-from collections import deque
 
 from llvm.core import Module, Constant, Type, Function, Builder
 from llvm.ee import ExecutionEngine, TargetData
@@ -552,7 +551,7 @@ class Parser(object):
         self.tokens = tokens
         self.Next()
 
-    # Provide a simple token buffer. Parser.current is the current token the
+    # Provide a simple token buffer.  Parser.current is the current token the
     # parser is looking at. Parser.Next() reads another token from the lexer and
     # updates Parser.current with its results.
     def Next(self):
@@ -581,9 +580,9 @@ class Parser(object):
             while True:
                 args.append(self.ParseExpression())
                 if self.current == CharacterToken(')'):
-                   break
+                    break
                 elif self.current != CharacterToken(','):
-                   raise RuntimeError('Expected ")" or "," in argument list.')
+                    raise RuntimeError('Expected ")" or "," in argument list.')
                 self.Next()
 
         self.Next()  # eat ')'.
