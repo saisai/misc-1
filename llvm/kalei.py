@@ -1,4 +1,7 @@
+import sys
 import re
+from collections import deque
+
 from llvm.core import Module, Constant, Type, Function, Builder
 from llvm.ee import ExecutionEngine, TargetData
 from llvm.passes import FunctionPassManager
@@ -870,6 +873,21 @@ class Parser(object):
             except:
                 pass
 
+
+def handle(raw):
+    parser = Parser(Tokenize(raw))
+    while True:
+        # top ::= definition | external | expression | EOF
+        if isinstance(parser.current, EOFToken):
+            break
+        if isinstance(parser.current, DefToken):
+            parser.HandleDefinition()
+        elif isinstance(parser.current, ExternToken):
+            parser.HandleExtern()
+        else:
+            parser.HandleTopLevelExpression()
+
+
 def main():
     # Set up the optimizer pipeline. Start with registering info about how the
     # target lays out data structures.
@@ -895,28 +913,21 @@ def main():
     g_binop_precedence['-'] = 20
     g_binop_precedence['*'] = 40
 
-    # Run the main "interpreter loop".
-    while True:
-        print 'ready>',
-        try:
-            raw = raw_input()
-        except KeyboardInterrupt:
-            break
-
-        parser = Parser(Tokenize(raw))
+    if len(sys.argv) == 2:
+        code = deque()
+        for line in open(sys.argv[1]):
+            handle(line.strip())
+    else:
         while True:
-            # top ::= definition | external | expression | EOF
-            if isinstance(parser.current, EOFToken):
+            print 'ready>',
+            try:
+                raw = raw_input()
+            except KeyboardInterrupt:
                 break
-            if isinstance(parser.current, DefToken):
-                parser.HandleDefinition()
-            elif isinstance(parser.current, ExternToken):
-                parser.HandleExtern()
-            else:
-                parser.HandleTopLevelExpression()
+            handle(raw)
 
     # Print out all of the generated code.
-    print '', g_llvm_module
+    #print '', g_llvm_module
 
 if __name__ ==  '__main__':
     main()
