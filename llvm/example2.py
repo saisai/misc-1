@@ -14,6 +14,8 @@ builder = Builder.new(bb)
 tmp = builder.add(f_sum.args[0], f_sum.args[1], "tmp")
 builder.ret(tmp)
 
+print my_module
+
 # Create an execution engine object. This will create a JIT compiler
 # on platforms that support it, or an interpreter otherwise.
 ee = ExecutionEngine.new(my_module)
