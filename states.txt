@@ -11,7 +11,7 @@ Florida         FL
 Georgia         GA x                                  07    09
 Hawaii          HI
 Idaho           ID x 96
-Illinois        IL x 96 97 98 99 00 01 02 03 04 05 06 07 08       11
+Illinois        IL x 96 97 98 99 00 01 02 03 04 05 06 07 08       11 12
 Indiana         IN x                   02          06 07
 Iowa            IA x    97 98    00 01             06       09    11
 Kansas          KS x       98       01                      09
@@ -47,5 +47,5 @@ Vermont         VT x                               06
 Virginia        VA x    97                      05 06
 Washington      WA x 96
 West Virginia   WV x    97
-Wisconsin       WI x 96 97 98 99 00 01 02 03 04 05 06 07 08 09    11
+Wisconsin       WI x 96 97 98 99 00 01 02 03 04 05 06 07 08 09    11 12
 Wyoming         WY
