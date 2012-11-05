@@ -17,6 +17,8 @@ Education
 Experience
 ----------
 
+  * Software Engineer, Continuum Analytics, Inc., Ausin, Texas,
+    July 2012 - present
   * Software Developer, Enthought, Inc., Austin, Texas, June 2008 - June 2012
   * Freelance Programmer, 2006-2008
   * Postdotorial Research Associate, Georgetown University, Washington, D.C.,
