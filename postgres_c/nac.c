@@ -21,7 +21,7 @@ static void loc2pos(text *txtloc, double *lat, double *lng)
 {
   char loc[6];
   memcpy(loc, VARDATA(txtloc), 6);
-  
+
   *lat = (double) (loc[5] - 'A') * (1.0 / 24.0);
   *lng = (double) (loc[4] - 'A') * (2.0 / 24.0);
 
@@ -36,10 +36,10 @@ int dist(text *arg1, text *arg2)
 {
   double latref, lngref;
   loc2pos(arg1, &latref, &lngref);
-  
+
   double lat, lng;
   loc2pos(arg2, &lat, &lng);
-  
+
   double
     a = (90.0 - lat) * M_D2R,
     b = (90.0 - latref) * M_D2R,
@@ -47,6 +47,6 @@ int dist(text *arg1, text *arg2)
     t = cos(a) * cos(b) + sin(a) * sin(b) * cos(gamma);
 
   t = fclamp(t, -1.0, +1.0);
-  
+
   return (int4) (acos(t) * 111.2 * M_R2D + 0.99);
 }
