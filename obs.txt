@@ -1,0 +1,14 @@
+openSuSE rpm and deb build service
+osc client
+openSuSE tools
+https://build.opensuse.org/package/files?package=snapper&project=filesystems%3Asnapper
+https://build.opensuse.org/project/monitor?project=YaST%3AHead
+http://en.opensuse.org/openSUSE:OSC
+http://software.opensuse.org/download/package?project=filesystems:snapper&package=snapper
+
+handling dependencies:
+  * add the required package to repo
+  * layering, i.e. the other project/repository as an additional path
+  * linking, i.e. re-use a package that already exists in another project
+      - link (allow patches)
+      - aggregate
