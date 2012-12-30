@@ -60,17 +60,13 @@ def char(typ, hashin):
     'k,2wy-SBt%yl3PQiujhb'
     """
     pool=''
-    if typ in 'aAxXzZ':
-        pool += string.ascii_lowercase
-    if typ in 'AXZ':
-        pool += string.ascii_uppercase
-    if typ in '9xXzZ':
-        pool += string.digits
-    if typ in 'pzZ':
-        pool += '!@#$%^&-+=;:,.'
-    if pool=='':
+    if typ in 'aAxXzZ': pool += string.ascii_lowercase
+    if typ in 'AXZ':    pool += string.ascii_uppercase
+    if typ in '9xXzZ':  pool += string.digits
+    if typ in 'pzZ':    pool += '!@#$%^&-+=;:,.'
+    if pool == '':
         pool = typ
-    return pool[int(hashlib.md5(hashin).hexdigest(), 16) % len(pool)]
+    return pool[long(hashlib.md5(hashin).hexdigest(), 16) % len(pool)]
 
 
 MASTER = ''
@@ -84,7 +80,7 @@ def passwd(tmpl, hashin):
     >>> passwd('999 aaa AAAAAA xxxxxx XXXXXX pppp zzzzzz ZZZZZZZZZZ', 'g')
     '131 wuo mympmK 3swcih Fb5lYA ..%, 5-1;kf jkKkJ;06f0'
     """
-    return ''.join(char(t, hashin+str(i) + MASTER)
+    return ''.join(char(t, hashin + str(i) + MASTER)
                    for i, t in enumerate(tmpl))
 
 
@@ -110,8 +106,8 @@ class Site:
     """
     def __init__(self, line):
         self.line = line
-        self.name, self.tmpl = [
-            x.strip() for x in rmcomm(line).rsplit(None, 1)]
+        self.name, self.tmpl = [x.strip()
+                                for x in rmcomm(line).rsplit(None, 1)]
 
     def __str__(self):
         return '%s --> %s' % (self.name,  passwd(self.tmpl, self.name))
@@ -121,20 +117,18 @@ def sites(filename):
     """
     Return list of Site instances corresponding to the template file.
     """
-    res = []
     for line in file(filename):
         line = line.expandtabs().strip()
         if not rmcomm(line):
             continue
-        if line[0]=='!':
+        if line[0] == '!':
             tmpl, chck = line[1:].split()
             passwd = str(Site('a ' + tmpl)).split()[-1]
             if passwd != chck:
                 print 'You entered a wrong master password.', passwd
                 sys.exit(1)
             continue
-        res.append(Site(line))
-    return res
+        yield Site(line)
 
 
 def usage():
@@ -159,14 +153,15 @@ def cmdloop(rcfile):
             sys.exit(0)
         if cmd.isdigit():
             try:
-                print sites(rcfile)[int(cmd)-1]
+                print list(sites(rcfile))[int(cmd) - 1]
             except IndexError:
                 print '%s not found in list.' % cmd
-        elif cmd=='a':
-            for s in sites(rcfile): print s
-        elif cmd=='q':
+        elif cmd == 'a':
+            for s in sites(rcfile):
+                print s
+        elif cmd == 'q':
             sys.exit(0)
-        elif cmd=='':
+        elif cmd == '':
             pass
         else:
             print 'Unknown command %r.' % cmd
@@ -188,7 +183,7 @@ def main():
 
     # if an argument is given, use it as a template and print the
     # created password before exiting:
-    if len(args)==1:
+    if len(args) == 1:
         print passwd(args[0], '%.15f' % random())
         return
 
@@ -202,7 +197,7 @@ def main():
 
     # Print the entries of the template file:
     for i, site in enumerate(sites(rcfile)):
-        print '%4d %s' % (i+1, site.line)
+        print '%4d %s' % (i + 1, site.line)
 
     cmdloop(rcfile)
 
