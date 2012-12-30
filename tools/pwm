@@ -46,7 +46,11 @@ import getopt
 from getpass import getpass
 from os.path import expanduser
 
-SLOW = 2 ** 14
+
+MASTER = ''
+PEPPER = ''
+SLOW = 0
+
 
 def char(typ, hashin):
     """
@@ -74,7 +78,6 @@ def char(typ, hashin):
     return pool[long(hashlib.md5(r).hexdigest(), 16) % len(pool)]
 
 
-MASTER = ''
 def passwd(tmpl, hashin):
     """
     Returns a password which is calculated from the md5sum
@@ -87,7 +90,7 @@ def passwd(tmpl, hashin):
     '131 wuo mympmK 3swcih Fb5lYA ..%, 5-1;kf jkKkJ;06f0'
     """
     for i, t in enumerate(tmpl):
-        yield char(t, hashin + str(i) + MASTER)
+        yield char(t, hashin + str(i) + MASTER + PEPPER)
 
 
 def output_password(tmpl, hashin):
@@ -110,6 +113,7 @@ def parse_line(line):
         sys.exit('Error: could not parse: %r' % line)
     return m.groups()
 
+
 def parse(filename):
     """
     Return list of Site instances corresponding to the template file.
@@ -119,49 +123,47 @@ def parse(filename):
         if not line or line.startswith('#'):
             continue
         if line.startswith('!'):
-            global MASTER
-            MASTER = parse_line(line)[1]
+            global PEPPER, SLOW
+            PEPPER = line[1:].strip()
+            SLOW = 2 ** 14
             continue
         yield parse_line(line)
 
 
-def usage():
-    print __doc__
-    sys.exit(0)
-
-def test():
-    print 'Performing self tests.'
-    import doctest
-    doctest.testmod()
-    sys.exit(0)
-
 def cmdloop(rcfile):
     print "Enter number, 'q' to quit, or 'a' to display all passwords."
     while True:
+        global PEPPER, SLOW
+        PEPPER = ''
+        SLOW = 0
         try:
             cmd = raw_input('>>> ').strip()
         except EOFError:
             print
             sys.exit(0)
-        if cmd.isdigit():
-            sites = list(parse(rcfile))
-            try:
-                name, tmpl = sites[int(cmd) - 1]
-            except IndexError:
-                print 'not in list: %s' % cmd
-                continue
-            print name, '--> ',
-            output_password(tmpl, name)
-        elif cmd == 'a':
-            for name, tmpl in parse(rcfile):
-                print name, '--> ',
-                output_password(tmpl, name)
+        if cmd == 'a' or cmd.isdigit():
+            for i, (name, tmpl) in enumerate(parse(rcfile)):
+                if cmd == 'a' or int(cmd) == i + 1:
+                    print '%4d %-30s ' % (i + 1, name),
+                    output_password(tmpl, name)
         elif cmd == 'q':
             sys.exit(0)
         elif cmd == '':
             pass
         else:
             print 'Unknown command %r.' % cmd
+
+
+def usage():
+    print __doc__
+    sys.exit(0)
+
+
+def test():
+    print 'Performing self tests.'
+    import doctest
+    doctest.testmod()
+    sys.exit(0)
 
 
 def main():
@@ -177,8 +179,6 @@ def main():
         if o in ('-f', '--file'): rcfile = v
         if o in ('-h', '--help'): usage()
         if o == '-t':
-            global SLOW
-            SLOW = 0
             test()
 
     # if an argument is given, use it as a template and print the
@@ -188,14 +188,12 @@ def main():
         return
 
     # Set master password:
-    """
     global MASTER
     try:
         MASTER = getpass('Master password: ')
     except EOFError:
         print
         return
-    """
 
     # Print the entries of the template file:
     for i, (name, tmpl) in enumerate(parse(rcfile)):
