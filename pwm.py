@@ -37,14 +37,16 @@ __copyright__ = '(c) Ilan Schnell, 2007'
 __license__ = 'GNU GPL 2'
 __version__ = '0.1'
 
+import os
+import re
 import sys
 import hashlib
 import string
 import getopt
 from getpass import getpass
-from random import random
 from os.path import expanduser
 
+SLOW = 0# 2 ** 14
 
 def char(typ, hashin):
     """
@@ -66,7 +68,12 @@ def char(typ, hashin):
     if typ in 'pzZ':    pool += '!@#$%^&-+=;:,.'
     if pool == '':
         pool = typ
-    return pool[long(hashlib.md5(hashin).hexdigest(), 16) % len(pool)]
+    if not SLOW:
+        return pool[long(hashlib.md5(hashin).hexdigest(), 16) % len(pool)]
+    r = hashin
+    for _ in xrange(SLOW):
+        r = hashlib.sha512(r).hexdigest()
+    return pool[long(r, 16) % len(pool)]
 
 
 MASTER = ''
@@ -77,71 +84,58 @@ def passwd(tmpl, hashin):
     The string `tmpl` is a template which describes the form of the password.
 
     Example:
-    >>> passwd('999 aaa AAAAAA xxxxxx XXXXXX pppp zzzzzz ZZZZZZZZZZ', 'g')
+    >>> tmpl = '999 aaa AAAAAA xxxxxx XXXXXX pppp zzzzzz ZZZZZZZZZZ'
+    >>> ''.join(passwd(tmpl, 'g'))
     '131 wuo mympmK 3swcih Fb5lYA ..%, 5-1;kf jkKkJ;06f0'
     """
-    return ''.join(char(t, hashin + str(i) + MASTER)
-                   for i, t in enumerate(tmpl))
+    for i, t in enumerate(tmpl):
+        yield char(t, hashin + str(i) + MASTER)
 
 
-def rmcomm(line):
+def output_password(tmpl, hashin):
+    for c in passwd(tmpl, hashin):
+        sys.stdout.write(c)
+        sys.stdout.flush()
+    sys.stdout.write('\n')
+
+
+line_pat = re.compile(r'(.+?)\s+(\w+)(?:\s*#.*)?$')
+def parse_line(line):
     """
-    >>> rmcomm('foo bar ## Comment')
-    'foo bar'
-    >>> rmcomm('example')
-    'example'
+    >>> parse_line('foo  bar ## Comment')
+    ('foo', 'bar')
+    >>> parse_line('foo  bar  baz')
+    ('foo  bar', 'baz')
     """
-    return (line.split('#', 1)[0] if line.count('#') else line).strip()
+    m = line_pat.match(line)
+    if not m:
+        sys.exit('Error: could not parse: %r' % line)
+    return m.groups()
 
-
-class Site:
-    """
-    >>> a = Site('example.com (1)  XXX  # Comment')
-    >>> a.name
-    'example.com (1)'
-    >>> a.tmpl
-    'XXX'
-    >>> print a
-    example.com (1) --> T6B
-    """
-    def __init__(self, line):
-        self.line = line
-        self.name, self.tmpl = [x.strip()
-                                for x in rmcomm(line).rsplit(None, 1)]
-
-    def __str__(self):
-        return '%s --> %s' % (self.name,  passwd(self.tmpl, self.name))
-
-
-def sites(filename):
+def parse(filename):
     """
     Return list of Site instances corresponding to the template file.
     """
     for line in file(filename):
         line = line.expandtabs().strip()
-        if not rmcomm(line):
+        if not line or line.startswith('#'):
             continue
-        if line[0] == '!':
-            tmpl, chck = line[1:].split()
-            passwd = str(Site('a ' + tmpl)).split()[-1]
-            if passwd != chck:
-                print 'You entered a wrong master password.', passwd
-                sys.exit(1)
+        if line.startswith('!'):
+            global MASTER
+            MASTER = parse_line(line)[1]
             continue
-        yield Site(line)
+        yield parse_line(line)
 
 
 def usage():
     print __doc__
     sys.exit(0)
 
-
 def test():
     print 'Performing self tests.'
     import doctest
     doctest.testmod()
     sys.exit(0)
-
 
 def cmdloop(rcfile):
     print "Enter number, 'q' to quit, or 'a' to display all passwords."
@@ -152,13 +146,18 @@ def cmdloop(rcfile):
             print
             sys.exit(0)
         if cmd.isdigit():
+            sites = list(parse(rcfile))
             try:
-                print list(sites(rcfile))[int(cmd) - 1]
+                name, tmpl = sites[int(cmd) - 1]
             except IndexError:
-                print '%s not found in list.' % cmd
+                print 'not in list: %s' % cmd
+                continue
+            print name, '--> ',
+            output_password(tmpl, name)
         elif cmd == 'a':
-            for s in sites(rcfile):
-                print s
+            for name, tmpl in parse(rcfile):
+                print name, '--> ',
+                output_password(tmpl, name)
         elif cmd == 'q':
             sys.exit(0)
         elif cmd == '':
@@ -179,25 +178,30 @@ def main():
     for o, v in opts:
         if o in ('-f', '--file'): rcfile = v
         if o in ('-h', '--help'): usage()
-        if o == '-t': test()
+        if o == '-t':
+            global SLOW
+            SLOW = 0
+            test()
 
     # if an argument is given, use it as a template and print the
     # created password before exiting:
     if len(args) == 1:
-        print passwd(args[0], '%.15f' % random())
+        output_password(args[0], os.urandom(128))
         return
 
     # Set master password:
+    """
     global MASTER
     try:
         MASTER = getpass('Master password: ')
     except EOFError:
         print
         return
+    """
 
     # Print the entries of the template file:
-    for i, site in enumerate(sites(rcfile)):
-        print '%4d %s' % (i + 1, site.line)
+    for i, (name, tmpl) in enumerate(parse(rcfile)):
+        print '%4d %-30s %s' % (i + 1, name, tmpl)
 
     cmdloop(rcfile)
 
