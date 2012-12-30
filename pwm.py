@@ -46,7 +46,7 @@ import getopt
 from getpass import getpass
 from os.path import expanduser
 
-SLOW = 0# 2 ** 14
+SLOW = 2 ** 14
 
 def char(typ, hashin):
     """
@@ -68,12 +68,10 @@ def char(typ, hashin):
     if typ in 'pzZ':    pool += '!@#$%^&-+=;:,.'
     if pool == '':
         pool = typ
-    if not SLOW:
-        return pool[long(hashlib.md5(hashin).hexdigest(), 16) % len(pool)]
     r = hashin
     for _ in xrange(SLOW):
-        r = hashlib.sha512(r).hexdigest()
-    return pool[long(r, 16) % len(pool)]
+        r = hashlib.sha512(r).digest()
+    return pool[long(hashlib.md5(r).hexdigest(), 16) % len(pool)]
 
 
 MASTER = ''
