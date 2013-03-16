@@ -14,6 +14,6 @@ Conda:
 ------
   * open source package	management tool
   * packages are (bziped) tarballs
-  * meta-data is stored in a json file
+  * meta-data is stored in a json file (acknowledges PEP 386)
   * Python agnostic
   * allows multiple environments (using hard links)
