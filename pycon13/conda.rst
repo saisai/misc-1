@@ -6,8 +6,8 @@ Ana(conda)
 Anaconda:
 ---------
   * free scientific package distribution
-      - supports Python 2.6, 2.7 and 3.3
-      - Linux, MacOSX, Windows
+  * for Linux, MacOSX, Windows
+  * supports Python 2.6, 2.7 and 3.3
   * Python, NumPy, SciPy, matplotlib, Qt, Erlang, HDF5, ...
   * maintained my Continuum Analytics
 
