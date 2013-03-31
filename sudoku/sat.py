@@ -11,6 +11,13 @@ def v(i, j, d):
     assert 1 <= d <= 9
     return d + 9 * ((j - 1) + 9 * (i - 1))
 
+def cls_valid(cells):
+    assert len(cells) == 9
+    cls = []
+    for d in xrange(1, 10):
+        cls.append([v(i, j, d) for i, j in cells])
+    return cls
+
 def mk_clauses():
     cnf = []
     for i in xrange(1, 10):
@@ -21,27 +28,39 @@ def mk_clauses():
             for d in xrange(1, 10):
                 for dp in xrange(d + 1, 10):
                     cnf.append([-v(i, j, d), -v(i, j, dp)])
-    # Lemma 1
-    #...
-    cnf=[]
+    # sudoku
     for i in xrange(1, 10):
-        for j in xrange(i + 1, 10):
-            for d in xrange(1, 10):
-                cnf.append([-v(i, j, d), -v(i, j, dp)]) # ???
-    print(len(cnf))
-#    pprint(cnf)
+        cnf.extend(cls_valid([(i, j) for j in xrange(1, 10)]))
+    for j in xrange(1, 10):
+        cnf.extend(cls_valid([(i, j) for i in xrange(1, 10)]))
+    for i in 1, 4, 7:
+        for j in 1, 4 ,7:
+            cnf.extend(cls_valid([(i,   j), (i,   j+1), (i,   j+2),
+                                  (i+1, j), (i+1, j+1), (i+1, j+2),
+                                  (i+2, j), (i+2, j+1), (i+2, j+2)]))
     return cnf
-
 
 def solve(S):
     pprint(S)
     cnf = mk_clauses()
-
-    return
-    for sol in pycosat.itersolve(cnf):
-        print sol
-    #pprint(S)
-
+    for i in xrange(1, 10):
+        for j in xrange(1, 10):
+            d = S[i-1][j-1]
+            if d:
+                cnf.append([v(i, j, d)])
+    sol = pycosat.solve(cnf)
+    #print sol
+    for i in xrange(1, 10):
+        for j in xrange(1, 10):
+            d = 0
+            for dp in xrange(1, 10):
+                if v(i, j, dp) in sol:
+                    d = dp
+                    break
+            S[i-1][j-1] = d
+    #pprint(cnf)
+    #print len(list(pycosat.itersolve(cnf)))
+    pprint(S)
 
 Result = 0
 fi=open('euler.dat')
