@@ -40,12 +40,12 @@ def mk_clauses():
                     cnf.append([-v(i, j, d), -v(i, j, dp)])
     # sudoku
     for i in xrange(1, 10):
-        cnf.extend(cls_valid([(i, j) for j in xrange(1, 10)]))
+        cnf.extend(cls_lemma1([(i, j) for j in xrange(1, 10)]))
     for j in xrange(1, 10):
-        cnf.extend(cls_valid([(i, j) for i in xrange(1, 10)]))
+        cnf.extend(cls_lemma1([(i, j) for i in xrange(1, 10)]))
     for i in 1, 4, 7:
         for j in 1, 4 ,7:
-            cnf.extend(cls_valid([(i,   j), (i,   j+1), (i,   j+2),
+            cnf.extend(cls_lemma1([(i,   j), (i,   j+1), (i,   j+2),
                                   (i+1, j), (i+1, j+1), (i+1, j+2),
                                   (i+2, j), (i+2, j+1), (i+2, j+2)]))
     return cnf
