@@ -12,10 +12,20 @@ def v(i, j, d):
     return d + 9 * ((j - 1) + 9 * (i - 1))
 
 def cls_valid(cells):
-    assert len(cells) == 9
     cls = []
     for d in xrange(1, 10):
         cls.append([v(i, j, d) for i, j in cells])
+    return cls
+
+def cls_lemma1(cells):
+    cls = []
+    # Lemma 1
+    for i, xi in enumerate(cells):
+        for j, xj in enumerate(cells):
+            if i < j:
+                for d in xrange(1, 10):
+                    cls.append([-v(xi[0], xi[1], d),
+                                -v(xj[0], xj[1], d)])
     return cls
 
 def mk_clauses():
