@@ -21,7 +21,14 @@ def mk_clauses():
             for d in xrange(1, 10):
                 for dp in xrange(d + 1, 10):
                     cnf.append([-v(i, j, d), -v(i, j, dp)])
-
+    # Lemma 1
+    #...
+    cnf=[]
+    for i in xrange(1, 10):
+        for j in xrange(i + 1, 10):
+            for d in xrange(1, 10):
+                cnf.append([-v(i, j, d), -v(i, j, dp)]) # ???
+    print(len(cnf))
 #    pprint(cnf)
     return cnf
 
