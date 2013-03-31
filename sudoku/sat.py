@@ -41,7 +41,7 @@ def mk_clauses():
     return cnf
 
 def solve(S):
-    pprint(S)
+#    pprint(S)
     cnf = mk_clauses()
     for i in xrange(1, 10):
         for j in xrange(1, 10):
@@ -63,7 +63,7 @@ def solve(S):
     pprint(S)
 
 Result = 0
-fi=open('euler.dat')
+fi=open('hard.dat')
 for grid in range(1):
     if fi.readline()[0:4] != 'Grid':
         raise 'Error while reading.'
@@ -71,5 +71,6 @@ for grid in range(1):
     for j in range(9):
         M.append([int(c) for c in fi.readline().strip()])
     solve(M)
+    Result += 100 * M[0][0] + 10 * M[0][1] + M[0][2]
 fi.close()
-#print Result
+print Result

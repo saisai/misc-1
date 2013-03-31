@@ -34,8 +34,8 @@ def solve(S):
 
 
 Result = 0
-fi=open('euler.dat')
-for grid in range(50):
+fi=open('hard.dat')
+for grid in range(1):
     if fi.readline()[0:4] != 'Grid':
         raise 'Error while reading.'
     M=[]
