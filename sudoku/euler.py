@@ -1,16 +1,15 @@
 from copy import deepcopy
 
 
-Result=0
 
 def solve(S):
     def options(i, j):
-        r=list(S[i])
+        r = list(S[i])
         r.extend(S[k][j] for k in range(9))
         r.extend(S[i/3*3 + k][j/3*3 + m]
                  for k in range(3) for m in range(3))
         s = set(r)
-        return [z for z in range(1,10) if z not in list(s)]
+        return [z for z in range(1, 10) if z not in list(s)]
     mnp = 99
     mp = None
     for i in range(9):
@@ -33,6 +32,8 @@ def solve(S):
     for c in W:
         return c
 
+
+Result = 0
 fi=open('euler.dat')
 for grid in range(50):
     if fi.readline()[0:4] != 'Grid':
