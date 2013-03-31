@@ -1,6 +1,5 @@
 # https://www.lri.fr/~conchon/mpri/weber.pdf
 from pprint import pprint
-from copy import deepcopy
 
 import pycosat
 
@@ -12,43 +11,36 @@ def v(i, j, d):
     assert 1 <= d <= 9
     return d + 9 * ((j - 1) + 9 * (i - 1))
 
-def cls_valid(cells):
-    cls = []
+def valid(cls, cells):
     for d in xrange(1, 10):
         cls.append([v(i, j, d) for i, j in cells])
-    return cls
 
-def cls_lemma1(cells):
-    cls = []
-    # Lemma 1
+def lemma1(cls, cells):
     for i, xi in enumerate(cells):
         for j, xj in enumerate(cells):
             if i < j:
                 for d in xrange(1, 10):
                     cls.append([-v(xi[0], xi[1], d), -v(xj[0], xj[1], d)])
-    return cls
 
 def mk_clauses():
-    cnf = []
+    res = []
     for i in xrange(1, 10):
         for j in xrange(1, 10):
             # ensure that cell denotes (at least) one of the 9 digits
-            cnf.append([v(i, j, d) for d in xrange(1, 10)])
+            res.append([v(i, j, d) for d in xrange(1, 10)])
             # ensure a cell does not denote two different digits at once
             for d in xrange(1, 10):
                 for dp in xrange(d + 1, 10):
-                    cnf.append([-v(i, j, d), -v(i, j, dp)])
+                    res.append([-v(i, j, d), -v(i, j, dp)])
     # sudoku
     for i in xrange(1, 10):
-        cnf.extend(cls_lemma1([(i, j) for j in xrange(1, 10)]))
+        lemma1(res, [(i, j) for j in xrange(1, 10)])
     for j in xrange(1, 10):
-        cnf.extend(cls_lemma1([(i, j) for i in xrange(1, 10)]))
+        lemma1(res, [(i, j) for i in xrange(1, 10)])
     for i in 1, 4, 7:
         for j in 1, 4 ,7:
-            cnf.extend(cls_lemma1([(i,   j), (i,   j+1), (i,   j+2),
-                                   (i+1, j), (i+1, j+1), (i+1, j+2),
-                                   (i+2, j), (i+2, j+1), (i+2, j+2)]))
-    return cnf
+            lemma1(res, [(i + k % 3, j + k / 3) for k in xrange(9)])
+    return res
 
 def solve(S):
 #    pprint(S)
