@@ -1,3 +1,4 @@
+# https://www.lri.fr/~conchon/mpri/weber.pdf
 from pprint import pprint
 from copy import deepcopy
 
