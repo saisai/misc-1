@@ -24,8 +24,7 @@ def cls_lemma1(cells):
         for j, xj in enumerate(cells):
             if i < j:
                 for d in xrange(1, 10):
-                    cls.append([-v(xi[0], xi[1], d),
-                                -v(xj[0], xj[1], d)])
+                    cls.append([-v(xi[0], xi[1], d), -v(xj[0], xj[1], d)])
     return cls
 
 def mk_clauses():
@@ -46,18 +45,20 @@ def mk_clauses():
     for i in 1, 4, 7:
         for j in 1, 4 ,7:
             cnf.extend(cls_lemma1([(i,   j), (i,   j+1), (i,   j+2),
-                                  (i+1, j), (i+1, j+1), (i+1, j+2),
-                                  (i+2, j), (i+2, j+1), (i+2, j+2)]))
+                                   (i+1, j), (i+1, j+1), (i+1, j+2),
+                                   (i+2, j), (i+2, j+1), (i+2, j+2)]))
     return cnf
 
 def solve(S):
 #    pprint(S)
     cnf = mk_clauses()
+    print len(cnf)
     for i in xrange(1, 10):
         for j in xrange(1, 10):
             d = S[i-1][j-1]
             if d:
                 cnf.append([v(i, j, d)])
+
     sol = pycosat.solve(cnf)
     #print sol
     for i in xrange(1, 10):
