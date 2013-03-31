@@ -42,28 +42,27 @@ def mk_clauses():
             lemma1(res, [(i + k % 3, j + k / 3) for k in xrange(9)])
     return res
 
+def read_cell(sol, i, j):
+    for d in xrange(1, 10):
+        if v(i, j, d) in sol:
+            return d
+
 def solve(S):
-#    pprint(S)
-    cnf = mk_clauses()
-    print len(cnf)
+    pprint(S)
+    clauses = mk_clauses()
+    print len(clauses)
     for i in xrange(1, 10):
         for j in xrange(1, 10):
             d = S[i-1][j-1]
             if d:
-                cnf.append([v(i, j, d)])
+                clauses.append([v(i, j, d)])
 
-    sol = pycosat.solve(cnf)
+    sol = set(pycosat.solve(clauses))
     #print sol
     for i in xrange(1, 10):
         for j in xrange(1, 10):
-            d = 0
-            for dp in xrange(1, 10):
-                if v(i, j, dp) in sol:
-                    d = dp
-                    break
-            S[i-1][j-1] = d
-    #pprint(cnf)
-    #print len(list(pycosat.itersolve(cnf)))
+            S[i-1][j-1] = read_cell(sol, i, j)
+
     pprint(S)
 
 Result = 0
