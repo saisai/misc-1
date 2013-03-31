@@ -5,7 +5,7 @@ import pycosat
 
 
 def v(i, j, d):
-    "return the number of the variable of cell i, j and d"
+    "return the number of the variable of cell i, j and digit d"
     assert 1 <= i <= 9
     assert 1 <= j <= 9
     assert 1 <= d <= 9
