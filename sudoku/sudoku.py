@@ -1,6 +1,14 @@
 """
 The implementation of this Sudoku solver is based on the paper:
-https://www.lri.fr/~conchon/mpri/weber.pdf
+
+    "A SAT-based Sudoku solver" by Tjark Weber
+
+    https://www.lri.fr/~conchon/mpri/weber.pdf
+
+If you want to understand the code below, in particular the function valid(),
+which calculates the 324 clauses corresponding to 9 cells, you are strongly
+encouraged to read the paper first.  The paper is very short, but contains
+all necessary information.
 """
 from pprint import pprint
 
@@ -82,6 +90,7 @@ def solve(grid):
 
 
 def main():
+    # Hard Sudoku problem, see Fig. 3 in paper by Weber
     hard = [[0, 2, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 6, 0, 0, 0, 0, 3],
             [0, 7, 4, 0, 8, 0, 0, 0, 0],
