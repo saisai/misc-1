@@ -1,1 +1,0 @@
-http://svn.python.org/view/sandbox/trunk/import_in_py/docs/pseudocode.py?revision=56786&view=markup&pathrev=61000
