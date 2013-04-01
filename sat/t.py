@@ -12,8 +12,9 @@ def write_cnf(clauses, path):
     with open(path, 'w') as fo:
         fo.write('p cnf %d %d\n' % (n_vars, len(clauses)))
         for clause in clauses:
-            fo.write(' '.join(str(lit) for lit in clause))
-            fo.write(' 0\n')
+            for lit in clause:
+                fo.write('%d ' % lit)
+            fo.write('0\n')
 
 
 write_cnf(sudoku_clauses(), 'sudoku.cnf')
