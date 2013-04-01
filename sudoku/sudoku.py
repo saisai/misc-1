@@ -18,7 +18,7 @@ def v(i, j, d):
     Return the number of the variable of cell i, j and digit d,
     which is an integer in the range of 1 to 729 (including).
     """
-    return d + 9 * ((j - 1) + 9 * (i - 1))
+    return 81 * (i - 1) + 9 * (j - 1) + d
 
 
 def sudoku_clauses():
@@ -77,6 +77,7 @@ def solve(grid):
             if d:
                 clauses.append([v(i, j, d)])
 
+    # solve the SAT problem
     sol = set(pycosat.solve(clauses))
 
     def read_cell(i, j):
