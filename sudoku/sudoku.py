@@ -10,8 +10,6 @@ which calculates the 324 clauses corresponding to 9 cells, you are strongly
 encouraged to read the paper first.  The paper is very short, but contains
 all necessary information.
 """
-from pprint import pprint
-
 import pycosat
 
 
@@ -92,7 +90,9 @@ def solve(grid):
             grid[i - 1][j - 1] = read_cell(i, j)
 
 
-def main():
+if __name__ == '__main__':
+    from pprint import pprint
+
     # hard Sudoku problem, see Fig. 3 in paper by Weber
     hard = [[0, 2, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 6, 0, 0, 0, 0, 3],
@@ -114,7 +114,3 @@ def main():
             [2, 6, 9, 3, 1, 4, 7, 8, 5],
             [5, 4, 8, 7, 6, 9, 2, 3, 1],
             [7, 3, 1, 8, 5, 2, 6, 4, 9]] == hard
-
-
-if __name__ == '__main__':
-    main()
