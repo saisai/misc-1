@@ -53,12 +53,19 @@ def mk_clauses():
 
 
 def solve(grid):
+    """
+    solve the Sudoku grid inplace
+    """
     clauses = mk_clauses()
     for i in range(1, 10):
         for j in range(1, 10):
             d = grid[i - 1][j - 1]
-            if 1 <= d <= 9:
-                # for each digit already set, we a clause (with one literal)
+            # For each digit already known, a clause (with one literal).
+            # Note:
+            #     We could also remove all variables for the known cells
+            #     altogether (which would be more efficient).  However, for
+            #     the sake of simplicity, we decided not to do that.
+            if d:
                 clauses.append([v(i, j, d)])
 
     sol = set(pycosat.solve(clauses))
