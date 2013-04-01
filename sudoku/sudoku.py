@@ -14,19 +14,6 @@ def v(i, j, d):
     return d + 9 * ((j - 1) + 9 * (i - 1))
 
 
-def valid(cls, cells):
-    """
-    Append 324 clauses, corresponding to the 9 cells, to `cls`.
-    The 9 cells are represented by a list tuples.  The new clauses
-    ensure that the cells contain distinct values.
-    """
-    for i, xi in enumerate(cells):
-        for j, xj in enumerate(cells):
-            if i < j:
-                for d in range(1, 10):
-                    cls.append([-v(xi[0], xi[1], d), -v(xj[0], xj[1], d)])
-
-
 def mk_clauses():
     """
     Create (the 11745) Sudoku clauses, and return them as a list.
@@ -42,52 +29,63 @@ def mk_clauses():
                 for dp in xrange(d + 1, 10):
                     res.append([-v(i, j, d), -v(i, j, dp)])
 
+    def valid(cells):
+        # Append 324 clauses, corresponding to 9 cells, to the result.
+        # The 9 cells are represented by a list tuples.  The new clauses
+        # ensure that the cells contain distinct values.
+        for i, xi in enumerate(cells):
+            for j, xj in enumerate(cells):
+                if i < j:
+                    for d in range(1, 10):
+                        res.append([-v(xi[0], xi[1], d), -v(xj[0], xj[1], d)])
+
     # ensure rows and columns have distinct values
     for i in xrange(1, 10):
-        valid(res, [(i, j) for j in range(1, 10)])
-        valid(res, [(j, i) for j in range(1, 10)])
+        valid([(i, j) for j in range(1, 10)])
+        valid([(j, i) for j in range(1, 10)])
     # ensure 3x3 subgrids "regions" have distinct values
     for i in 1, 4, 7:
         for j in 1, 4 ,7:
-            valid(res, [(i + k % 3, j + k / 3) for k in range(9)])
+            valid([(i + k % 3, j + k / 3) for k in range(9)])
 
     assert len(res) == 81 * (1 + 36) + 27 * 324
     return res
 
 
-def read_cell(sol, i, j):
-    for d in xrange(1, 10):
-        if v(i, j, d) in sol:
-            return d
-
-
-def solve(S):
-    pprint(S)
+def solve(grid):
     clauses = mk_clauses()
-    print len(clauses)
     for i in xrange(1, 10):
         for j in xrange(1, 10):
-            d = S[i-1][j-1]
-            if d:
+            d = grid[i - 1][j - 1]
+            if 1 <= d <= 9:
+                # for each digit already set, we a clause (with one literal)
                 clauses.append([v(i, j, d)])
 
     sol = set(pycosat.solve(clauses))
-    #print sol
+
+    def read_cell(i, j):
+        for d in xrange(1, 10):
+            if v(i, j, d) in sol:
+                return d
+
     for i in xrange(1, 10):
         for j in xrange(1, 10):
-            S[i-1][j-1] = read_cell(sol, i, j)
+            grid[i - 1][j - 1] = read_cell(i, j)
 
-    pprint(S)
 
-Result = 0
-fi=open('hard.dat')
-for grid in range(1):
-    if fi.readline()[0:4] != 'Grid':
-        raise 'Error while reading.'
-    M=[]
-    for j in range(9):
-        M.append([int(c) for c in fi.readline().strip()])
-    solve(M)
-    Result += 100 * M[0][0] + 10 * M[0][1] + M[0][2]
-fi.close()
-print Result
+def main():
+    fig3 = [[0, 2, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 6, 0, 0, 0, 0, 3],
+            [0, 7, 4, 0, 8, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 3, 0, 0, 2],
+            [0, 8, 0, 0, 4, 0, 0, 1, 0],
+            [6, 0, 0, 5, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 1, 0, 7, 8, 0],
+            [5, 0, 0, 0, 0, 9, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 4, 0]]
+    solve(fig3)
+    pprint(fig3)
+
+
+if __name__ == '__main__':
+    main()
