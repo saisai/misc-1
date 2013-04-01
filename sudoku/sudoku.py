@@ -17,14 +17,17 @@ import pycosat
 
 def v(i, j, d):
     """
-    return the number of the variable of cell i, j and digit d
+    Return the number of the variable of cell i, j and digit d,
+    which is an integer in the range of 1 to 729 (including).
     """
     return d + 9 * ((j - 1) + 9 * (i - 1))
 
 
-def mk_clauses():
+def sudoku_clauses():
     """
-    Create (the 11745) Sudoku clauses, and return them as a list.
+    Create the (11745) Sudoku clauses, and return them as a list.
+    Note that these clauses are *independent* of the particular
+    Sudoku puzzle at hand.
     """
     res = []
     # for all cells, ensure that the each cell:
@@ -62,9 +65,9 @@ def mk_clauses():
 
 def solve(grid):
     """
-    solve the Sudoku grid inplace
+    solve a Sudoku grid inplace
     """
-    clauses = mk_clauses()
+    clauses = sudoku_clauses()
     for i in range(1, 10):
         for j in range(1, 10):
             d = grid[i - 1][j - 1]
@@ -90,7 +93,7 @@ def solve(grid):
 
 
 def main():
-    # Hard Sudoku problem, see Fig. 3 in paper by Weber
+    # hard Sudoku problem, see Fig. 3 in paper by Weber
     hard = [[0, 2, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 6, 0, 0, 0, 0, 3],
             [0, 7, 4, 0, 8, 0, 0, 0, 0],
