@@ -33,14 +33,29 @@ def solve(S):
         return c
 
 
-Result = 0
-fi=open('hard.dat')
-for grid in range(1):
-    if fi.readline()[0:4] != 'Grid':
-        raise 'Error while reading.'
-    M=[]
-    for j in range(9):
-        M.append([int(c) for c in fi.readline().strip()])
-    solve(M)
-fi.close()
-print Result
+if __name__ == '__main__':
+    import sys
+    import sudoku
+
+    if len(sys.argv) != 3:
+        sys.exit("Usage: <program> BT/SAT <file>.dat")
+
+    Result = 0
+    algo = sys.argv[1]
+    fi = open(sys.argv[2])
+    while True:
+        if fi.readline()[0:4] != 'Grid':
+            break
+        M = []
+        for j in range(9):
+            M.append([int(c) for c in fi.readline().strip()])
+
+        if algo == 'BT':
+            solve(M)
+        elif algo == 'SAT':
+            sudoku.solve(M)
+            Result += 100 * M[0][0] + 10 * M[0][1] + M[0][2]
+        else:
+            raise Exception("No algo: %r" % algo)
+    fi.close()
+    print Result
