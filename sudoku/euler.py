@@ -36,6 +36,7 @@ def solve(S):
 if __name__ == '__main__':
     import sys
     import sudoku
+    import time
 
     if len(sys.argv) != 3:
         sys.exit("Usage: <program> BT/SAT <file>.dat")
@@ -50,6 +51,7 @@ if __name__ == '__main__':
         for j in range(9):
             M.append([int(c) for c in fi.readline().strip()])
 
+        t0 = time.time()
         if algo == 'BT':
             solve(M)
         elif algo == 'SAT':
@@ -57,5 +59,6 @@ if __name__ == '__main__':
             Result += 100 * M[0][0] + 10 * M[0][1] + M[0][2]
         else:
             raise Exception("No algo: %r" % algo)
+        print 'time: %8.3f sec' % (time.time() - t0)
     fi.close()
     print Result
