@@ -40,8 +40,8 @@ def solve():
     for sol in pycosat.itersolve(clauses):
         sol = set(sol)
         for i in range(N):
-            print ''.join('Q' if v(i, j) in sol else '.' for j in range(N))
-        print
+            print(''.join('Q' if v(i, j) in sol else '.' for j in range(N)))
+        print('')
 
 if __name__ == '__main__':
     solve()
