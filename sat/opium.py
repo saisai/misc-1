@@ -1,11 +1,37 @@
+from pprint import pprint
+
 index = {
-    'a', {'requires': ['a', 'b', 'z']},
-    'b', {'requires': ['d']},
-    'c', {'requires': ['d|e', 'f|g']},
-    'd', {'requires': []},
-    'e', {'requires': []},
-    'f', {'requires': []},
-    'g', {'requires': []},
-    'y', {'requires': ['z']},
-    'z', {'requires': []},
+    'a': {'requires': ['b', 'c', 'z']},
+    'b': {'requires': ['d']},
+    'c': {'requires': ['d|e', 'f|g']},
+    'd': {'conflicts': ['e']},
+    'e': {'conflicts': ['d']},
+    'f': {},
+    'g': {},
+    'y': {'requires': ['z']},
+    'z': {},
 }
+
+v = {} # map names to variable numbers
+w = {} # map variable numbers to names
+for i, name in enumerate(index.iterkeys()):
+    v[name] = i + 1
+    w[i + 1] = name
+
+clauses = []
+def to_cnf(name):
+    requires = index[name].get('requires', [])
+    for r in requires:
+        clauses.append([-v[name]] + [v[n] for n in r.split('|')])
+
+    conflicts = index[name].get('conflicts', [])
+    for c in conflicts:
+        clauses.append([-v[name], -v[c]])
+
+for name in index.iterkeys():
+    to_cnf(name)
+
+print v
+print w
+to_cnf('a')
+pprint(clauses)
