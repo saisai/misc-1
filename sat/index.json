@@ -7009,17 +7009,6 @@
     "size": 1261350,
     "version": "2.4.0"
   },
-  "pytest-2.3.3-py26_0.tar.bz2": {
-    "build": "py26_0",
-    "build_number": 0,
-    "name": "pytest",
-    "requires": [
-      "py 2.4.12",
-      "python 2.6"
-    ],
-    "size": 264389,
-    "version": "2.3.3"
-  },
   "pytest-2.3.3-py26_1.tar.bz2": {
     "build": "py26_1",
     "build_number": 1,
@@ -7029,17 +7018,6 @@
       "python 2.6"
     ],
     "size": 152379,
-    "version": "2.3.3"
-  },
-  "pytest-2.3.3-py27_0.tar.bz2": {
-    "build": "py27_0",
-    "build_number": 0,
-    "name": "pytest",
-    "requires": [
-      "py 2.4.12",
-      "python 2.7"
-    ],
-    "size": 152458,
     "version": "2.3.3"
   },
   "pytest-2.3.3-py27_1.tar.bz2": {
