@@ -36,7 +36,7 @@ for name in index.iterkeys():
 print v
 clauses.append([v['a']])
 
-pprint([[('-' if i<0 else '') + w[-i if i<0 else i] for i in clause]
+pprint([' V '.join(('-' if i<0 else '') + w[abs(i)] for i in clause)
         for clause in clauses])
 
 for sol in pycosat.itersolve(clauses):
