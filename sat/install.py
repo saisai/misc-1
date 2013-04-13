@@ -4,6 +4,7 @@ from pprint import pprint
 
 import pycosat
 
+
 with open('index.json') as fi:
     index = json.load(fi)
 
@@ -60,9 +61,10 @@ for fn1, info1 in index.iteritems():
         clauses.append(clause)
 
 
-pprint([' V '.join(('-' if i<0 else '') + w[abs(i)] for i in clause)
-        for clause in clauses])
+#pprint([' V '.join(('-' if i<0 else '') + w[abs(i)] for i in clause)
+#        for clause in clauses])
 
+clauses.append([v['anaconda-1.4.0-np17py27_0.tar.bz2']])
 
 for sol in pycosat.itersolve(clauses):
-    print sorted(w[i] for i in sol if i > 0)
+    pprint(sorted(w[i] for i in sol if i > 0))
