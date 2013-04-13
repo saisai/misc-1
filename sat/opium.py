@@ -8,8 +8,8 @@ index = {
     'c': {'requires': ['d|e', 'f|g']},
     'd': {'conflicts': ['e']},
     'e': {'conflicts': ['d']},
-    'f': {},
-    'g': {},
+    'f': {'conflicts': ['g']},
+    'g': {'conflicts': ['f']},
     'y': {'requires': ['z']},
     'z': {},
 }
@@ -33,8 +33,11 @@ def to_cnf(name):
 for name in index.iterkeys():
     to_cnf(name)
 
-#print v
-#print w
-#pprint(clauses)
+print v
+clauses.append([v['a']])
+
+pprint([[('-' if i<0 else '') + w[-i if i<0 else i] for i in clause]
+        for clause in clauses])
+
 for sol in pycosat.itersolve(clauses):
     print sorted(w[i] for i in sol if i > 0)
