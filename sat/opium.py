@@ -1,5 +1,7 @@
 from pprint import pprint
 
+import pycosat
+
 index = {
     'a': {'requires': ['b', 'c', 'z']},
     'b': {'requires': ['d']},
@@ -31,7 +33,8 @@ def to_cnf(name):
 for name in index.iterkeys():
     to_cnf(name)
 
-print v
-print w
-to_cnf('a')
-pprint(clauses)
+#print v
+#print w
+#pprint(clauses)
+for sol in pycosat.itersolve(clauses):
+    print sorted(w[i] for i in sol if i > 0)
