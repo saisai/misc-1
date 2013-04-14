@@ -1,4 +1,5 @@
 import json
+import time
 from collections import defaultdict
 from pprint import pprint
 
@@ -47,7 +48,7 @@ for fn1, info1 in index.iteritems():
         name, version, build = split_requirement(r)
         assert name and name != info1['name']
         if build is None and name == 'nose':
-            version = None
+            continue
 
         clause = [-v[fn1]]
         if version is None:
@@ -74,14 +75,16 @@ for fn1, info1 in index.iteritems():
         clauses.append(clause)
 
 
-print len(clauses)
+print len(v), len(w), len(clauses)
 #pprint([' V '.join(('-' if i<0 else '') + w[abs(i)] for i in clause)
 #        for clause in clauses])
 
 clauses.append(None)
 for fn in index:
     clauses[-1] = [v[fn]]
+    t0 = time.time()
     sol = pycosat.solve(clauses)
+    print 'time: %8.3f sec' % (time.time() - t0)
     if not isinstance(sol, list):
         print fn, sol
         if not fn.startswith('anaconda-'):
