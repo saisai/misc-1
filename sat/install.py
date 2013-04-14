@@ -29,27 +29,37 @@ for filenames in groups.itervalues():
             if v1 < v2:
                 clauses.append([-v1, -v2])
 
+def itergroup(name):
+    for fn in groups[name]:
+        info = index[fn]
+        assert info['name'] == name
+        yield fn, info
+
 for fn1, info1 in index.iteritems():
     for r in info1['requires']:
-        parts = r.split()
         clause = [-v[fn1]]
-        if len(parts) == 2:
+
+        parts = r.split()
+        while len(parts) < 3:
             parts.append(None)
         name, version, build = parts
-        assert name != info1['name']
+        assert name and name != info1['name']
+        if build is None and name == 'nose':
+            version = None
 
-        if name in ('python', 'numpy') and len(version) == 3:
+        if version is None:
             assert build is None
-            for fn2 in groups[name]:
-                info2 = index[fn2]
-                assert info2['name'] == name
+            for fn2, unused_info in itergroup(name):
+                clause.append(v[fn2])
+
+        elif name in ('python', 'numpy') and len(version) == 3:
+            assert build is None
+            for fn2, info2 in itergroup(name):
                 if info2['version'].startswith(version):
                     clause.append(v[fn2])
 
         elif build is None:
-            for fn2 in groups[name]:
-                info2 = index[fn2]
-                assert info2['name'] == name
+            for fn2, info2 in itergroup(name):
                 if info2['version'] == version:
                     clause.append(v[fn2])
 
@@ -64,7 +74,12 @@ for fn1, info1 in index.iteritems():
 #pprint([' V '.join(('-' if i<0 else '') + w[abs(i)] for i in clause)
 #        for clause in clauses])
 
-clauses.append([v['anaconda-1.4.0-np17py27_0.tar.bz2']])
-
-for sol in pycosat.itersolve(clauses):
-    pprint(sorted(w[i] for i in sol if i > 0))
+clauses.append(None)
+for fn in index:
+    clauses[-1] = [v[fn]]
+    sol = pycosat.solve(clauses)
+    if not isinstance(sol, list):
+        print fn, sol
+        if not fn.startswith('anaconda-'):
+            pprint(index[fn])
+    #pprint(sorted(w[i] for i in sol if i > 0))
