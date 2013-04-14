@@ -35,18 +35,21 @@ for filenames in groups.itervalues():
             if v1 < v2:
                 clauses.append([-v1, -v2])
 
+def split_requirement(s):
+    parts = s.split()
+    while len(parts) < 3:
+        parts.append(None)
+    assert len(parts) == 3
+    return parts
+
 for fn1, info1 in index.iteritems():
     for r in info1['requires']:
-        clause = [-v[fn1]]
-
-        parts = r.split()
-        while len(parts) < 3:
-            parts.append(None)
-        name, version, build = parts
+        name, version, build = split_requirement(r)
         assert name and name != info1['name']
         if build is None and name == 'nose':
             version = None
 
+        clause = [-v[fn1]]
         if version is None:
             assert build is None
             for fn2, unused_info in itergroup(name):
@@ -64,13 +67,14 @@ for fn1, info1 in index.iteritems():
                     clause.append(v[fn2])
 
         else:
-            fn2 = '%s-%s-%s.tar.bz2' % tuple(parts)
+            fn2 = '%s-%s-%s.tar.bz2' % (name, version, build)
             clause.append(v[fn2])
 
         assert len(clause) > 1
         clauses.append(clause)
 
 
+print len(clauses)
 #pprint([' V '.join(('-' if i<0 else '') + w[abs(i)] for i in clause)
 #        for clause in clauses])
 
