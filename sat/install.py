@@ -18,6 +18,12 @@ groups = defaultdict(list) # map name to list of filenames
 for fn, info in index.iteritems():
     groups[info['name']].append(fn)
 
+def itergroup(name):
+    for fn in groups[name]:
+        info = index[fn]
+        assert info['name'] == name
+        yield fn, info
+
 clauses = []
 
 for filenames in groups.itervalues():
@@ -28,12 +34,6 @@ for filenames in groups.itervalues():
             v2 = v[fn2]
             if v1 < v2:
                 clauses.append([-v1, -v2])
-
-def itergroup(name):
-    for fn in groups[name]:
-        info = index[fn]
-        assert info['name'] == name
-        yield fn, info
 
 for fn1, info1 in index.iteritems():
     for r in info1['requires']:
