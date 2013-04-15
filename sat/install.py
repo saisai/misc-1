@@ -43,7 +43,9 @@ def split_requirement(s):
     assert len(parts) == 3
     return parts
 
-for fn1, info1 in index.iteritems():
+def add_requirements(fn1):
+    # translate the requirements of package `fn` to clauses
+    info1 = index[fn1]
     for r in info1['requires']:
         name, version, build = split_requirement(r)
         assert name and name != info1['name']
@@ -74,6 +76,8 @@ for fn1, info1 in index.iteritems():
         assert len(clause) > 1
         clauses.append(clause)
 
+for fn in index.iterkeys():
+    add_requirements(fn)
 
 print len(v), len(w), len(clauses)
 #pprint([' V '.join(('-' if i<0 else '') + w[abs(i)] for i in clause)
@@ -82,9 +86,9 @@ print len(v), len(w), len(clauses)
 clauses.append(None)
 for fn in index:
     clauses[-1] = [v[fn]]
-    t0 = time.time()
+    #t0 = time.time()
     sol = pycosat.solve(clauses)
-    print 'time: %8.3f sec' % (time.time() - t0)
+    #print 'time: %8.3f sec' % (time.time() - t0)
     if not isinstance(sol, list):
         print fn, sol
         if not fn.startswith('anaconda-'):
