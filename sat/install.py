@@ -41,16 +41,14 @@ def split_requirement(s):
     while len(parts) < 3:
         parts.append(None)
     assert len(parts) == 3
-    return parts
+    return tuple(parts)
 
-def add_requirements(fn1):
+def translate_requirements(fn1):
     # translate the requirements of package `fn` to clauses
     info1 = index[fn1]
     for r in info1['requires']:
         name, version, build = split_requirement(r)
         assert name and name != info1['name']
-        if build is None and name == 'nose':
-            continue
 
         clause = [-v[fn1]]
         if version is None:
@@ -77,20 +75,53 @@ def add_requirements(fn1):
         clauses.append(clause)
 
 for fn in index.iterkeys():
-    add_requirements(fn)
+    translate_requirements(fn)
 
 print len(v), len(w), len(clauses)
 #pprint([' V '.join(('-' if i<0 else '') + w[abs(i)] for i in clause)
 #        for clause in clauses])
 
-clauses.append(None)
-for fn in index:
-    clauses[-1] = [v[fn]]
-    #t0 = time.time()
-    sol = pycosat.solve(clauses)
-    #print 'time: %8.3f sec' % (time.time() - t0)
-    if not isinstance(sol, list):
-        print fn, sol
-        if not fn.startswith('anaconda-'):
-            pprint(index[fn])
-    #pprint(sorted(w[i] for i in sol if i > 0))
+def reqs_pkg(fn):
+    for r in index[fn]['requires']:
+        name, version, build = split_requirement(r)
+        if version is None:
+            assert build is None
+            for fn2, unused_info in itergroup(name):
+                yield fn2
+
+        elif name in ('python', 'numpy') and len(version) == 3:
+            assert build is None
+            for fn2, info2 in itergroup(name):
+                if info2['version'].startswith(version):
+                    yield fn2
+
+        elif build is None:
+            for fn2, info2 in itergroup(name):
+                if info2['version'] == version:
+                    yield fn2
+
+        else:
+            fn2 = '%s-%s-%s.tar.bz2' % (name, version, build)
+            assert fn2 in index
+            yield fn2
+
+
+if 0:
+    clauses.append(None)
+    for fn in index:
+        clauses[-1] = [v[fn]]
+        #t0 = time.time()
+        sol = pycosat.solve(clauses)
+        #print 'time: %8.3f sec' % (time.time() - t0)
+        if not isinstance(sol, list):
+            print fn, sol
+            if not fn.startswith('anaconda-'):
+                pprint(index[fn])
+        #pprint(sorted(w[i] for i in sol if i > 0))
+
+
+if 1:
+    fn = 'numbapro-0.6-np17py27_0.tar.bz2'
+    pprint(index[fn])
+    for f in reqs_pkg(fn):
+        print f
