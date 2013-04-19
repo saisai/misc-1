@@ -44,6 +44,7 @@ def split_requirement(s):
     return tuple(parts)
 
 def find_matches(name, version, build):
+    assert name is not None
     if version is None:
         assert build is None
         for fn2, unused_info in itergroup(name):
