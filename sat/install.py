@@ -43,6 +43,28 @@ def split_requirement(s):
     assert len(parts) == 3
     return tuple(parts)
 
+def find_matches(name, version, build):
+    if version is None:
+        assert build is None
+        for fn2, unused_info in itergroup(name):
+            yield fn2
+
+    elif name in ('python', 'numpy') and len(version) == 3:
+        assert build is None
+        for fn2, info2 in itergroup(name):
+            if info2['version'].startswith(version):
+                yield fn2
+
+    elif build is None:
+        for fn2, info2 in itergroup(name):
+            if info2['version'] == version:
+                yield fn2
+
+    else:
+        fn2 = '%s-%s-%s.tar.bz2' % (name, version, build)
+        assert fn2 in index
+        yield fn2
+
 def translate_requirements(fn1):
     # translate the requirements of package `fn` to clauses
     info1 = index[fn1]
@@ -53,24 +75,7 @@ def translate_requirements(fn1):
             continue
 
         clause = [-v[fn1]]
-        if version is None:
-            assert build is None
-            for fn2, unused_info in itergroup(name):
-                clause.append(v[fn2])
-
-        elif name in ('python', 'numpy') and len(version) == 3:
-            assert build is None
-            for fn2, info2 in itergroup(name):
-                if info2['version'].startswith(version):
-                    clause.append(v[fn2])
-
-        elif build is None:
-            for fn2, info2 in itergroup(name):
-                if info2['version'] == version:
-                    clause.append(v[fn2])
-
-        else:
-            fn2 = '%s-%s-%s.tar.bz2' % (name, version, build)
+        for fn2 in find_matches(name, version, build):
             clause.append(v[fn2])
 
         assert len(clause) > 1
