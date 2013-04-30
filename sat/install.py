@@ -82,6 +82,11 @@ def translate_requirements(fn1):
         assert len(clause) > 1
         clauses.append(clause)
 
+    for name in info1.get('conflicts', []):
+        for fn2 in find_matches(name, None, None):
+            clauses.append([-v[fn1], -v[fn2]])
+
+
 for fn in index.iterkeys():
     translate_requirements(fn)
 
