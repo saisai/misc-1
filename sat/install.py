@@ -63,7 +63,7 @@ def find_matches(name, version, build):
 
     else:
         fn2 = '%s-%s-%s.tar.bz2' % (name, version, build)
-        assert fn2 in index
+        assert fn2 in index, fn2
         yield fn2
 
 def translate_requirements(fn1):
