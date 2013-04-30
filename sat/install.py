@@ -90,18 +90,17 @@ def translate_requirements(fn1):
 for fn in index.iterkeys():
     translate_requirements(fn)
 
-print len(v), len(w), len(clauses)
-#pprint([' V '.join(('-' if i<0 else '') + w[abs(i)] for i in clause)
-#        for clause in clauses])
+if __name__ == '__main__':
+    print len(v), len(w), len(clauses)
+    #pprint([' V '.join(('-' if i<0 else '') + w[abs(i)] for i in clause)
+    #        for clause in clauses])
 
-clauses.append(None)
-for fn in index:
-    clauses[-1] = [v[fn]]
-    #t0 = time.time()
-    sol = pycosat.solve(clauses)
-    #print 'time: %8.3f sec' % (time.time() - t0)
-    if not isinstance(sol, list):
-        print fn, sol
-        if not fn.startswith('anaconda-'):
-            pprint(index[fn])
-    #pprint(sorted(w[i] for i in sol if i > 0))
+    clauses.append(None)
+    for fn in index:
+        clauses[-1] = [v[fn]]
+        #t0 = time.time()
+        sol = pycosat.solve(clauses)
+        #print 'time: %8.3f sec' % (time.time() - t0)
+        if not isinstance(sol, list):
+            print fn, sol
+        #pprint(sorted(w[i] for i in sol if i > 0))
