@@ -1,60 +1,9 @@
-import json
-import time
-from collections import defaultdict
 from pprint import pprint
 
-import pycosat
 from ll.diffutils import show_set_diff
 
+from install import index, split_requirement, find_matches
 
-with open('index.json') as fi:
-    index = json.load(fi)
-
-v = {} # map fn to variable number
-w = {} # map variable number to fn
-for i, fn in enumerate(index.iterkeys()):
-    v[fn] = i + 1
-    w[i + 1] = fn
-
-groups = defaultdict(list) # map name to list of filenames
-for fn, info in index.iteritems():
-    groups[info['name']].append(fn)
-
-def itergroup(name):
-    for fn in groups[name]:
-        info = index[fn]
-        assert info['name'] == name
-        yield fn, info
-
-def split_requirement(s):
-    parts = s.split()
-    while len(parts) < 3:
-        parts.append(None)
-    assert len(parts) == 3
-    return tuple(parts)
-
-def find_matches(name, version, build):
-    assert name is not None
-    if version is None:
-        assert build is None
-        for fn2, unused_info in itergroup(name):
-            yield fn2
-
-    elif name in ('python', 'numpy') and len(version) == 3:
-        assert build is None
-        for fn2, info2 in itergroup(name):
-            if info2['version'].startswith(version):
-                yield fn2
-
-    elif build is None:
-        for fn2, info2 in itergroup(name):
-            if info2['version'] == version:
-                yield fn2
-
-    else:
-        fn2 = '%s-%s-%s.tar.bz2' % (name, version, build)
-        assert fn2 in index
-        yield fn2
 
 def nvb_fn(fn):
     return tuple(fn[:-8].rsplit('-', 2))
