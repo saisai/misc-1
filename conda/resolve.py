@@ -43,7 +43,9 @@ class Package(object):
         self.name = self.info['name']
         self.version = self.info['version']
         self.build_number = self.info['build_number']
+        self.add_norm_version()
 
+    def add_norm_version(self):
         v = self.version
         v = v.replace('rc', '.dev99999')
         if v.endswith('.dev'):
