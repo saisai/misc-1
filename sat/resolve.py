@@ -29,6 +29,7 @@ def all_deps(root_fn):
 
 fn = 'anaconda-1.4.1-np17py27_0.tar.bz2'
 
-a = all_deps(fn)
-s = shallow_deps(fn)
-assert s - a == set([])
+sd = shallow_deps(fn)
+for fn in sd:
+    print fn
+    print all_deps(fn)
