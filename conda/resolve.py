@@ -80,6 +80,17 @@ def show_sorted_versions():
             for x in disp:
                 print '\t' + x
 
+def max_pkg_fn(name, py_ver='2.7', npy_ver='1.7'):
+    pkgs = []
+    for fn2, info2 in itergroup(name):
+        if any((r.startswith('python ') and r != 'python %s' % py_ver) or
+               (r.startswith('numpy ') and r != 'numpy %s' % npy_ver)
+               for r in info2['requires']):
+            continue
+        pkgs.append(Package(fn2))
+
+    return max(pkgs).fn
+
 
 if __name__ == '__main__':
     #show_sorted_versions()
@@ -89,15 +100,6 @@ if __name__ == '__main__':
     ad = all_deps(fn)
     for fn1 in sd:
         name, unused_version, unused_buid = nvb_fn(fn1)
-
-        pkgs = []
-        for fn2, info2 in itergroup(name):
-            if any((r.startswith('python ') and r != 'python 2.7') or
-                   (r.startswith('numpy ') and r != 'numpy 1.7')
-                   for r in info2['requires']):
-                continue
-            pkgs.append(Package(fn2))
-
-        max_pkg = max(pkgs)
-        if fn1 != max_pkg.fn:
-            print fn1, max_pkg.fn
+        max_fn = max_pkg_fn(name)
+        if fn1 != max_fn:
+            print fn1, max_fn
