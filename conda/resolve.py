@@ -44,12 +44,16 @@ class Package(object):
         self.version = self.info['version']
         self.build_number = self.info['build_number']
 
+        v = self.version
+        v = v.replace('rc', '.dev99999')
+        if v.endswith('.dev'):
+            v += '0'
         try:
-            self.norm_version = verlib.NormalizedVersion(self.version)
+            self.norm_version = verlib.NormalizedVersion(v)
         except verlib.IrrationalVersionError:
             self.norm_version = self.version
 
-    def  __cmp__(self, other):
+    def __cmp__(self, other):
         assert self.name == other.name
         try:
             return cmp((self.norm_version, self.build_number),
@@ -59,15 +63,22 @@ class Package(object):
                        (other.version, other.build_number))
 
 def main():
-    for name in groups:
-        print name
-
+    for name in sorted(groups):
         pkgs = []
         for fn, info in itergroup(name):
             pkgs.append(Package(fn))
         pkgs.sort()
+        disp = []
         for pkg in pkgs:
-            print pkg.version, pkg.build_number
+            x = '%s-%d' % (pkg.version, pkg.build_number)
+            if str(pkg.norm_version) != pkg.version:
+                x += '          %s' % pkg.norm_version
+            if x not in disp:
+                disp.append(x)
+        if len(disp) > 1:
+            print name
+            for x in disp:
+                print '\t' + x
 
 
 if __name__ == '__main__':
