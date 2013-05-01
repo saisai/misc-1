@@ -64,11 +64,9 @@ class Package(object):
             return cmp((self.version, self.build_number),
                        (other.version, other.build_number))
 
-def main():
+def show_sorted_versions():
     for name in sorted(groups):
-        pkgs = []
-        for fn, info in itergroup(name):
-            pkgs.append(Package(fn))
+        pkgs = [Package(fn) for fn, unused_info in itergroup(name)]
         pkgs.sort()
         disp = []
         for pkg in pkgs:
@@ -84,4 +82,22 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    #show_sorted_versions()
+
+    fn = 'anaconda-1.4.1-np17py27_0.tar.bz2'
+    sd = shallow_deps(fn)
+    ad = all_deps(fn)
+    for fn1 in sd:
+        name, unused_version, unused_buid = nvb_fn(fn1)
+
+        pkgs = []
+        for fn2, info2 in itergroup(name):
+            if any((r.startswith('python ') and r != 'python 2.7') or
+                   (r.startswith('numpy ') and r != 'numpy 1.7')
+                   for r in info2['requires']):
+                continue
+            pkgs.append(Package(fn2))
+
+        max_pkg = max(pkgs)
+        if fn1 != max_pkg.fn:
+            print fn1, max_pkg.fn
