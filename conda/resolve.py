@@ -80,26 +80,39 @@ def show_sorted_versions():
             for x in disp:
                 print '\t' + x
 
-def max_pkg_fn(name, py_ver='2.7', npy_ver='1.7'):
-    pkgs = []
-    for fn2, info2 in itergroup(name):
+def meta_pkg_deps(fn):
+    return ['%s-%s-%s.tar.bz2' % split_requirement(r)
+            for r in index[fn]['requires']]
+
+def filter(dists, py_ver='2.7', npy_ver='1.7'):
+    res = []
+    for fn in dists:
+        if any((fn.startswith(name + '-') and
+                not fn.startswith(name + '-' + ver))
+               for name, ver in (('python', py_ver), ('numpy', npy_ver))):
+            continue
+        info = index[fn]
         if any((r.startswith('python ') and r != 'python %s' % py_ver) or
                (r.startswith('numpy ') and r != 'numpy %s' % npy_ver)
-               for r in info2['requires']):
+               for r in info['requires']):
             continue
-        pkgs.append(Package(fn2))
-
-    return max(pkgs).fn
+        res.append(fn)
+    return res
 
 
 if __name__ == '__main__':
-    show_sorted_versions()
+    #show_sorted_versions()
 
-    fn = 'anaconda-1.4.1-np17py27_0.tar.bz2'
-    sd = shallow_deps(fn)
-    ad = all_deps(fn)
+    sd = meta_pkg_deps('anaconda-1.4.1-np17py27_0.tar.bz2')
+    res = set()
     for fn1 in sd:
-        name, unused_version, unused_buid = nvb_fn(fn1)
-        max_fn = max_pkg_fn(name)
-        if fn1 != max_fn:
-            print fn1, max_fn
+        ad = filter(all_deps(fn1))
+        #print fn1, len(ad)
+        pkgs = [Package(fn) for fn in ad]
+        names = set(p.name for p in pkgs)
+        for name in names:
+            fn2 = max(p for p in pkgs if p.name == name).fn
+            if fn2 not in sd:
+                res.add('%s required by %s' % (fn2, fn1))
+    for fn in res:
+        print fn
