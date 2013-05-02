@@ -94,11 +94,12 @@ if __name__ == '__main__':
     #        for clause in clauses])
 
     clauses.append(None)
-    for fn in index:
+    for fn in sorted(index):
+        if not fn.startswith('anaconda-1.4'):
+            continue
         clauses[-1] = [v[fn]]
         #t0 = time.time()
         sol = pycosat.solve(clauses)
         #print 'time: %8.3f sec' % (time.time() - t0)
-        if not isinstance(sol, list):
-            print fn, sol
+        print fn, 'SAT' if isinstance(sol, list) else sol
         #pprint(sorted(w[i] for i in sol if i > 0))
