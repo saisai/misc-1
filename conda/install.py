@@ -72,8 +72,6 @@ def translate_requirements(fn1):
     for r in info1['requires']:
         name, version, build = split_requirement(r)
         assert name and name != info1['name']
-        if build is None and name == 'nose':
-            continue
 
         clause = [-v[fn1]]
         for fn2 in find_matches(name, version, build):

@@ -78,8 +78,6 @@ class Index(object):
             for r in info1['requires']:
                 name, version, build = split_requirement(r)
                 assert name and name != info1['name']
-                if build is None and name == 'nose':
-                    continue
 
                 clause = [-self.v[fn1]]
                 for fn2 in self.find_matches(name, version, build):
