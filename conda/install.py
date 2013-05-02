@@ -79,7 +79,7 @@ def translate_requirements(fn1):
         for fn2 in find_matches(name, version, build):
             clause.append(v[fn2])
 
-        assert len(clause) > 1
+        assert len(clause) > 1, fn1
         clauses.append(clause)
 
     for name in info1.get('conflicts', []):
