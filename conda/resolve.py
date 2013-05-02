@@ -106,9 +106,9 @@ if __name__ == '__main__':
     sd = meta_pkg_deps('anaconda-1.4.1-np17py27_0.tar.bz2')
     res = set()
     for fn1 in sd:
-        ad = filter(all_deps(fn1))
-        #print fn1, len(ad)
-        pkgs = [Package(fn) for fn in ad]
+        deps = filter(shallow_deps(fn1))
+        #print fn1, len(deps)
+        pkgs = [Package(fn) for fn in deps]
         names = set(p.name for p in pkgs)
         for name in names:
             fn2 = max(p for p in pkgs if p.name == name).fn
