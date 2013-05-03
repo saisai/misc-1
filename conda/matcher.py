@@ -1,6 +1,6 @@
 import re
 
-class Matcher(object):
+class MatchSpec(object):
 
     def __init__(self, spec):
         parts = spec.split()
@@ -44,5 +44,5 @@ if __name__ == '__main__':
                        ('numpy 1.7.1 py26_0', False),
                        ('python', False),
                        ]:
-        m = Matcher(mspec)
+        m = MatchSpec(mspec)
         assert m.match('numpy-1.7.1-py27_0') == res, mspec
