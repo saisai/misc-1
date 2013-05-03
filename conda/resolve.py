@@ -28,13 +28,6 @@ def all_deps(root_fn):
     add_dependents(root_fn)
     return pkgs
 
-def foo():
-    fn = 'anaconda-1.4.1-np17py27_0.tar.bz2'
-    sd = shallow_deps(fn)
-    for fn in sd:
-        print fn
-        print all_deps(fn)
-
 class Package(object):
 
     def __init__(self, fn):
