@@ -1,0 +1,33 @@
+  "pytables-2.4.0-np16py26_0.tar.bz2": {
+    "build": "np16py26_0",
+    "build_number": 0,
+    "depends": [
+      "hdf5 1.8.9",
+      "numexpr 2.0.0|2.0.1",
+      "numpy 1.6*",
+      "python 2.6*",
+      "pytz",
+      "zlib 1.2.7 0"
+    ],
+    "conflicts": [],
+    "name": "pytables",
+    "requires": [
+      "hdf5 1.8.9",
+      "numexpr 2.0.1",
+      "numpy 1.6",
+      "python 2.6"
+    ],
+    "version": "2.4.0"
+  },
+
+"depends" and "conflicts" are lists of "match specifications".
+A match specification is string, which (when split by spaces)
+has 1, 2 or 3 parts:
+  * the first part is always the (exact) name
+  * the second part refers to the version, and may contain special characters
+      '|' means "or", e.g. "1.0|1.2" matches either version 1.0 or 1.2
+      '*' means (in terms of regex) .*
+      '?' means (in terms of regex) .
+    Examples:
+      "1.0|1.2.?|1.4*"  matches 1.0, 1.2.1, 1.4.1b2, but not 1.2.1b2
+  * the third part is always the (exact) build string
