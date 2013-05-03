@@ -4,8 +4,8 @@
     "depends": [
       "hdf5 1.8.9",
       "numexpr 2.0.0|2.0.1",
-      "numpy 1.6*",
-      "python 2.6*",
+      "numpy 1.6.*",
+      "python 2.6.*",
       "pytz",
       "zlib 1.2.7 0"
     ],

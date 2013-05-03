@@ -101,7 +101,7 @@ def filter(dists, py_ver='2.7', npy_ver='1.7'):
 
 
 if __name__ == '__main__':
-    #show_sorted_versions()
+    show_sorted_versions()
 
     sd = meta_pkg_deps('anaconda-1.4.1-np17py27_0.tar.bz2')
     res = set()
