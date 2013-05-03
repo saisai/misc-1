@@ -92,11 +92,8 @@ def filter(dists, py_ver='2.7', npy_ver='1.7'):
         res.append(fn)
     return res
 
-
-if __name__ == '__main__':
-    show_sorted_versions()
-
-    sd = meta_pkg_deps('anaconda-1.4.1-np17py27_0.tar.bz2')
+def show_inconsistencies(meta_fn):
+    sd = meta_pkg_deps(meta_fn)
     res = set()
     for fn1 in sd:
         deps = filter(shallow_deps(fn1))
@@ -109,3 +106,8 @@ if __name__ == '__main__':
                 res.add('%s required by %s' % (fn2, fn1))
     for fn in res:
         print fn
+
+
+if __name__ == '__main__':
+    show_sorted_versions()
+    show_inconsistencies('anaconda-1.4.1-np17py27_0.tar.bz2')
