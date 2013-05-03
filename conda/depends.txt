@@ -26,7 +26,7 @@ has 1, 2 or 3 parts:
   * the first part is always the (exact) name
   * the second part refers to the version, and may contain special characters
       '|' means "or", e.g. "1.0|1.2" matches either version 1.0 or 1.2
-      '*' means (in terms of regex) .*
+      '*' means (in terms of regex) r'.*'
     Example:
       "1.0|1.4*"  matches 1.0, 1.4, 1.4.1b2, but not 1.2
   * the third part is always the (exact) build string

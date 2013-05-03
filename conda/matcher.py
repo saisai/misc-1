@@ -12,9 +12,9 @@ class MatchSpec(object):
             rx = rx.replace('.', r'\.')
             rx = rx.replace('*', r'.*')
             rx = r'(%s)$' % rx
-            self.vpat = re.compile(rx)
+            self.ver_pat = re.compile(rx)
         else:
-            self.vpat = None
+            self.ver_pat = None
 
         if self.strictness == 3:
             self.build = parts[2]
@@ -25,16 +25,18 @@ class MatchSpec(object):
         name, version, build = dist.rsplit('-', 2)
         if name != self.name:
             return False
-        if self.vpat and not self.vpat.match(version):
+        if self.ver_pat and not self.ver_pat.match(version):
             return False
         if self.build and build != self.build:
             return False
         return True
 
+
 if __name__ == '__main__':
     for mspec, res in [('numpy 1.7*', True),
                        ('numpy 1.7.1', True),
                        ('numpy 1.7', False),
+                       ('numpy 1.5*', False),
                        ('numpy 1.6*|1.7*', True),
                        ('numpy 1.6*|1.8*', False),
                        ('numpy 1.6.2|1.7*', True),
