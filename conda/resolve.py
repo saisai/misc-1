@@ -98,16 +98,16 @@ def show_inconsistencies(meta_fn):
     py_ver  = '.'.join(m.group(3))
     npy_ver = '.'.join(m.group(2))
 
-    sd = meta_pkg_deps(meta_fn)
+    mpd = meta_pkg_deps(meta_fn)
     res = set()
-    for fn1 in sd:
+    for fn1 in mpd:
         deps = filter(shallow_deps(fn1), py_ver, npy_ver)
         #print fn1, len(deps)
         pkgs = [Package(fn) for fn in deps]
         names = set(p.name for p in pkgs)
         for name in names:
             fn2 = max(p for p in pkgs if p.name == name).fn
-            if fn2 not in sd:
+            if fn2 not in mpd:
                 res.add('%s required by %s' % (fn2, fn1))
     for fn in res:
         print fn
