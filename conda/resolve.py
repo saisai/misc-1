@@ -1,6 +1,5 @@
-from pprint import pprint
+import re
 
-from ll.diffutils import show_set_diff
 import verlib
 
 from install import index, groups, itergroup, split_requirement, find_matches
@@ -93,10 +92,16 @@ def filter(dists, py_ver='2.7', npy_ver='1.7'):
     return res
 
 def show_inconsistencies(meta_fn):
+    pat = re.compile(r'(np(\d{2})py(\d{2}))_0$')
+    b = nvb_fn(meta_fn)[2]
+    m = pat.match(b)
+    py_ver  = '.'.join(m.group(3))
+    npy_ver = '.'.join(m.group(2))
+
     sd = meta_pkg_deps(meta_fn)
     res = set()
     for fn1 in sd:
-        deps = filter(shallow_deps(fn1))
+        deps = filter(shallow_deps(fn1), py_ver, npy_ver)
         #print fn1, len(deps)
         pkgs = [Package(fn) for fn in deps]
         names = set(p.name for p in pkgs)
@@ -109,5 +114,9 @@ def show_inconsistencies(meta_fn):
 
 
 if __name__ == '__main__':
-    show_sorted_versions()
-    show_inconsistencies('anaconda-1.4.1-np17py27_0.tar.bz2')
+    #show_sorted_versions()
+    for fn in index:
+        if not fn.startswith('anaconda-1.4.1-'):
+            continue
+        print fn
+        show_inconsistencies(fn)
