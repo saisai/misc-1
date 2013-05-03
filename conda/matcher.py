@@ -10,7 +10,8 @@ class MatchSpec(object):
         if self.strictness >= 2:
             rx = parts[1]
             rx = rx.replace('.', r'\.')
-            rx = rx.replace('*', '.*') + '$'
+            rx = rx.replace('*', r'.*')
+            rx = r'(%s)$' % rx
             self.vpat = re.compile(rx)
         else:
             self.vpat = None
