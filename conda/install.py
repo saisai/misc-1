@@ -1,3 +1,4 @@
+import sys
 import json
 import time
 from collections import defaultdict
@@ -93,13 +94,13 @@ if __name__ == '__main__':
     #pprint([' V '.join(('-' if i<0 else '') + w[abs(i)] for i in clause)
     #        for clause in clauses])
 
-    clauses.append(None)
-    for fn in sorted(index):
-        if not fn.startswith('anaconda-1.4'):
-            continue
-        clauses[-1] = [v[fn]]
-        #t0 = time.time()
-        sol = pycosat.solve(clauses)
-        #print 'time: %8.3f sec' % (time.time() - t0)
-        print fn, 'SAT' if isinstance(sol, list) else sol
+    clauses.append([v['anaconda-1.4.1-np17py27_0.tar.bz2']])
+    t0 = time.time()
+    n = 0
+    for sol in pycosat.itersolve(clauses):
+        n += 1
+        if n % 1000 == 0:
+            sys.stdout.write('.')
+            sys.stdout.flush()
         #pprint(sorted(w[i] for i in sol if i > 0))
+    print n
