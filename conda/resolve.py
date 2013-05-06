@@ -92,7 +92,7 @@ def filter(dists, py_ver='2.7', npy_ver='1.7'):
     return res
 
 def show_inconsistencies(meta_fn):
-    pat = re.compile(r'(np(\d{2})py(\d{2}))_0$')
+    pat = re.compile(r'(np(\d{2})py(\d{2}))_')
     b = nvb_fn(meta_fn)[2]
     m = pat.match(b)
     py_ver  = '.'.join(m.group(3))
@@ -116,7 +116,7 @@ def show_inconsistencies(meta_fn):
 if __name__ == '__main__':
     #show_sorted_versions()
     for fn in index:
-        if not fn.startswith('anaconda-1.4.1-'):
+        if not fn.startswith('anaconda-1.5.0-'):
             continue
         print fn
         show_inconsistencies(fn)
