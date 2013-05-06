@@ -8,7 +8,7 @@ for info in index.itervalues():
     del info['md5'], info['size']
     channel = info['channel']
     channel = channel.split('/')[-3]
-    assert channel in ('pro', 'free', 'test'), channel
+    assert channel in ('pro', 'free', 'test-pkgs'), channel
     info['channel'] = channel
 
 
