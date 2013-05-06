@@ -71,7 +71,7 @@ def find_matches(name, version, build):
         assert fn2 in index, fn2
         yield fn2
 
-def translate_requirements(fn1):
+def add_clauses(fn1):
     # translate the requirements of package `fn` to clauses
     info1 = index[fn1]
     for r in info1['requires']:
@@ -91,7 +91,8 @@ def translate_requirements(fn1):
 
 
 for fn in index.iterkeys():
-    translate_requirements(fn)
+    add_clauses(fn)
+
 
 if __name__ == '__main__':
     print len(v), len(w), len(clauses)
@@ -100,6 +101,8 @@ if __name__ == '__main__':
 
     clauses.append(None)
     for fn in sorted(index):
+        if not fn.startswith('anaconda-'):
+            continue
         clauses[-1] = [v[fn]]
         sol = pycosat.solve(clauses)
         if not isinstance(sol, list):
