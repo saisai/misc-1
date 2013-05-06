@@ -7,7 +7,7 @@ from pprint import pprint
 import pycosat
 
 
-with open('index.json') as fi:
+with open('joined.json') as fi:
     index = json.load(fi)
 
 v = {} # map fn to variable number
@@ -94,13 +94,9 @@ if __name__ == '__main__':
     #pprint([' V '.join(('-' if i<0 else '') + w[abs(i)] for i in clause)
     #        for clause in clauses])
 
-    clauses.append([v['anaconda-1.4.1-np17py27_0.tar.bz2']])
-    t0 = time.time()
-    n = 0
-    for sol in pycosat.itersolve(clauses):
-        n += 1
-        if n % 1000 == 0:
-            sys.stdout.write('.')
-            sys.stdout.flush()
-        #pprint(sorted(w[i] for i in sol if i > 0))
-    print n
+    clauses.append(None)
+    for fn in sorted(index):
+        clauses[-1] = [v[fn]]
+        sol = pycosat.solve(clauses)
+        if not isinstance(sol, list):
+            print fn, sol
