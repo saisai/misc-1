@@ -5,17 +5,16 @@ from conda.api import get_index
 
 index = get_index()
 for info in index.itervalues():
-    del info['channel'], info['md5'], info['size']
-
-
-for fn in index.keys():
-    if fn.startswith(('accelerate-', 'mkl-devel')):
-        del index[fn]
+    del info['md5'], info['size']
+    channel = info['channel']
+    channel = channel.split('/')[-3]
+    assert channel in ('pro', 'free', 'test'), channel
+    info['channel'] = channel
 
 
 data = json.dumps(index, indent=2, sort_keys=True)
 data = '\n'.join(line.rstrip() for line in data.split('\n'))
 if not data.endswith('\n'):
     data += '\n'
-with open('index.json', 'w') as fo:
+with open('joined.json', 'w') as fo:
     fo.write(data)
