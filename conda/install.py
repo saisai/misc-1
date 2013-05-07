@@ -47,13 +47,6 @@ for filenames in groups.itervalues():
             if v1 < v2:
                 clauses.append([-v1, -v2])
 
-def split_requirement(s):
-    parts = s.split()
-    while len(parts) < 3:
-        parts.append(None)
-    assert len(parts) == 3
-    return tuple(parts)
-
 def find_matches(ms):
     for fn2, unused_info in itergroup(ms.name):
         if ms.match(fn2[:-8]):

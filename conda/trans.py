@@ -1,15 +1,11 @@
-def split_requirement(s):
-    parts = s.split()
-    while len(parts) < 3:
-        parts.append(None)
-    assert len(parts) == 3
-    return tuple(parts)
-
-
 def add_depends(info):
     depends = []
     for s in info['requires']:
-        name, version, build = split_requirement(s)
+        parts = s.split()
+        while len(parts) < 3:
+            parts.append(None)
+        assert len(parts) == 3
+        name, version, build = parts
         assert name is not None
         assert version is not None
 

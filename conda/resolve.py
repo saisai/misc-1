@@ -2,11 +2,18 @@ import re
 
 import verlib
 
-from install import index, groups, itergroup, split_requirement, find_matches
+from install import index, groups, itergroup, find_matches
 
 
 def nvb_fn(fn):
     return tuple(fn[:-8].rsplit('-', 2))
+
+def split_requirement(s):
+    parts = s.split()
+    while len(parts) < 3:
+        parts.append(None)
+    assert len(parts) == 3
+    return tuple(parts)
 
 def shallow_deps(fn):
     pkgs = set()
