@@ -12,20 +12,26 @@ def add_depends(info):
         assert name is not None
         assert version is not None
 
-        #if name in ('nose', 'pytz', 'distribute'):
-        #    depends.append(name)
-        #    continue
-
-        if name in ('python', 'numpy') and len(version) == 3:
-            assert build is None
-            depends.append(name + ' ' + version + '*')
-
-        elif build is None:
-            depends.append(name + ' ' + version)
-
-        else:
+        if build:
             depends.append(name + ' ' + version + ' ' + build)
 
+        elif name in ('python', 'numpy') and len(version) == 3:
+            depends.append(name + ' ' + version + '*')
+
+        elif (name in ('nose', 'pytz', 'dateutil', 'distribute', 'docutils') or
+                 (info['name'] == 'bitey' and name == 'llvmpy')):
+            depends.append(name)
+
+        elif (info['name'] == ('gevent-websocket', 'gevent_zeromq') and
+                   name == 'gevent'):
+            depends.append('gevent 0.13.7|0.13.8')
+
+        elif info['name'] == 'statsmodels' and name == 'pandas':
+            depends.append('pandas')
+
+        else:
+            depends.append(name + ' ' + version)
+            
     info['depends'] = depends
 
 

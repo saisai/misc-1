@@ -116,6 +116,8 @@ def show_inconsistencies(meta_fn):
         names = set(p.name for p in pkgs)
         for name in names:
             fn2 = max(p for p in pkgs if p.name == name).fn
+            if fn2.startswith(('python-', 'numpy-')):
+                continue
             if fn2 not in mpd:
                 res.add('%s required by %s' % (fn2, fn1))
     for fn in res:
@@ -125,7 +127,7 @@ def show_inconsistencies(meta_fn):
 if __name__ == '__main__':
     #show_sorted_versions()
     for fn in index:
-        if not fn.startswith('anaconda-1.5.0-'):
+        if not fn.startswith(('anaconda-1.5.0-', 'anaconda-1.4.0-np17py27')):
             continue
         print fn
         show_inconsistencies(fn)
