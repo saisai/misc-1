@@ -17,8 +17,8 @@ def split_requirement(s):
 
 def shallow_deps(fn):
     pkgs = set()
-    for r in index[fn]['requires']:
-        for fn2 in find_matches(*split_requirement(r)):
+    for ms in index[fn]['ms_depends']:
+        for fn2 in find_matches(ms):
             pkgs.add(fn2)
     return pkgs
 
