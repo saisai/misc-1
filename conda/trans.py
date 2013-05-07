@@ -16,7 +16,7 @@ def add_depends(info):
             depends.append(name + ' ' + version + ' ' + build)
 
         elif name in ('python', 'numpy') and len(version) == 3:
-            depends.append(name + ' ' + version + '*')
+            depends.append('%s %s*' % (name, version))
 
         elif (name in ('nose', 'pytz', 'dateutil', 'distribute', 'docutils') or
                  (info['name'] == 'bitey' and name == 'llvmpy')):
