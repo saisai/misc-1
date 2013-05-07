@@ -91,6 +91,8 @@ def filter(dists, py_ver='2.7', npy_ver='1.7'):
                for name, ver in (('python', py_ver), ('numpy', npy_ver))):
             continue
         info = index[fn]
+        if info.get('features'):
+            continue
         if any((r.startswith('python ') and r != 'python %s' % py_ver) or
                (r.startswith('numpy ') and r != 'numpy %s' % npy_ver)
                for r in info['requires']):
