@@ -1,3 +1,6 @@
+
+
+
 def add_depends(info):
     depends = []
     for s in info['requires']:
@@ -8,6 +11,10 @@ def add_depends(info):
         name, version, build = parts
         assert name is not None
         assert version is not None
+
+        #if name in ('nose', 'pytz', 'distribute'):
+        #    depends.append(name)
+        #    continue
 
         if name in ('python', 'numpy') and len(version) == 3:
             assert build is None
