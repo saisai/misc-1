@@ -28,6 +28,9 @@ class MatchSpec(object):
             return False
         return True
 
+    def __repr__(self):
+        return '<MatchSpec %s %d>' % (self.name, self.strictness)
+
 
 if __name__ == '__main__':
     for mspec, res in [('numpy 1.7*', True),

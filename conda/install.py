@@ -5,6 +5,7 @@ from collections import defaultdict
 from pprint import pprint
 
 import trans
+from matcher import MatchSpec
 
 import pycosat
 
@@ -19,6 +20,11 @@ w = {} # map variable number to fn
 for i, fn in enumerate(index.iterkeys()):
     v[fn] = i + 1
     w[i + 1] = fn
+
+for info in index.itervalues():
+    info['ms_depends'] = [MatchSpec(mspec) for mspec in info['depends']]
+    info['ms_conflicts'] = [MatchSpec(mspec)
+                            for mspec in info.get('conflicts', [])]
 
 groups = defaultdict(list) # map name to list of filenames
 for fn, info in index.iteritems():
@@ -48,45 +54,25 @@ def split_requirement(s):
     assert len(parts) == 3
     return tuple(parts)
 
-def find_matches(name, version, build):
-    assert name is not None
-    if version is None:
-        assert build is None
-        for fn2, unused_info in itergroup(name):
+def find_matches(ms):
+    for fn2, unused_info in itergroup(ms.name):
+        if ms.match(fn2[:-8]):
+            assert fn2.startswith(ms.name + '-')
             yield fn2
-
-    elif name in ('python', 'numpy') and len(version) == 3:
-        assert build is None
-        for fn2, info2 in itergroup(name):
-            if info2['version'].startswith(version):
-                yield fn2
-
-    elif build is None:
-        for fn2, info2 in itergroup(name):
-            if info2['version'] == version:
-                yield fn2
-
-    else:
-        fn2 = '%s-%s-%s.tar.bz2' % (name, version, build)
-        assert fn2 in index, fn2
-        yield fn2
 
 def add_clauses(fn1):
     # translate the requirements of package `fn` to clauses
     info1 = index[fn1]
-    for r in info1['requires']:
-        name, version, build = split_requirement(r)
-        assert name and name != info1['name']
-
+    for ms in info1['ms_depends']:
         clause = [-v[fn1]]
-        for fn2 in find_matches(name, version, build):
+        for fn2 in find_matches(ms):
             clause.append(v[fn2])
 
         assert len(clause) > 1, fn1
         clauses.append(clause)
 
-    for name in info1.get('conflicts', []):
-        for fn2 in find_matches(name, None, None):
+    for ms in info1['ms_conflicts']:
+        for fn2 in find_matches(ms):
             clauses.append([-v[fn1], -v[fn2]])
 
 
