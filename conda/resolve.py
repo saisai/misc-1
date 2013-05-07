@@ -107,9 +107,9 @@ def show_inconsistencies(meta_fn):
     py_ver  = '.'.join(m.group(3))
     npy_ver = '.'.join(m.group(2))
 
-    mpd = meta_pkg_deps(meta_fn)
+    mp_deps = meta_pkg_deps(meta_fn)
     res = set()
-    for fn1 in mpd:
+    for fn1 in mp_deps:
         deps = filter(shallow_deps(fn1), py_ver, npy_ver)
         #print fn1, len(deps)
         pkgs = [Package(fn) for fn in deps]
@@ -118,7 +118,7 @@ def show_inconsistencies(meta_fn):
             fn2 = max(p for p in pkgs if p.name == name).fn
             if fn2.startswith(('python-', 'numpy-')):
                 continue
-            if fn2 not in mpd:
+            if fn2 not in mp_deps:
                 res.add('%s required by %s' % (fn2, fn1))
     for fn in res:
         print fn
