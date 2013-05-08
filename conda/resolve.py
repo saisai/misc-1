@@ -101,11 +101,11 @@ def filter(dists, py_ver='2.7', npy_ver='1.7'):
     return res
 
 def show_inconsistencies(meta_fn):
-    pat = re.compile(r'(np(\d{2})py(\d{2}))_')
+    pat = re.compile(r'np(\d{2})py(\d{2})_')
     b = nvb_fn(meta_fn)[2]
     m = pat.match(b)
-    py_ver  = '.'.join(m.group(3))
-    npy_ver = '.'.join(m.group(2))
+    py_ver  = '.'.join(m.group(2))
+    npy_ver = '.'.join(m.group(1))
 
     mp_deps = meta_pkg_deps(meta_fn)
     res = set()
