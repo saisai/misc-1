@@ -87,10 +87,6 @@ def filter(dists, py_ver='2.7', npy_ver='1.7'):
     res = []
     for fn in dists:
         info = index[fn]
-        if any((fn.startswith(name + '-') and
-                not fn.startswith(name + '-' + ver))
-               for name, ver in (('python', py_ver), ('numpy', npy_ver))):
-            continue
         if info.get('features'):
             continue
         if any((ms.name == 'python' and not ms.match('python-%s-0' % py_ver) or
