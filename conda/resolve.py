@@ -65,7 +65,7 @@ class Package(object):
 
 def show_sorted_versions():
     for name in sorted(groups):
-        pkgs = [Package(fn) for fn, unused_info in itergroup(name)]
+        pkgs = [Package(fn) for fn in itergroup(name)]
         pkgs.sort()
         disp = []
         for pkg in pkgs:
