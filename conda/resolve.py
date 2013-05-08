@@ -91,7 +91,7 @@ def filter(dists, py_ver='2.7', npy_ver='1.7'):
             continue
         if any((ms.name == 'python' and not ms.match('python-%s-0' % py_ver) or
                 (ms.name == 'numpy') and not ms.match('numpy-%s-0' % npy_ver))
-                for ms in info['ms_depends']):
+               for ms in info['ms_depends']):
             continue
         res.append(fn)
     return res
