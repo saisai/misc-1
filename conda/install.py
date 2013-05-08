@@ -34,7 +34,7 @@ def itergroup(name):
     for fn in groups[name]:
         info = index[fn]
         assert info['name'] == name
-        yield fn, info
+        yield fn
 
 clauses = []
 
@@ -48,9 +48,8 @@ for filenames in groups.itervalues():
                 clauses.append([-v1, -v2])
 
 def find_matches(ms):
-    for fn2, unused_info in itergroup(ms.name):
+    for fn2 in itergroup(ms.name):
         if ms.match(fn2[:-8]):
-            assert fn2.startswith(ms.name + '-')
             yield fn2
 
 def add_clauses(fn1):
