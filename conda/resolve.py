@@ -63,9 +63,13 @@ def shallow_deps(fn):
 
 def all_deps(root_fn):
     res = set()
+    names = set()
 
     def add_dependents(fn1):
         for ms in index[fn1]['ms_depends']:
+            if ms.name in names:
+                continue
+            names.add(ms.name)
             fn2 = get_dist(ms)
             if fn2 is None:
                 raise
