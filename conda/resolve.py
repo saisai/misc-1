@@ -52,7 +52,11 @@ def get_dist(ms):
     pkgs = set(Package(fn) for fn in find_matches(ms))
     if not pkgs:
        return None
-    return max(pkgs).fn
+    maxpkg = max(pkgs)
+    for pkg in pkgs:
+        if pkg == maxpkg:
+            print '\t', pkg
+    return maxpkg.fn
 
 def shallow_deps(fn):
     pkgs = set()
@@ -63,13 +67,9 @@ def shallow_deps(fn):
 
 def all_deps(root_fn):
     res = set()
-    names = set()
 
     def add_dependents(fn1):
         for ms in index[fn1]['ms_depends']:
-            if ms.name in names:
-                continue
-            names.add(ms.name)
             fn2 = get_dist(ms)
             if fn2 is None:
                 raise
