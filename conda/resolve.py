@@ -140,4 +140,5 @@ if __name__ == '__main__':
     #        continue
     #    print fn
     #    show_inconsistencies(fn)
-    print all_deps('numpy-1.6.2-py26_4.tar.bz2')
+    for fn in sorted(all_deps('scipy-0.12.0-np15py26_0.tar.bz2')):
+        print fn
