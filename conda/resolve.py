@@ -53,6 +53,7 @@ def get_dist(ms):
     if not pkgs:
        return None
     maxpkg = max(pkgs)
+    print '   ', ms
     for pkg in pkgs:
         if pkg == maxpkg:
             print '\t', pkg
@@ -71,8 +72,7 @@ def all_deps(root_fn):
     def add_dependents(fn1):
         for ms in index[fn1]['ms_depends']:
             fn2 = get_dist(ms)
-            if fn2 is None:
-                raise
+            assert fn2 is not None
             res.add(fn2)
             add_dependents(fn2)
 
