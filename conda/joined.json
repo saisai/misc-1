@@ -4503,7 +4503,7 @@
   "anaconda-1.5.0-np16py26_0.tar.bz2": {
     "build": "np16py26_0",
     "build_number": 0,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "anaconda",
     "requires": [
       "argparse 1.2.1 py26_0",
@@ -4608,7 +4608,7 @@
   "anaconda-1.5.0-np16py27_0.tar.bz2": {
     "build": "np16py27_0",
     "build_number": 0,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "anaconda",
     "requires": [
       "_license 1.1 py27_0",
@@ -4693,13 +4693,14 @@
       "redis 2.6.9 0",
       "redis-py 2.7.2 py27_0",
       "requests 1.2.0 py27_0",
+      "rope 0.9.4 py27_0",
       "scikit-image 0.8.2 np16py27_1",
       "scikit-learn 0.13.1 np16py27_0",
       "scipy 0.12.0 np16py27_0",
       "shiboken 1.1.2 py27_0",
       "six 1.3.0 py27_0",
       "sphinx 1.1.3 py27_3",
-      "spyder 2.2.0rc1 py27_0",
+      "spyder 2.2.0 py27_0",
       "sqlalchemy 0.8.1 py27_0",
       "sqlite 3.7.13 0",
       "statsmodels 0.4.3 np16py27_1",
@@ -4721,7 +4722,7 @@
   "anaconda-1.5.0-np17py26_0.tar.bz2": {
     "build": "np17py26_0",
     "build_number": 0,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "anaconda",
     "requires": [
       "argparse 1.2.1 py26_0",
@@ -4827,7 +4828,7 @@
   "anaconda-1.5.0-np17py27_0.tar.bz2": {
     "build": "np17py27_0",
     "build_number": 0,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "anaconda",
     "requires": [
       "_license 1.1 py27_0",
@@ -4913,13 +4914,14 @@
       "redis 2.6.9 0",
       "redis-py 2.7.2 py27_0",
       "requests 1.2.0 py27_0",
+      "rope 0.9.4 py27_0",
       "scikit-image 0.8.2 np17py27_1",
       "scikit-learn 0.13.1 np17py27_0",
       "scipy 0.12.0 np17py27_0",
       "shiboken 1.1.2 py27_0",
       "six 1.3.0 py27_0",
       "sphinx 1.1.3 py27_3",
-      "spyder 2.2.0rc1 py27_0",
+      "spyder 2.2.0 py27_0",
       "sqlalchemy 0.8.1 py27_0",
       "sqlite 3.7.13 0",
       "statsmodels 0.4.3 np17py27_1",
@@ -4941,7 +4943,7 @@
   "anaconda-1.5.0-np17py33_0.tar.bz2": {
     "build": "np17py33_0",
     "build_number": 0,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "anaconda",
     "requires": [
       "astropy 0.2.1 np17py33_0",
@@ -6040,7 +6042,7 @@
   "cubes-0.10.2-py27_1.tar.bz2": {
     "build": "py27_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "cubes",
     "requires": [
       "jinja2 2.6",
@@ -6218,6 +6220,36 @@
       "python 3.3"
     ],
     "version": "0.19"
+  },
+  "cython-0.19.1-py26_0.tar.bz2": {
+    "build": "py26_0",
+    "build_number": 0,
+    "channel": "free",
+    "name": "cython",
+    "requires": [
+      "python 2.6"
+    ],
+    "version": "0.19.1"
+  },
+  "cython-0.19.1-py27_0.tar.bz2": {
+    "build": "py27_0",
+    "build_number": 0,
+    "channel": "free",
+    "name": "cython",
+    "requires": [
+      "python 2.7"
+    ],
+    "version": "0.19.1"
+  },
+  "cython-0.19.1-py33_0.tar.bz2": {
+    "build": "py33_0",
+    "build_number": 0,
+    "channel": "free",
+    "name": "cython",
+    "requires": [
+      "python 3.3"
+    ],
+    "version": "0.19.1"
   },
   "dateutil-1.5-py26_0.tar.bz2": {
     "build": "py26_0",
@@ -6678,7 +6710,7 @@
   "freeglut-2.8.1-0.tar.bz2": {
     "build": "0",
     "build_number": 0,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "freeglut",
     "requires": [],
     "version": "2.8.1"
@@ -6789,7 +6821,7 @@
   "gevent-websocket-0.3.6-py26_2.tar.bz2": {
     "build": "py26_2",
     "build_number": 2,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "gevent-websocket",
     "requires": [
       "gevent 0.13.8",
@@ -6821,7 +6853,7 @@
   "gevent-websocket-0.3.6-py27_2.tar.bz2": {
     "build": "py27_2",
     "build_number": 2,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "gevent-websocket",
     "requires": [
       "gevent 0.13.8",
@@ -6856,7 +6888,7 @@
   "gevent_zeromq-0.2.5-py26_2.tar.bz2": {
     "build": "py26_2",
     "build_number": 2,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "gevent_zeromq",
     "requires": [
       "gevent 0.13.8",
@@ -6892,7 +6924,7 @@
   "gevent_zeromq-0.2.5-py27_2.tar.bz2": {
     "build": "py27_2",
     "build_number": 2,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "gevent_zeromq",
     "requires": [
       "gevent 0.13.8",
@@ -9270,7 +9302,7 @@
   "matplotlib-1.2.1-np16py26_1.tar.bz2": {
     "build": "np16py26_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "matplotlib",
     "requires": [
       "dateutil 2.1",
@@ -9303,7 +9335,7 @@
   "matplotlib-1.2.1-np16py27_1.tar.bz2": {
     "build": "np16py27_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "matplotlib",
     "requires": [
       "dateutil 2.1",
@@ -9336,7 +9368,7 @@
   "matplotlib-1.2.1-np17py26_1.tar.bz2": {
     "build": "np17py26_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "matplotlib",
     "requires": [
       "dateutil 2.1",
@@ -9369,7 +9401,7 @@
   "matplotlib-1.2.1-np17py27_1.tar.bz2": {
     "build": "np17py27_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "matplotlib",
     "requires": [
       "dateutil 2.1",
@@ -9401,7 +9433,7 @@
   "matplotlib-1.2.1-np17py33_1.tar.bz2": {
     "build": "np17py33_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "matplotlib",
     "requires": [
       "dateutil 2.1",
@@ -9603,6 +9635,25 @@
     "track_features": "mkl",
     "version": "11.0"
   },
+  "mkl-11.0-np16py26_p1.tar.bz2": {
+    "build": "np16py26_p1",
+    "build_channel": "p",
+    "build_number": 1,
+    "channel": "test-pkgs",
+    "name": "mkl",
+    "pub_date": "2013-05-13",
+    "requires": [
+      "mkl-rt 11.0",
+      "mkl-service 1.0.0",
+      "numexpr 2.0.1",
+      "numpy 1.6",
+      "python 2.6",
+      "scikit-learn 0.13.1",
+      "scipy 0.12.0"
+    ],
+    "track_features": "mkl",
+    "version": "11.0"
+  },
   "mkl-11.0-np16py27_p0.tar.bz2": {
     "build": "np16py27_p0",
     "build_channel": "p",
@@ -9614,6 +9665,25 @@
       "mkl-rt 11.0",
       "mkl-service 1.0.0",
       "numexpr 2.1",
+      "numpy 1.6",
+      "python 2.7",
+      "scikit-learn 0.13.1",
+      "scipy 0.12.0"
+    ],
+    "track_features": "mkl",
+    "version": "11.0"
+  },
+  "mkl-11.0-np16py27_p1.tar.bz2": {
+    "build": "np16py27_p1",
+    "build_channel": "p",
+    "build_number": 1,
+    "channel": "test-pkgs",
+    "name": "mkl",
+    "pub_date": "2013-05-13",
+    "requires": [
+      "mkl-rt 11.0",
+      "mkl-service 1.0.0",
+      "numexpr 2.0.1",
       "numpy 1.6",
       "python 2.7",
       "scikit-learn 0.13.1",
@@ -9641,6 +9711,25 @@
     "track_features": "mkl",
     "version": "11.0"
   },
+  "mkl-11.0-np17py26_p1.tar.bz2": {
+    "build": "np17py26_p1",
+    "build_channel": "p",
+    "build_number": 1,
+    "channel": "test-pkgs",
+    "name": "mkl",
+    "pub_date": "2013-05-13",
+    "requires": [
+      "mkl-rt 11.0",
+      "mkl-service 1.0.0",
+      "numexpr 2.0.1",
+      "numpy 1.7",
+      "python 2.6",
+      "scikit-learn 0.13.1",
+      "scipy 0.12.0"
+    ],
+    "track_features": "mkl",
+    "version": "11.0"
+  },
   "mkl-11.0-np17py27_p0.tar.bz2": {
     "build": "np17py27_p0",
     "build_channel": "p",
@@ -9660,6 +9749,25 @@
     "track_features": "mkl",
     "version": "11.0"
   },
+  "mkl-11.0-np17py27_p1.tar.bz2": {
+    "build": "np17py27_p1",
+    "build_channel": "p",
+    "build_number": 1,
+    "channel": "test-pkgs",
+    "name": "mkl",
+    "pub_date": "2013-05-13",
+    "requires": [
+      "mkl-rt 11.0",
+      "mkl-service 1.0.0",
+      "numexpr 2.0.1",
+      "numpy 1.7",
+      "python 2.7",
+      "scikit-learn 0.13.1",
+      "scipy 0.12.0"
+    ],
+    "track_features": "mkl",
+    "version": "11.0"
+  },
   "mkl-11.0-np17py33_p0.tar.bz2": {
     "build": "np17py33_p0",
     "build_channel": "p",
@@ -9671,6 +9779,23 @@
       "mkl-rt 11.0",
       "mkl-service 1.0.0",
       "numexpr 2.1",
+      "numpy 1.7",
+      "python 3.3",
+      "scipy 0.12.0"
+    ],
+    "track_features": "mkl",
+    "version": "11.0"
+  },
+  "mkl-11.0-np17py33_p1.tar.bz2": {
+    "build": "np17py33_p1",
+    "build_channel": "p",
+    "build_number": 1,
+    "channel": "test-pkgs",
+    "name": "mkl",
+    "pub_date": "2013-05-13",
+    "requires": [
+      "mkl-rt 11.0",
+      "mkl-service 1.0.0",
       "numpy 1.7",
       "python 3.3",
       "scipy 0.12.0"
@@ -14258,7 +14383,7 @@
   "pysal-1.5.0-np16py27_1.tar.bz2": {
     "build": "np16py27_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "pysal",
     "requires": [
       "numpy 1.6",
@@ -14282,7 +14407,7 @@
   "pysal-1.5.0-np17py27_1.tar.bz2": {
     "build": "np17py27_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "pysal",
     "requires": [
       "numpy 1.7",
@@ -14890,7 +15015,7 @@
   "pyzmq-2.2.0.1-py26_1.tar.bz2": {
     "build": "py26_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "pyzmq",
     "requires": [
       "python 2.6",
@@ -14912,7 +15037,7 @@
   "pyzmq-2.2.0.1-py27_1.tar.bz2": {
     "build": "py27_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "pyzmq",
     "requires": [
       "python 2.7",
@@ -14934,7 +15059,7 @@
   "pyzmq-2.2.0.1-py33_1.tar.bz2": {
     "build": "py33_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "pyzmq",
     "requires": [
       "python 3.3",
@@ -15108,6 +15233,16 @@
     ],
     "version": "1.2.0"
   },
+  "rope-0.9.4-py27_0.tar.bz2": {
+    "build": "py27_0",
+    "build_number": 0,
+    "channel": "free",
+    "name": "rope",
+    "requires": [
+      "python 2.7"
+    ],
+    "version": "0.9.4"
+  },
   "scikit-image-0.7.2-np16py26_0.tar.bz2": {
     "build": "np16py26_0",
     "build_number": 0,
@@ -15243,7 +15378,7 @@
   "scikit-image-0.8.2-np16py26_1.tar.bz2": {
     "build": "np16py26_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "scikit-image",
     "requires": [
       "numpy 1.6",
@@ -15267,7 +15402,7 @@
   "scikit-image-0.8.2-np16py27_1.tar.bz2": {
     "build": "np16py27_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "scikit-image",
     "requires": [
       "numpy 1.6",
@@ -15291,7 +15426,7 @@
   "scikit-image-0.8.2-np17py26_1.tar.bz2": {
     "build": "np17py26_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "scikit-image",
     "requires": [
       "numpy 1.7",
@@ -15315,7 +15450,7 @@
   "scikit-image-0.8.2-np17py27_1.tar.bz2": {
     "build": "np17py27_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "scikit-image",
     "requires": [
       "numpy 1.7",
@@ -15339,7 +15474,7 @@
   "scikit-image-0.8.2-np17py33_1.tar.bz2": {
     "build": "np17py33_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "scikit-image",
     "requires": [
       "numpy 1.7",
@@ -17255,7 +17390,7 @@
   "sphinx-1.1.3-py26_3.tar.bz2": {
     "build": "py26_3",
     "build_number": 3,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "sphinx",
     "requires": [
       "docutils 0.10",
@@ -17291,7 +17426,7 @@
   "sphinx-1.1.3-py27_3.tar.bz2": {
     "build": "py27_3",
     "build_number": 3,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "sphinx",
     "requires": [
       "docutils 0.10",
@@ -17315,7 +17450,7 @@
   "sphinx-1.1.3-py33_3.tar.bz2": {
     "build": "py33_3",
     "build_number": 3,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "sphinx",
     "requires": [
       "docutils 0.10",
@@ -17346,16 +17481,16 @@
     ],
     "version": "2.1.13"
   },
-  "spyder-2.2.0rc1-py27_0.tar.bz2": {
+  "spyder-2.2.0-py27_0.tar.bz2": {
     "build": "py27_0",
     "build_number": 0,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "spyder",
     "requires": [
       "pyside 1.1.2",
       "python 2.7"
     ],
-    "version": "2.2.0rc1"
+    "version": "2.2.0"
   },
   "sqlalchemy-0.7.8-py26_0.tar.bz2": {
     "build": "py26_0",
@@ -17527,7 +17662,7 @@
   "statsmodels-0.4.3-np16py26_1.tar.bz2": {
     "build": "np16py26_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "statsmodels",
     "requires": [
       "numpy 1.6",
@@ -17553,7 +17688,7 @@
   "statsmodels-0.4.3-np16py27_1.tar.bz2": {
     "build": "np16py27_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "statsmodels",
     "requires": [
       "numpy 1.6",
@@ -17579,7 +17714,7 @@
   "statsmodels-0.4.3-np17py26_1.tar.bz2": {
     "build": "np17py26_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "statsmodels",
     "requires": [
       "numpy 1.7",
@@ -17605,7 +17740,7 @@
   "statsmodels-0.4.3-np17py27_1.tar.bz2": {
     "build": "np17py27_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "statsmodels",
     "requires": [
       "numpy 1.7",
@@ -17676,14 +17811,14 @@
   "system-5.8-1.tar.bz2": {
     "build": "1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "system",
     "requires": [],
     "version": "5.8"
   },
-  "test-1.0-2.tar.bz2": {
-    "build": "2",
-    "build_number": 2,
+  "test-1.0-4.tar.bz2": {
+    "build": "4",
+    "build_number": 4,
     "channel": "test-pkgs",
     "name": "test",
     "requires": [],
@@ -17725,7 +17860,7 @@
   "theano-0.5.0-np16py26_1.tar.bz2": {
     "build": "np16py26_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "theano",
     "requires": [
       "numpy 1.6",
@@ -17748,7 +17883,7 @@
   "theano-0.5.0-np16py27_1.tar.bz2": {
     "build": "np16py27_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "theano",
     "requires": [
       "numpy 1.6",
@@ -17771,7 +17906,7 @@
   "theano-0.5.0-np17py26_1.tar.bz2": {
     "build": "np17py26_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "theano",
     "requires": [
       "numpy 1.7",
@@ -17794,7 +17929,7 @@
   "theano-0.5.0-np17py27_1.tar.bz2": {
     "build": "np17py27_1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "theano",
     "requires": [
       "numpy 1.7",
@@ -18226,7 +18361,7 @@
   "zeromq-2.2.0-1.tar.bz2": {
     "build": "1",
     "build_number": 1,
-    "channel": "test-pkgs",
+    "channel": "free",
     "name": "zeromq",
     "requires": [
       "util-linux 2.21"
