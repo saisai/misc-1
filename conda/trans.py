@@ -31,7 +31,7 @@ def add_depends(info):
 
         else:
             depends.append(name + ' ' + version)
-            
+
     info['depends'] = depends
 
 
