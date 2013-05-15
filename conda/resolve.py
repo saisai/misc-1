@@ -34,6 +34,9 @@ class Package(object):
             return cmp((self.version, self.build_number),
                        (other.version, other.build_number))
 
+    def __repr__(self):
+        return self.fn
+
 
 def nvb_fn(fn):
     return tuple(fn[:-8].rsplit('-', 2))
@@ -44,6 +47,12 @@ def split_requirement(s):
         parts.append(None)
     assert len(parts) == 3
     return tuple(parts)
+
+def get_dist(ms):
+    pkgs = set(Package(fn) for fn in find_matches(ms))
+    if not pkgs:
+       return None
+    return max(pkgs)
 
 def shallow_deps(fn):
     pkgs = set()
@@ -124,8 +133,12 @@ def show_inconsistencies(meta_fn):
 
 if __name__ == '__main__':
     #show_sorted_versions()
-    for fn in index:
-        if not fn.startswith(('anaconda-1.5.0-', 'anaconda-1.4.0-np17py27')):
-            continue
-        print fn
-        show_inconsistencies(fn)
+    #for fn in index:
+    #    if not fn.startswith(('anaconda-1.5.0-', 'anaconda-1.4.0-np17py27')):
+    #        continue
+    #    print fn
+    #    show_inconsistencies(fn)
+    from matcher import MatchSpec
+
+    ms = MatchSpec('numpy')
+    print get_dist(ms)
