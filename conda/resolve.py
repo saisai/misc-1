@@ -5,6 +5,36 @@ import verlib
 from install import index, groups, itergroup, find_matches
 
 
+class Package(object):
+
+    def __init__(self, fn):
+        self.fn = fn
+        info = index[fn]
+        self.name = info['name']
+        self.version = info['version']
+        self.build_number = info['build_number']
+        self.add_norm_version()
+
+    def add_norm_version(self):
+        v = self.version
+        v = v.replace('rc', '.dev99999')
+        if v.endswith('.dev'):
+            v += '0'
+        try:
+            self.norm_version = verlib.NormalizedVersion(v)
+        except verlib.IrrationalVersionError:
+            self.norm_version = self.version
+
+    def __cmp__(self, other):
+        assert self.name == other.name
+        try:
+            return cmp((self.norm_version, self.build_number),
+                       (other.norm_version, other.build_number))
+        except TypeError:
+            return cmp((self.version, self.build_number),
+                       (other.version, other.build_number))
+
+
 def nvb_fn(fn):
     return tuple(fn[:-8].rsplit('-', 2))
 
@@ -34,34 +64,6 @@ def all_deps(root_fn):
     add_dependents(root_fn)
     return pkgs
 
-class Package(object):
-
-    def __init__(self, fn):
-        self.fn = fn
-        info = index[fn]
-        self.name = info['name']
-        self.version = info['version']
-        self.build_number = info['build_number']
-        self.add_norm_version()
-
-    def add_norm_version(self):
-        v = self.version
-        v = v.replace('rc', '.dev99999')
-        if v.endswith('.dev'):
-            v += '0'
-        try:
-            self.norm_version = verlib.NormalizedVersion(v)
-        except verlib.IrrationalVersionError:
-            self.norm_version = self.version
-
-    def __cmp__(self, other):
-        assert self.name == other.name
-        try:
-            return cmp((self.norm_version, self.build_number),
-                       (other.norm_version, other.build_number))
-        except TypeError:
-            return cmp((self.version, self.build_number),
-                       (other.version, other.build_number))
 
 def show_sorted_versions():
     for name in sorted(groups):
