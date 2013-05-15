@@ -52,7 +52,7 @@ def get_dist(ms):
     pkgs = set(Package(fn) for fn in find_matches(ms))
     if not pkgs:
        return None
-    return max(pkgs)
+    return max(pkgs).fn
 
 def shallow_deps(fn):
     pkgs = set()
@@ -62,16 +62,18 @@ def shallow_deps(fn):
     return pkgs
 
 def all_deps(root_fn):
-    pkgs = set()
+    res = set()
 
     def add_dependents(fn1):
-        for r in index[fn1]['requires']:
-            for fn2 in find_matches(*split_requirement(r)):
-                pkgs.add(fn2)
-                add_dependents(fn2)
+        for ms in index[fn1]['ms_depends']:
+            fn2 = get_dist(ms)
+            if fn2 is None:
+                raise
+            res.add(fn2)
+            add_dependents(fn2)
 
     add_dependents(root_fn)
-    return pkgs
+    return res
 
 
 def show_sorted_versions():
@@ -138,7 +140,4 @@ if __name__ == '__main__':
     #        continue
     #    print fn
     #    show_inconsistencies(fn)
-    from matcher import MatchSpec
-
-    ms = MatchSpec('numpy')
-    print get_dist(ms)
+    print all_deps('numpy-1.6.2-py26_4.tar.bz2')
