@@ -75,7 +75,7 @@ def solve(root_fn, features=None):
 
     v = {} # map fn to variable number
     w = {} # map variable number to fn
-    for i, fn in enumerate(dists):
+    for i, fn in enumerate(sorted(dists)):
         v[fn] = i + 1
         w[i + 1] = fn
 
@@ -107,7 +107,7 @@ def solve(root_fn, features=None):
 
     clauses.append([v[root_fn]])
     #pprint(clauses)
-    candidates = {}
+    candidates = defaultdict(list)
     for sol in pycosat.itersolve(clauses):
         nfeat = 0
         pkgs = [w[lit] for lit in sol if lit > 0]
@@ -116,7 +116,7 @@ def solve(root_fn, features=None):
                 nfeat += sum(bool(feat in index[fn]['features'])
                              for feat in features)
         key = nfeat, -len(pkgs)
-        candidates[key] = pkgs
+        candidates[key].append(pkgs)
 
     global max_candidate
     if len(candidates) > max_candidate[0]:
@@ -124,14 +124,13 @@ def solve(root_fn, features=None):
 
     maxkey = max(candidates)
 
-    cwm = set(tuple(sorted(c)) for key, c in candidates.iteritems()
-              if key == maxkey)
-    if len(cwm) != 1:
+    mc = candidates[maxkey]
+    if len(mc) != 1:
         print root_fn
-        pprint(cwm)
+        pprint(mc)
 
     #print 'maxkey =', maxkey
-    return candidates[maxkey]
+    return candidates[maxkey][0]
 
 
 def main():
