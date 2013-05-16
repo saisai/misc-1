@@ -9803,51 +9803,6 @@
     "track_features": "mkl",
     "version": "11.0"
   },
-  "mkl-11.0-py26_p1.tar.bz2": {
-    "build": "py26_p1",
-    "build_channel": "p",
-    "build_number": 1,
-    "channel": "test-pkgs",
-    "name": "mkl",
-    "pub_date": "2013-05-03",
-    "requires": [
-      "mkl-rt 11.0",
-      "mkl-service 1.0.0",
-      "python 2.6"
-    ],
-    "track_features": "mkl",
-    "version": "11.0"
-  },
-  "mkl-11.0-py27_p1.tar.bz2": {
-    "build": "py27_p1",
-    "build_channel": "p",
-    "build_number": 1,
-    "channel": "test-pkgs",
-    "name": "mkl",
-    "pub_date": "2013-05-03",
-    "requires": [
-      "mkl-rt 11.0",
-      "mkl-service 1.0.0",
-      "python 2.7"
-    ],
-    "track_features": "mkl",
-    "version": "11.0"
-  },
-  "mkl-11.0-py33_p1.tar.bz2": {
-    "build": "py33_p1",
-    "build_channel": "p",
-    "build_number": 1,
-    "channel": "test-pkgs",
-    "name": "mkl",
-    "pub_date": "2013-05-03",
-    "requires": [
-      "mkl-rt 11.0",
-      "mkl-service 1.0.0",
-      "python 3.3"
-    ],
-    "track_features": "mkl",
-    "version": "11.0"
-  },
   "mkl-devel-11.0-x0.tar.bz2": {
     "build": "x0",
     "build_channel": "x",
