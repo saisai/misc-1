@@ -109,10 +109,8 @@ def solve(root_fn, features):
     #pprint(clauses)
     candidates = defaultdict(list)
     for sol in pycosat.itersolve(clauses):
-        fsd = 0
         pkgs = [w[lit] for lit in sol if lit > 0]
-        for fn in pkgs:
-            fsd += len(features ^ index[fn]['features'])
+        fsd = sum(len(features ^ index[fn]['features']) for fn in pkgs)
         key = fsd, len(pkgs)
         candidates[key].append(pkgs)
 
