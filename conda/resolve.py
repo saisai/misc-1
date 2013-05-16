@@ -124,7 +124,9 @@ def solve(root_fn, features):
     if len(mc) != 1:
         print root_fn, features
         print 'minkey =', minkey
-        pprint(mc)
+        for c in mc:
+            print len(c)
+            pprint(c)
 
     return candidates[minkey][0]
 
@@ -147,5 +149,6 @@ def main():
     print min_candidate
 
 if __name__ == '__main__':
+    pprint(solve('pandas-0.9.1-np17py27_0.tar.bz2', set(['mkl'])))
     #pprint(solve('accelerate-1.1.0-np17py26_p0.tar.bz2', ['mkl']))
-    main()
+    #main()
