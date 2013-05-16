@@ -64,8 +64,6 @@ def all_deps(root_fn):
     return res
 
 
-min_candidate = 10000,
-
 def solve(root_fn, features):
     #print '*** %s %r ***' % (root_fn, features)
 
@@ -114,10 +112,6 @@ def solve(root_fn, features):
         key = fsd, len(pkgs)
         candidates[key].append(pkgs)
 
-    global min_candidate
-    if len(candidates) < min_candidate[0]:
-        min_candidate = len(candidates), root_fn, features
-
     minkey = min(candidates)
 
     mc = candidates[minkey]
@@ -146,7 +140,7 @@ def main():
         for features in set([]), set(['mkl']):
             solve(fn, features)
     print 'OK'
-    print min_candidate
+
 
 if __name__ == '__main__':
     p = OptionParser(usage="usage: %prog [options] SPEC")
