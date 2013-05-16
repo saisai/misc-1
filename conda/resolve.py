@@ -61,12 +61,12 @@ def all_deps(root_fn):
                 add_dependents(fn2)
 
     add_dependents(root_fn)
-    return sorted(res)
+    return res
 
 
 def solve(root_fn):
     dists = all_deps(root_fn)
-    dists.append(root_fn)
+    dists.add(root_fn)
     v = {} # map fn to variable number
     w = {} # map variable number to fn
     for i, fn in enumerate(dists):
@@ -103,7 +103,7 @@ def solve(root_fn):
     pprint(clauses)
     for sol in pycosat.itersolve(clauses):
         print sol
-        yield [w[lit] for lit in sol if lit > 0]
+        yield sorted(w[lit] for lit in sol if lit > 0)
 
 
 if __name__ == '__main__':
