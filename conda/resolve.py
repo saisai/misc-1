@@ -121,11 +121,11 @@ def solve(root_fn, features):
         min_candidate = len(candidates), root_fn, features
 
     minkey = min(candidates)
-    print 'minkey =', minkey
 
     mc = candidates[minkey]
     if len(mc) != 1:
-        print root_fn
+        print root_fn, features
+        print 'minkey =', minkey
         pprint(mc)
 
     return candidates[minkey][0]
