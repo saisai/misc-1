@@ -5,7 +5,7 @@ import pycosat
 
 import verlib
 
-from install import index, find_matches, all_features
+from install import index, find_matches
 
 
 class Package(object):
@@ -102,14 +102,21 @@ def solve(root_fn, features):
 
     clauses.append([v[root_fn]])
     pprint(clauses)
+    candidates = {}
     for sol in pycosat.itersolve(clauses):
-        print sol
-        yield sorted(w[lit] for lit in sol if lit > 0)
+        nfeat = 0
+        pkgs = [w[lit] for lit in sol if lit > 0]
+        for fn in pkgs:
+            nfeat += sum(bool(feat in index[fn]['features'])
+                         for feat in features)
+        key = nfeat, -len(pkgs)
+        print key, sol
+        candidates[key] = pkgs
+
+    maxkey = max(candidates)
+    print 'maxkey =', maxkey
+    return candidates[maxkey]
 
 
 if __name__ == '__main__':
-    n = 0
-    for lst in solve('scipy-0.12.0-np15py26_0.tar.bz2', ['mkl']):
-        pprint(lst)
-        n += 1
-    print 'n =', n
+    pprint(solve('scipy-0.12.0-np15py26_0.tar.bz2', ['mkl']))
