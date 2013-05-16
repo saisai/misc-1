@@ -123,6 +123,13 @@ def solve(root_fn, features=None):
         max_candidate = len(candidates), root_fn, features
 
     maxkey = max(candidates)
+
+    cwm = set(tuple(sorted(c)) for key, c in candidates.iteritems()
+              if key == maxkey)
+    if len(cwm) != 1:
+        print root_fn
+        pprint(cwm)
+
     #print 'maxkey =', maxkey
     return candidates[maxkey]
 
