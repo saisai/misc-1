@@ -6,6 +6,7 @@ import pycosat
 
 import verlib
 from install import index, find_matches
+from matcher import MatchSpec
 
 
 class Package(object):
@@ -138,6 +139,30 @@ def main():
     print 'OK'
 
 
+def get_install_root(spec, features=set(), installed=[]):
+    if spec.count('=') == 0:
+        ms = MatchSpec(spec)
+    elif spec.count('=') == 1:
+        ms = MatchSpec(spec.replace('=', ' ') + '*')
+    elif spec.count('=') == 2:
+        return spec.replace('=', '-') + '.tar.bz2'
+    else:
+        raise
+    candidates = defaultdict(list)
+    for fn in sorted(get_dists(ms)):
+        fsd = len(features ^ index[fn]['features'])
+        key = fsd, 0
+        candidates[key].append(fn)
+
+    minkey = min(candidates)
+
+    mc = candidates[minkey]
+    if len(mc) != 1:
+        print 'WARNING:', mc
+
+    return candidates[minkey][0]
+
+
 if __name__ == '__main__':
     p = OptionParser(usage="usage: %prog [options] SPEC")
     p.add_option("--mkl", action="store_true")
@@ -146,13 +171,7 @@ if __name__ == '__main__':
     if len(args) == 0:
         main()
     elif len(args) == 1:
-        from matcher import MatchSpec
-        spec = args[0]
-        if '=' in spec:
-            ms = MatchSpec(spec.replace('=', ' ') + '*')
-        else:
-            ms = MatchSpec(spec)
         features = set(['mkl']) if opts.mkl else set()
-        for fn in sorted(get_dists(ms)):
-            print fn, features
-            pprint(solve(fn, features))
+        fn = get_install_root(args[0], features)
+        print fn, features
+        pprint(solve(fn, features))
