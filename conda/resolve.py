@@ -64,8 +64,11 @@ def all_deps(root_fn):
     return res
 
 
-def solve(root_fn, features):
+def solve(root_fn, features=None):
+    print '*** %s %r ***' % (root_fn, features)
+
     dists = all_deps(root_fn)
+    pprint(dists)
     dists.add(root_fn)
 
     v = {} # map fn to variable number
@@ -101,14 +104,15 @@ def solve(root_fn, features):
             clauses.append(clause)
 
     clauses.append([v[root_fn]])
-    pprint(clauses)
+    #pprint(clauses)
     candidates = {}
     for sol in pycosat.itersolve(clauses):
         nfeat = 0
         pkgs = [w[lit] for lit in sol if lit > 0]
-        for fn in pkgs:
-            nfeat += sum(bool(feat in index[fn]['features'])
-                         for feat in features)
+        if features:
+            for fn in pkgs:
+                nfeat += sum(bool(feat in index[fn]['features'])
+                             for feat in features)
         key = nfeat, -len(pkgs)
         print key, sol
         candidates[key] = pkgs
@@ -119,4 +123,17 @@ def solve(root_fn, features):
 
 
 if __name__ == '__main__':
-    pprint(solve('scipy-0.12.0-np15py26_0.tar.bz2', ['mkl']))
+    ignore = set(['statsmodels-0.4.3-np16py26_0.tar.bz2',
+                  'statsmodels-0.4.3-np16py27_0.tar.bz2',
+                  'statsmodels-0.4.3-np17py27_0.tar.bz2',
+                  'statsmodels-0.4.3-np17py26_0.tar.bz2',
+                  'anaconda-launcher-0.0-py27_0.tar.bz2',
+                  ])
+    for fn in index:
+        if fn in ignore:
+            continue
+        if index[fn]['name'] == 'anaconda':
+            continue
+        for features in [], ['mkl']:
+            pprint(solve(fn, features))
+    print 'OK'
