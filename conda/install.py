@@ -21,10 +21,14 @@ for i, fn in enumerate(index.iterkeys()):
     v[fn] = i + 1
     w[i + 1] = fn
 
+all_features = set()
 for info in index.itervalues():
     info['ms_depends'] = [MatchSpec(mspec) for mspec in info['depends']]
     info['ms_conflicts'] = [MatchSpec(mspec)
                             for mspec in info.get('conflicts', [])]
+    info['features'] = info.get('features', '').split()
+    all_features.update(set(info['features']))
+print all_features
 
 groups = defaultdict(list) # map name to list of filenames
 for fn, info in index.iteritems():

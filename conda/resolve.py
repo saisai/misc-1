@@ -5,7 +5,7 @@ import pycosat
 
 import verlib
 
-from install import index, find_matches
+from install import index, find_matches, all_features
 
 
 class Package(object):
@@ -64,9 +64,10 @@ def all_deps(root_fn):
     return res
 
 
-def solve(root_fn):
+def solve(root_fn, features):
     dists = all_deps(root_fn)
     dists.add(root_fn)
+
     v = {} # map fn to variable number
     w = {} # map variable number to fn
     for i, fn in enumerate(dists):
@@ -107,5 +108,8 @@ def solve(root_fn):
 
 
 if __name__ == '__main__':
-    for lst in solve('scipy-0.12.0-np15py26_0.tar.bz2'):
+    n = 0
+    for lst in solve('scipy-0.12.0-np15py26_0.tar.bz2', ['mkl']):
         pprint(lst)
+        n += 1
+    print 'n =', n
