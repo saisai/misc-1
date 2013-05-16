@@ -64,9 +64,9 @@ def all_deps(root_fn):
     return res
 
 
-max_candidate = 0,
+min_candidate = 10000,
 
-def solve(root_fn, features=None):
+def solve(root_fn, features):
     #print '*** %s %r ***' % (root_fn, features)
 
     dists = all_deps(root_fn)
@@ -109,28 +109,26 @@ def solve(root_fn, features=None):
     #pprint(clauses)
     candidates = defaultdict(list)
     for sol in pycosat.itersolve(clauses):
-        nfeat = 0
+        fsd = 0
         pkgs = [w[lit] for lit in sol if lit > 0]
-        if features:
-            for fn in pkgs:
-                nfeat += sum(bool(feat in index[fn]['features'])
-                             for feat in features)
-        key = nfeat, -len(pkgs)
+        for fn in pkgs:
+            fsd += len(features ^ index[fn]['features'])
+        key = fsd, len(pkgs)
         candidates[key].append(pkgs)
 
-    global max_candidate
-    if len(candidates) > max_candidate[0]:
-        max_candidate = len(candidates), root_fn, features
+    global min_candidate
+    if len(candidates) < min_candidate[0]:
+        min_candidate = len(candidates), root_fn, features
 
-    maxkey = max(candidates)
+    minkey = min(candidates)
+    print 'minkey =', minkey
 
-    mc = candidates[maxkey]
+    mc = candidates[minkey]
     if len(mc) != 1:
         print root_fn
         pprint(mc)
 
-    #print 'maxkey =', maxkey
-    return candidates[maxkey][0]
+    return candidates[minkey][0]
 
 
 def main():
@@ -145,10 +143,10 @@ def main():
             continue
         if index[fn]['name'] == 'anaconda':
             continue
-        for features in [], ['mkl']:
+        for features in set([]), set(['mkl']):
             solve(fn, features)
     print 'OK'
-    print max_candidate
+    print min_candidate
 
 if __name__ == '__main__':
     #pprint(solve('accelerate-1.1.0-np17py26_p0.tar.bz2', ['mkl']))
