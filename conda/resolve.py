@@ -70,7 +70,7 @@ def solve(root_fn, features=None):
     #print '*** %s %r ***' % (root_fn, features)
 
     dists = all_deps(root_fn)
-    pprint(dists)
+    #pprint(dists)
     dists.add(root_fn)
 
     v = {} # map fn to variable number
@@ -116,7 +116,6 @@ def solve(root_fn, features=None):
                 nfeat += sum(bool(feat in index[fn]['features'])
                              for feat in features)
         key = nfeat, -len(pkgs)
-        #print key, sol
         candidates[key] = pkgs
 
     global max_candidate
@@ -128,10 +127,6 @@ def solve(root_fn, features=None):
     return candidates[maxkey]
 
 
-if __name__ == '__main__':
-    pprint(solve('accelerate-1.1.0-np17py26_p0.tar.bz2', ['mkl']))
-
-
 def main():
     ignore = set(['statsmodels-0.4.3-np16py26_0.tar.bz2',
                   'statsmodels-0.4.3-np16py27_0.tar.bz2',
@@ -140,7 +135,7 @@ def main():
                   'anaconda-launcher-0.0-py27_0.tar.bz2',
                   ])
     for fn in index:
-        if fn in ignore:
+        if fn in ignore or '-np15py' in fn:
             continue
         if index[fn]['name'] == 'anaconda':
             continue
@@ -148,3 +143,7 @@ def main():
             solve(fn, features)
     print 'OK'
     print max_candidate
+
+if __name__ == '__main__':
+    #pprint(solve('accelerate-1.1.0-np17py26_p0.tar.bz2', ['mkl']))
+    main()
