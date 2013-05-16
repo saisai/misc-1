@@ -116,11 +116,7 @@ def solve(root_fn, features):
 
     mc = candidates[minkey]
     if len(mc) != 1:
-        print root_fn, features
-        print 'minkey =', minkey
-        for c in mc:
-            print len(c)
-            pprint(c)
+        print 'WARNING:', len(mc), root_fn, features
 
     return candidates[minkey][0]
 
