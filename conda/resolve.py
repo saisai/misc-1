@@ -64,8 +64,10 @@ def all_deps(root_fn):
     return res
 
 
+max_candidate = 0,
+
 def solve(root_fn, features=None):
-    print '*** %s %r ***' % (root_fn, features)
+    #print '*** %s %r ***' % (root_fn, features)
 
     dists = all_deps(root_fn)
     pprint(dists)
@@ -114,15 +116,23 @@ def solve(root_fn, features=None):
                 nfeat += sum(bool(feat in index[fn]['features'])
                              for feat in features)
         key = nfeat, -len(pkgs)
-        print key, sol
+        #print key, sol
         candidates[key] = pkgs
 
+    global max_candidate
+    if len(candidates) > max_candidate[0]:
+        max_candidate = len(candidates), root_fn, features
+
     maxkey = max(candidates)
-    print 'maxkey =', maxkey
+    #print 'maxkey =', maxkey
     return candidates[maxkey]
 
 
 if __name__ == '__main__':
+    pprint(solve('accelerate-1.1.0-np17py26_p0.tar.bz2', ['mkl']))
+
+
+def main():
     ignore = set(['statsmodels-0.4.3-np16py26_0.tar.bz2',
                   'statsmodels-0.4.3-np16py27_0.tar.bz2',
                   'statsmodels-0.4.3-np17py27_0.tar.bz2',
@@ -135,5 +145,6 @@ if __name__ == '__main__':
         if index[fn]['name'] == 'anaconda':
             continue
         for features in [], ['mkl']:
-            pprint(solve(fn, features))
+            solve(fn, features)
     print 'OK'
+    print max_candidate
