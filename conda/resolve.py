@@ -1,10 +1,10 @@
 from pprint import pprint
 from collections import defaultdict
+from optparse import OptionParser
 
 import pycosat
 
 import verlib
-
 from install import index, find_matches
 
 
@@ -149,6 +149,16 @@ def main():
     print min_candidate
 
 if __name__ == '__main__':
-    pprint(solve('pandas-0.9.1-np17py27_0.tar.bz2', set(['mkl'])))
-    #pprint(solve('accelerate-1.1.0-np17py26_p0.tar.bz2', ['mkl']))
-    #main()
+    p = OptionParser(usage="usage: %prog [options] SPEC")
+    p.add_option("--mkl", action="store_true")
+    opts, args = p.parse_args()
+
+    if len(args) == 0:
+        main()
+    elif len(args) == 1:
+        from matcher import MatchSpec
+        ms = MatchSpec(args[0])
+        features = set(['mkl']) if opts.mkl else set()
+        for fn in sorted(find_matches(ms)):
+            print fn, features
+            pprint(solve(fn, features))
