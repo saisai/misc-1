@@ -18,8 +18,7 @@ def add_depends(info):
         elif name in ('python', 'numpy') and len(version) == 3:
             depends.append('%s %s*' % (name, version))
 
-        elif (name in ('nose', 'pytz', 'dateutil', 'distribute', 'docutils') or
-                 (info['name'] == 'bitey' and name == 'llvmpy')):
+        elif name in ('nose', 'pytz', 'dateutil', 'distribute', 'docutils'):
             depends.append(name)
 
         elif (info['name'] == ('gevent-websocket', 'gevent_zeromq') and

@@ -52,12 +52,15 @@ def all_deps(root_fn):
     def add_dependents(fn1):
         for ms in index[fn1]['ms_depends']:
             for fn2 in get_dists(ms):
+                if fn2 in res:
+                    continue
                 res.add(fn2)
                 add_dependents(fn2)
 
     add_dependents(root_fn)
-    return res
+    return sorted(res)
+
 
 if __name__ == '__main__':
-    for fn in sorted(all_deps('scipy-0.12.0-np15py26_0.tar.bz2')):
+    for fn in all_deps('scipy-0.12.0-np15py26_0.tar.bz2'):
         print fn
