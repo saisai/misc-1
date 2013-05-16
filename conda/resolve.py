@@ -157,8 +157,12 @@ if __name__ == '__main__':
         main()
     elif len(args) == 1:
         from matcher import MatchSpec
-        ms = MatchSpec(args[0])
+        spec = args[0]
+        if '=' in spec:
+            ms = MatchSpec(spec.replace('=', ' ') + '*')
+        else:
+            ms = MatchSpec(spec)
         features = set(['mkl']) if opts.mkl else set()
-        for fn in sorted(find_matches(ms)):
+        for fn in sorted(get_dists(ms)):
             print fn, features
             pprint(solve(fn, features))
