@@ -78,7 +78,8 @@ def solve(root_fn, features):
         groups[index[fn]['name']].append(fn)
 
     if len(groups) == len(dists):
-        print "No duplicate name, no SAT needed."
+        assert all(len(filenames) == 1 for filenames in groups.itervalues())
+        #print "No duplicate name, no SAT needed."
         return sorted(dists)
 
     v = {} # map fn to variable number
