@@ -139,7 +139,7 @@ def main():
     print 'OK'
 
 
-def get_install_root(spec, features=set(), installed=[]):
+def select_install_root_fn(spec, features=set(), installed=[]):
     if spec.count('=') == 0:
         ms = MatchSpec(spec)
     elif spec.count('=') == 1:
@@ -172,6 +172,6 @@ if __name__ == '__main__':
         main()
     elif len(args) == 1:
         features = set(['mkl']) if opts.mkl else set()
-        fn = get_install_root(args[0], features)
+        fn = select_install_root_fn(args[0], features)
         print fn, features
         pprint(solve(fn, features))
