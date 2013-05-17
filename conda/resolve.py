@@ -152,20 +152,24 @@ def main():
     print 'OK'
 
 
-def select_install_root_fn(spec, features=set(), installed=[],
-                           return_set=False):
+ranks = {}
+def select_install_root_fn(spec, features=set(), installed=[], rank=False):
     if spec.count('=') == 0:
         ms = MatchSpec(spec)
     elif spec.count('=') == 1:
         ms = MatchSpec(spec.replace('=', ' ') + '*')
     elif spec.count('=') == 2:
         fn = spec.replace('=', '-') + '.tar.bz2'
-        return {fn} if return_set else fn
+        ranks[fn] = 0
+        return [fn] if rank else fn
     else:
         raise
 
-    if return_set:
-        return set(find_matches(ms))
+    if rank:
+        pkgs = [Package(fn2) for fn2 in find_matches(ms)]
+        for i, p in enumerate(sorted(pkgs)):
+            ranks[p.fn] = i
+        return [p.fn for p in pkgs]
 
     candidates = defaultdict(list)
     for fn in get_dists(ms):
@@ -186,23 +190,24 @@ def select_install_root_fn(spec, features=set(), installed=[],
 
 
 def select_install_root_dists(specs, features, installed):
-    args = [select_install_root_fn(spec, features, installed, return_set=1)
+    args = [select_install_root_fn(spec, features, installed, rank=True)
             for spec in specs]
     candidates = defaultdict(list)
     for dists in itertools.product(*args):
-        fsd = ssm = olx = 0
+        fsd = ssm = olx = rnk = 0
         for fn in dists:
             fsd += len(features ^ index[fn]['features'])
             ssm += sum(sum(ms.match(fn2[:-8]) for fn2 in installed)
                        for ms in index[fn]['ms_depends'])
+            rnk += ranks[fn]
         for fn1 in dists:
             for fn2 in dists:
                 if fn1 != fn2:
-                    print fn1, fn2
+                    #print fn1, fn2
                     olx += sum(ms.match(fn2[:-8])
                                for ms in index[fn1]['ms_depends'])
 
-        key = fsd, -olx, -ssm
+        key = fsd, -olx, -rnk, -ssm
         print dists, key
         candidates[key].append(dists)
 
