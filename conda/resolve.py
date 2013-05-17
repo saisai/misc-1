@@ -156,7 +156,9 @@ def select_install_root_fn(spec, features=set(), installed=[]):
     candidates = defaultdict(list)
     for fn in get_dists(ms):
         fsd = len(features ^ index[fn]['features'])
-        key = fsd, 0
+        ssm = sum(sum(ms.match(fn2[:-8]) for fn2 in installed)
+                  for ms in index[fn]['ms_depends'])
+        key = fsd, -ssm
         candidates[key].append(fn)
 
     minkey = min(candidates)
@@ -177,6 +179,7 @@ if __name__ == '__main__':
         main()
     elif len(args) == 1:
         features = set(['mkl']) if opts.mkl else set()
-        fn = select_install_root_fn(args[0], features)
+        installed = solve('anaconda-1.5.0-np16py26_0.tar.bz2', set())
+        fn = select_install_root_fn(args[0], features, installed)
         print fn, features
         pprint(solve(fn, features))
