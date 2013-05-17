@@ -72,15 +72,19 @@ def solve(root_fn, features):
     #pprint(dists)
     dists.add(root_fn)
 
+    groups = defaultdict(list) # map name to list of filenames
+    for fn in dists:
+        groups[index[fn]['name']].append(fn)
+
+    if len(groups) == len(dists):
+        print "No duplicate name, no SAT needed."
+        return sorted(dists)
+
     v = {} # map fn to variable number
     w = {} # map variable number to fn
     for i, fn in enumerate(sorted(dists)):
         v[fn] = i + 1
         w[i + 1] = fn
-
-    groups = defaultdict(list) # map name to list of filenames
-    for fn in dists:
-        groups[index[fn]['name']].append(fn)
 
     clauses = []
 
@@ -149,7 +153,7 @@ def select_install_root_fn(spec, features=set(), installed=[]):
     else:
         raise
     candidates = defaultdict(list)
-    for fn in sorted(get_dists(ms)):
+    for fn in get_dists(ms):
         fsd = len(features ^ index[fn]['features'])
         key = fsd, 0
         candidates[key].append(fn)
