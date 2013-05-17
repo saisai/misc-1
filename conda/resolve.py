@@ -66,12 +66,15 @@ def all_deps(root_fn):
     return res
 
 
-def solve(root_fn, features):
+def solve(root_dists, features):
     #print '*** %s %r ***' % (root_fn, features)
 
-    dists = all_deps(root_fn)
+    dists = set()
+    for root_fn in root_dists:
+        dists.update(all_deps(root_fn))
+        dists.add(root_fn)
+
     #pprint(dists)
-    dists.add(root_fn)
 
     groups = defaultdict(list) # map name to list of filenames
     for fn in dists:
@@ -79,7 +82,7 @@ def solve(root_fn, features):
 
     if len(groups) == len(dists):
         assert all(len(filenames) == 1 for filenames in groups.itervalues())
-        #print "No duplicate name, no SAT needed."
+        print "No duplicate name, no SAT needed."
         return sorted(dists)
 
     v = {} # map fn to variable number
@@ -110,7 +113,9 @@ def solve(root_fn, features):
             assert len(clause) > 1, fn1
             clauses.append(clause)
 
-    clauses.append([v[root_fn]])
+    for root_fn in root_dists:
+        clauses.append([v[root_fn]])
+
     #pprint(clauses)
     candidates = defaultdict(list)
     for sol in pycosat.itersolve(clauses):
@@ -123,7 +128,7 @@ def solve(root_fn, features):
 
     mc = candidates[minkey]
     if len(mc) != 1:
-        print 'WARNING:', len(mc), root_fn, features
+        print 'WARNING:', len(mc), root_dists, features
 
     return candidates[minkey][0]
 
@@ -173,6 +178,15 @@ def select_install_root_fn(spec, features=set(), installed=[]):
     return candidates[minkey][0]
 
 
+def select_install_root_dists(specs, features, installed):
+    res = set()
+    for spec in specs:
+        files = select_install_root_fn(spec, features, installed)
+        
+
+    return res
+
+
 if __name__ == '__main__':
     p = OptionParser(usage="usage: %prog [options] SPEC")
     p.add_option("--mkl", action="store_true")
@@ -180,9 +194,14 @@ if __name__ == '__main__':
 
     if len(args) == 0:
         main()
-    elif len(args) == 1:
+    else:
         features = set(['mkl']) if opts.mkl else set()
-        installed = solve('anaconda-1.5.0-np16py26_0.tar.bz2', set())
-        fn = select_install_root_fn(args[0], features, installed)
-        print fn, features
-        pprint(solve(fn, features))
+        installed = solve({'anaconda-1.5.0-np16py26_0.tar.bz2'}, set())
+
+        if len(args) == 1:
+            files = {select_install_root_fn(args[0], features, installed)}
+        else:
+            files = select_install_root_dists(args, features, installed)
+
+        print files, features
+        pprint(solve(files, features))
