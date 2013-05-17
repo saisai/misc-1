@@ -59,7 +59,8 @@ def all_deps(root_fn):
                 if fn2 in res:
                     continue
                 res.add(fn2)
-                add_dependents(fn2)
+                if ms.strictness < 3:
+                    add_dependents(fn2)
 
     add_dependents(root_fn)
     return res
