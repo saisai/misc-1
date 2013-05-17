@@ -13620,6 +13620,21 @@
     ],
     "version": "2.7.4"
   },
+  "python-2.7.5-0.tar.bz2": {
+    "build": "0",
+    "build_number": 0,
+    "channel": "test-pkgs",
+    "name": "python",
+    "requires": [
+      "openssl 1.0.1c",
+      "readline 6.2",
+      "sqlite 3.7.13",
+      "system 5.8",
+      "tk 8.5.13",
+      "zlib 1.2.7"
+    ],
+    "version": "2.7.5"
+  },
   "python-3.3.0-2.tar.bz2": {
     "build": "2",
     "build_number": 2,
@@ -13708,6 +13723,21 @@
       "zlib 1.2.7"
     ],
     "version": "3.3.1"
+  },
+  "python-3.3.2-0.tar.bz2": {
+    "build": "0",
+    "build_number": 0,
+    "channel": "test-pkgs",
+    "name": "python",
+    "requires": [
+      "openssl 1.0.1c",
+      "readline 6.2",
+      "sqlite 3.7.13",
+      "system 5.8",
+      "tk 8.5.13",
+      "zlib 1.2.7"
+    ],
+    "version": "3.3.2"
   },
   "pytz-2012d-py26_0.tar.bz2": {
     "build": "py26_0",
