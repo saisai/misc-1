@@ -66,7 +66,7 @@ def all_deps(root_fn):
     return res
 
 
-def solve(root_dists, features):
+def solve(root_dists, features, verbose=False):
     #print '*** %s %r ***' % (root_fn, features)
 
     dists = set()
@@ -82,7 +82,8 @@ def solve(root_dists, features):
 
     if len(groups) == len(dists):
         assert all(len(filenames) == 1 for filenames in groups.itervalues())
-        print "No duplicate name, no SAT needed."
+        if verbose:
+            print "No duplicate name, no SAT needed."
         return sorted(dists)
 
     v = {} # map fn to variable number
@@ -150,15 +151,20 @@ def main():
     print 'OK'
 
 
-def select_install_root_fn(spec, features=set(), installed=[]):
+def select_install_root_fn(spec, features=set(), installed=[],
+                           return_set=False):
     if spec.count('=') == 0:
         ms = MatchSpec(spec)
     elif spec.count('=') == 1:
         ms = MatchSpec(spec.replace('=', ' ') + '*')
     elif spec.count('=') == 2:
-        return spec.replace('=', '-') + '.tar.bz2'
+        fn = spec.replace('=', '-') + '.tar.bz2'
+        return {fn} if return_set else fn
     else:
         raise
+
+    if return_set:
+        return set(get_dists(ms))
 
     candidates = defaultdict(list)
     for fn in get_dists(ms):
@@ -169,7 +175,7 @@ def select_install_root_fn(spec, features=set(), installed=[]):
         candidates[key].append(fn)
 
     minkey = min(candidates)
-    print 'minkey:', minkey
+    #print 'minkey:', minkey
 
     mc = candidates[minkey]
     if len(mc) != 1:
@@ -204,4 +210,4 @@ if __name__ == '__main__':
             files = select_install_root_dists(args, features, installed)
 
         print files, features
-        pprint(solve(files, features))
+        pprint(solve(files, features, verbose=True))
