@@ -1,3 +1,4 @@
+import itertools
 from pprint import pprint
 from collections import defaultdict
 from optparse import OptionParser
@@ -185,12 +186,35 @@ def select_install_root_fn(spec, features=set(), installed=[],
 
 
 def select_install_root_dists(specs, features, installed):
-    res = set()
-    for spec in specs:
-        files = select_install_root_fn(spec, features, installed)
-        
+    args = [select_install_root_fn(spec, features, installed, return_set=1)
+            for spec in specs]
+    candidates = defaultdict(list)
+    for dists in itertools.product(*args):
+        fsd = ssm = olx = 0
+        for fn in dists:
+            fsd += len(features ^ index[fn]['features'])
+            ssm += sum(sum(ms.match(fn2[:-8]) for fn2 in installed)
+                       for ms in index[fn]['ms_depends'])
+        for fn1 in dists:
+            for fn2 in dists:
+                if fn1 != fn2:
+                    olx += sum(ms.match(fn2[:-8])
+                               for ms in index[fn1]['ms_depends'])
 
-    return res
+        key = fsd, -ssm, -olx
+        print dists, key
+        candidates[key].append(dists)
+
+    minkey = min(candidates)
+    print 'minkey:', minkey
+
+    mc = candidates[minkey]
+    if len(mc) != 1:
+        print 'WARNING:'
+        for c in mc:
+            print '\t', c
+
+    return set(candidates[minkey][0])
 
 
 if __name__ == '__main__':
@@ -202,7 +226,7 @@ if __name__ == '__main__':
         main()
     else:
         features = set(['mkl']) if opts.mkl else set()
-        installed = solve({'anaconda-1.5.0-np16py26_0.tar.bz2'}, set())
+        installed = []#solve({'anaconda-1.5.0-np16py26_0.tar.bz2'}, set())
 
         if len(args) == 1:
             files = {select_install_root_fn(args[0], features, installed)}
