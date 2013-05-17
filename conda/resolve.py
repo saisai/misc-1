@@ -154,6 +154,7 @@ def select_install_root_fn(spec, features=set(), installed=[]):
         return spec.replace('=', '-') + '.tar.bz2'
     else:
         raise
+
     candidates = defaultdict(list)
     for fn in get_dists(ms):
         fsd = len(features ^ index[fn]['features'])
@@ -163,6 +164,7 @@ def select_install_root_fn(spec, features=set(), installed=[]):
         candidates[key].append(fn)
 
     minkey = min(candidates)
+    print 'minkey:', minkey
 
     mc = candidates[minkey]
     if len(mc) != 1:
