@@ -11,6 +11,7 @@ for info in index.itervalues():
     assert channel in ('pro', 'free', 'test-pkgs'), channel
     info['channel'] = channel
 
+print len(index)
 
 data = json.dumps(index, indent=2, sort_keys=True)
 data = '\n'.join(line.rstrip() for line in data.split('\n'))
