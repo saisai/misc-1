@@ -165,7 +165,7 @@ def select_install_root_fn(spec, features=set(), installed=[],
         raise
 
     if return_set:
-        return set(get_dists(ms))
+        return set(find_matches(ms))
 
     candidates = defaultdict(list)
     for fn in get_dists(ms):
@@ -198,10 +198,11 @@ def select_install_root_dists(specs, features, installed):
         for fn1 in dists:
             for fn2 in dists:
                 if fn1 != fn2:
+                    print fn1, fn2
                     olx += sum(ms.match(fn2[:-8])
                                for ms in index[fn1]['ms_depends'])
 
-        key = fsd, -ssm, -olx
+        key = fsd, -olx, -ssm
         print dists, key
         candidates[key].append(dists)
 
