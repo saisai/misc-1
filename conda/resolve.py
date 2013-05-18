@@ -190,11 +190,9 @@ def select_root_dists(specs, features, installed):
         fsd = olx = svs = sim = 0
         for fn1 in dists:
             fsd += len(features ^ index[fn1]['features'])
-            sim += installed_matches(fn1)
+            olx += sum(sum_matches(fn1, fn2) for fn2 in dists if fn1 != fn2)
             svs += verscores[fn1]
-            for fn2 in dists:
-                if fn1 != fn2:
-                    olx += sum_matches(fn1, fn2)
+            sim += installed_matches(fn1)
 
         key = -fsd, olx, svs, sim
         #print dists, key
