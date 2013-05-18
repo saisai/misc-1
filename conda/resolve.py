@@ -178,19 +178,19 @@ def select_dists_spec(spec):
         verscores[p1.fn] = vs
         if p2 and p2 > p1:
             vs += 1
-    pprint(verscores)
+    #pprint(verscores)
     return [p.fn for p in pkgs]
 
 def select_root_dists(specs, features, installed):
     args = [select_dists_spec(spec) for spec in specs]
     candidates = defaultdict(list)
     for dists in itertools.product(*args):
-        fsd = ssm = olx = vs = 0
+        fsd = ssm = olx = svs = 0
         for fn in dists:
             fsd += len(features ^ index[fn]['features'])
             ssm += sum(sum(ms.match(fn2[:-8]) for fn2 in installed)
                        for ms in index[fn]['ms_depends'])
-            vs += verscores[fn]
+            svs += verscores[fn]
         for fn1 in dists:
             for fn2 in dists:
                 if fn1 != fn2:
@@ -198,7 +198,7 @@ def select_root_dists(specs, features, installed):
                     olx += sum(ms.match(fn2[:-8])
                                for ms in index[fn1]['ms_depends'])
 
-        key = -fsd, olx, vs, ssm
+        key = -fsd, olx, svs, ssm
         #print dists, key
         candidates[key].append(dists)
 
