@@ -179,13 +179,12 @@ def sum_matches(fn1, fn2):
 
 def select_root_dists(specs, features, installed):
     args = [select_dists_spec(spec) for spec in specs]
-    candidates = defaultdict(list)
-    n = 0
 
     @memoized
     def installed_matches(fn):
         return sum(sum_matches(fn, fn2) for fn2 in installed)
 
+    candidates = defaultdict(list)
     for dists in itertools.product(*args):
         fsd = ssm = olx = svs = 0
         for fn in dists:
@@ -200,9 +199,7 @@ def select_root_dists(specs, features, installed):
         key = -fsd, olx, svs, ssm
         #print dists, key
         candidates[key].append(dists)
-        n += 1
 
-    print 'n =', n
     maxkey = max(candidates)
     print 'maxkey:', maxkey
 
