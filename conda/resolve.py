@@ -153,39 +153,19 @@ def main():
 
 
 ranks = {}
-def select_install_root_fn(spec, features=set(), installed=[], rank=False):
+def select_root_dists_spec(spec):
     mspec = spec.replace('=', ' ')
     if spec.count('=') == 1:
         mspec += '*'
     ms = MatchSpec(mspec)
 
-    if rank:
-        pkgs = [Package(fn2) for fn2 in find_matches(ms)]
-        for i, p in enumerate(sorted(pkgs)):
-            ranks[p.fn] = i
-        return [p.fn for p in pkgs]
+    pkgs = [Package(fn2) for fn2 in find_matches(ms)]
+    for i, p in enumerate(sorted(pkgs)):
+        ranks[p.fn] = i
+    return [p.fn for p in pkgs]
 
-    candidates = defaultdict(list)
-    for fn in get_dists(ms):
-        fsd = len(features ^ index[fn]['features'])
-        ssm = sum(sum(ms.match(fn2[:-8]) for fn2 in installed)
-                  for ms in index[fn]['ms_depends'])
-        key = fsd, -ssm
-        candidates[key].append(fn)
-
-    minkey = min(candidates)
-    #print 'minkey:', minkey
-
-    mc = candidates[minkey]
-    if len(mc) != 1:
-        print 'WARNING:', mc
-
-    return candidates[minkey][0]
-
-
-def select_install_root_dists(specs, features, installed):
-    args = [select_install_root_fn(spec, features, installed, rank=True)
-            for spec in specs]
+def select_root_dists(specs, features, installed):
+    args = [select_root_dists_spec(spec) for spec in specs]
     candidates = defaultdict(list)
     for dists in itertools.product(*args):
         fsd = ssm = olx = rnk = 0
@@ -228,10 +208,6 @@ if __name__ == '__main__':
         features = set(['mkl']) if opts.mkl else set()
         installed = []#solve({'anaconda-1.5.0-np16py26_0.tar.bz2'}, set())
 
-        if len(args) == 1:
-            files = {select_install_root_fn(args[0], features, installed)}
-        else:
-            files = select_install_root_dists(args, features, installed)
-
+        files = select_root_dists(args, features, installed)
         print files, features
         pprint(solve(files, features, verbose=True))
