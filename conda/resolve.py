@@ -186,17 +186,16 @@ def select_root_dists(specs, features, installed):
 
     candidates = defaultdict(list)
     for dists in itertools.product(*args):
-        fsd = ssm = olx = svs = 0
-        for fn in dists:
-            fsd += len(features ^ index[fn]['features'])
-            ssm += installed_matches(fn)
-            svs += verscores[fn]
+        fsd = olx = svs = sim = 0
         for fn1 in dists:
+            fsd += len(features ^ index[fn1]['features'])
+            sim += installed_matches(fn1)
+            svs += verscores[fn1]
             for fn2 in dists:
                 if fn1 != fn2:
                     olx += sum_matches(fn1, fn2)
 
-        key = -fsd, olx, svs, ssm
+        key = -fsd, olx, svs, sim
         #print dists, key
         candidates[key].append(dists)
 
