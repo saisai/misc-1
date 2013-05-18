@@ -6,7 +6,7 @@ from optparse import OptionParser
 import pycosat
 
 import verlib
-from utils import iter_pairs
+from utils import iter_pairs, memoized
 from install import index, find_matches
 from matcher import MatchSpec
 
@@ -173,6 +173,7 @@ def select_dists_spec(spec):
     #pprint(verscores)
     return [p.fn for p in pkgs]
 
+@memoized
 def sum_matches(fn1, fn2):
     return sum(ms.match(fn2[:-8]) for ms in index[fn1]['ms_depends'])
 
