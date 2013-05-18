@@ -108,8 +108,8 @@ def solve2(root_dists, features, verbose=False):
                 if fn2 in dists:
                     clause.append(v[fn2])
 
-            if len(clause) > 1:
-                clauses.append(clause)
+            assert len(clause) > 1, fn1
+            clauses.append(clause)
 
     for root_fn in root_dists:
         clauses.append([v[root_fn]])
@@ -134,20 +134,6 @@ def solve2(root_dists, features, verbose=False):
 
     return candidates[minkey][0]
 
-
-def main():
-    ignore = set(['statsmodels-0.4.3-np16py26_0.tar.bz2',
-                  'statsmodels-0.4.3-np16py27_0.tar.bz2',
-                  'statsmodels-0.4.3-np17py27_0.tar.bz2',
-                  'statsmodels-0.4.3-np17py26_0.tar.bz2',
-                  'anaconda-launcher-0.0-py27_0.tar.bz2',
-                  ])
-    for fn in index:
-        if fn in ignore or '-np15py' in fn:
-            continue
-        for features in set([]), set(['mkl']):
-            solve2([fn], features)
-    print 'OK'
 
 verscores = {}
 def select_dists_spec(spec):
@@ -202,13 +188,28 @@ def select_root_dists(specs, features, installed):
     return set(candidates[maxkey][0])
 
 
+def test_all():
+    ignore = set(['statsmodels-0.4.3-np16py26_0.tar.bz2',
+                  'statsmodels-0.4.3-np16py27_0.tar.bz2',
+                  'statsmodels-0.4.3-np17py27_0.tar.bz2',
+                  'statsmodels-0.4.3-np17py26_0.tar.bz2',
+                  'anaconda-launcher-0.0-py27_0.tar.bz2',
+                  ])
+    for fn in index:
+        if fn in ignore or '-np15py' in fn:
+            continue
+        for features in set([]), set(['mkl']):
+            solve2([fn], features)
+    print 'OK'
+
+
 if __name__ == '__main__':
     p = OptionParser(usage="usage: %prog [options] SPEC")
     p.add_option("--mkl", action="store_true")
     opts, args = p.parse_args()
 
     if len(args) == 0:
-        main()
+        test_all()
     else:
         features = set(['mkl']) if opts.mkl else set()
         installed = solve2({'anaconda-1.5.0-np17py27_0.tar.bz2'}, set())
