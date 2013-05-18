@@ -67,16 +67,11 @@ def all_deps(root_fn):
     add_dependents(root_fn)
     return res
 
-
-def solve(root_dists, features, verbose=False):
-    #print '*** %s %r ***' % (root_fn, features)
-
+def solve2(root_dists, features, verbose=False):
     dists = set()
     for root_fn in root_dists:
         dists.update(all_deps(root_fn))
         dists.add(root_fn)
-
-    #pprint(dists)
 
     groups = defaultdict(list) # map name to list of filenames
     for fn in dists:
@@ -113,13 +108,12 @@ def solve(root_dists, features, verbose=False):
                 if fn2 in dists:
                     clause.append(v[fn2])
 
-            assert len(clause) > 1, fn1
-            clauses.append(clause)
+            if len(clause) > 1:
+                clauses.append(clause)
 
     for root_fn in root_dists:
         clauses.append([v[root_fn]])
 
-    #pprint(clauses)
     candidates = defaultdict(list)
     for sol in pycosat.itersolve(clauses):
         pkgs = [w[lit] for lit in sol if lit > 0]
@@ -152,7 +146,7 @@ def main():
         if fn in ignore or '-np15py' in fn:
             continue
         for features in set([]), set(['mkl']):
-            solve([fn], features)
+            solve2([fn], features)
     print 'OK'
 
 verscores = {}
@@ -217,8 +211,8 @@ if __name__ == '__main__':
         main()
     else:
         features = set(['mkl']) if opts.mkl else set()
-        installed = solve({'anaconda-1.5.0-np17py27_0.tar.bz2'}, set())
+        installed = solve2({'anaconda-1.5.0-np17py27_0.tar.bz2'}, set())
 
         files = select_root_dists(args, features, installed)
         print files, features
-        pprint(solve(files, features, verbose=True))
+        pprint(solve2(files, features, verbose=True))
