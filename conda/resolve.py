@@ -6,6 +6,7 @@ from optparse import OptionParser
 import pycosat
 
 import verlib
+from utils import iter_pairs
 from install import index, find_matches
 from matcher import MatchSpec
 
@@ -154,15 +155,6 @@ def main():
         for features in set([]), set(['mkl']):
             solve([fn], features)
     print 'OK'
-
-def iter_pairs(lst):
-    assert isinstance(lst, list)
-    for i, elem in enumerate(lst):
-        try:
-            next = lst[i + 1]
-        except IndexError:
-            next = None
-        yield elem, next
 
 verscores = {}
 def select_dists_spec(spec):
