@@ -126,6 +126,10 @@ def solve(root_dists, features, verbose=False):
         key = fsd, len(pkgs)
         candidates[key].append(pkgs)
 
+    if not candidates:
+        print "Error: UNSAT"
+        return []
+
     minkey = min(candidates)
 
     mc = candidates[minkey]
@@ -148,7 +152,7 @@ def main():
         if index[fn]['name'] == 'anaconda':
             continue
         for features in set([]), set(['mkl']):
-            solve(fn, features)
+            solve([fn], features)
     print 'OK'
 
 
