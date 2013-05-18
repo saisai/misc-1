@@ -185,20 +185,20 @@ def select_root_dists(specs, features, installed):
                     olx += sum(ms.match(fn2[:-8])
                                for ms in index[fn1]['ms_depends'])
 
-        key = fsd, -olx, -rnk, -ssm
+        key = -fsd, olx, rnk, ssm
         #print dists, key
         candidates[key].append(dists)
 
-    minkey = min(candidates)
-    print 'minkey:', minkey
+    maxkey = max(candidates)
+    print 'maxkey:', maxkey
 
-    mc = candidates[minkey]
+    mc = candidates[maxkey]
     if len(mc) != 1:
         print 'WARNING:'
         for c in mc:
             print '\t', c
 
-    return set(candidates[minkey][0])
+    return set(candidates[maxkey][0])
 
 
 if __name__ == '__main__':
