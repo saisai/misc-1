@@ -125,6 +125,7 @@ def solve(root_dists, features, verbose=False):
         pkgs = [w[lit] for lit in sol if lit > 0]
         fsd = sum(len(features ^ index[fn]['features']) for fn in pkgs)
         key = fsd, len(pkgs)
+        #print key, pkgs
         candidates[key].append(pkgs)
 
     if not candidates:
@@ -224,4 +225,4 @@ if __name__ == '__main__':
 
         files = select_root_dists(args, features, installed)
         print files, features
-        print bool(solve(files, features, verbose=True))
+        pprint(solve(files, features, verbose=True))

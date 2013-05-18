@@ -1,6 +1,3 @@
-
-
-
 def add_depends(info):
     depends = []
     for s in info['requires']:
@@ -37,3 +34,5 @@ def add_depends(info):
 def add_all_depends(index):
     for info in index.itervalues():
         add_depends(info)
+        if info['name'] == 'mkl-rt':
+            info['features'] = 'mkl'
