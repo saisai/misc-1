@@ -154,16 +154,10 @@ def main():
 
 ranks = {}
 def select_install_root_fn(spec, features=set(), installed=[], rank=False):
-    if spec.count('=') == 0:
-        ms = MatchSpec(spec)
-    elif spec.count('=') == 1:
-        ms = MatchSpec(spec.replace('=', ' ') + '*')
-    elif spec.count('=') == 2:
-        fn = spec.replace('=', '-') + '.tar.bz2'
-        ranks[fn] = 0
-        return [fn] if rank else fn
-    else:
-        raise
+    mspec = spec.replace('=', ' ')
+    if spec.count('=') == 1:
+        mspec += '*'
+    ms = MatchSpec(mspec)
 
     if rank:
         pkgs = [Package(fn2) for fn2 in find_matches(ms)]
@@ -208,7 +202,7 @@ def select_install_root_dists(specs, features, installed):
                                for ms in index[fn1]['ms_depends'])
 
         key = fsd, -olx, -rnk, -ssm
-        print dists, key
+        #print dists, key
         candidates[key].append(dists)
 
     minkey = min(candidates)
