@@ -181,6 +181,9 @@ def select_dists_spec(spec):
     #pprint(verscores)
     return [p.fn for p in pkgs]
 
+def sum_matches(fn1, fn2):
+    return sum(ms.match(fn2[:-8]) for ms in index[fn1]['ms_depends'])
+
 def select_root_dists(specs, features, installed):
     args = [select_dists_spec(spec) for spec in specs]
     candidates = defaultdict(list)
@@ -188,15 +191,12 @@ def select_root_dists(specs, features, installed):
         fsd = ssm = olx = svs = 0
         for fn in dists:
             fsd += len(features ^ index[fn]['features'])
-            ssm += sum(sum(ms.match(fn2[:-8]) for fn2 in installed)
-                       for ms in index[fn]['ms_depends'])
+            ssm += sum(sum_matches(fn, fn2) for fn2 in installed)
             svs += verscores[fn]
         for fn1 in dists:
             for fn2 in dists:
                 if fn1 != fn2:
-                    #print fn1, fn2
-                    olx += sum(ms.match(fn2[:-8])
-                               for ms in index[fn1]['ms_depends'])
+                    olx += sum_matches(fn1, fn2)
 
         key = -fsd, olx, svs, ssm
         #print dists, key
@@ -223,7 +223,7 @@ if __name__ == '__main__':
         main()
     else:
         features = set(['mkl']) if opts.mkl else set()
-        installed = []#solve({'anaconda-1.5.0-np16py26_0.tar.bz2'}, set())
+        installed = solve({'anaconda-1.5.0-np17py27_0.tar.bz2'}, set())
 
         files = select_root_dists(args, features, installed)
         print files, features
