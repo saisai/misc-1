@@ -31,7 +31,7 @@ class Package(object):
             self.norm_version = self.version
 
     def __cmp__(self, other):
-        assert self.name == other.name
+        assert self.name == other.name, '%r %r' % (self.fn, other.fn)
         try:
             return cmp((self.norm_version, self.build_number),
                        (other.norm_version, other.build_number))
@@ -155,6 +155,14 @@ def main():
             solve([fn], features)
     print 'OK'
 
+def iter_pairs(lst):
+    assert isinstance(lst, list)
+    for i, elem in enumerate(lst):
+        try:
+            next = lst[i + 1]
+        except IndexError:
+            next = None
+        yield elem, next
 
 verscores = {}
 def select_dists_spec(spec):
@@ -166,10 +174,11 @@ def select_dists_spec(spec):
     pkgs = [Package(fn) for fn in find_matches(ms)]
     pkgs.sort()
     vs = 0
-    for i, p in enumerate(pkgs):
-        verscores[p.fn] = vs
-        if i + 1 < len(pkgs) and pkgs[i + 1] > p:
+    for p1, p2 in iter_pairs(pkgs):
+        verscores[p1.fn] = vs
+        if p2 and p2 > p1:
             vs += 1
+    pprint(verscores)
     return [p.fn for p in pkgs]
 
 def select_root_dists(specs, features, installed):
