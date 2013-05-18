@@ -157,7 +157,7 @@ def main():
 
 
 ranks = {}
-def select_root_dists_spec(spec):
+def select_dists_spec(spec):
     mspec = spec.replace('=', ' ')
     if spec.count('=') == 1:
         mspec += '*'
@@ -169,7 +169,7 @@ def select_root_dists_spec(spec):
     return [p.fn for p in pkgs]
 
 def select_root_dists(specs, features, installed):
-    args = [select_root_dists_spec(spec) for spec in specs]
+    args = [select_dists_spec(spec) for spec in specs]
     candidates = defaultdict(list)
     for dists in itertools.product(*args):
         fsd = ssm = olx = rnk = 0
@@ -214,4 +214,4 @@ if __name__ == '__main__':
 
         files = select_root_dists(args, features, installed)
         print files, features
-        pprint(solve(files, features, verbose=True))
+        print bool(solve(files, features, verbose=True))
