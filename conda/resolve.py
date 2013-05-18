@@ -43,7 +43,7 @@ class Package(object):
         return self.fn
 
 
-def get_dists(ms):
+def get_max_dists(ms):
     pkgs = set(Package(fn) for fn in find_matches(ms))
     assert pkgs
     maxpkg = max(pkgs)
@@ -56,7 +56,7 @@ def all_deps(root_fn):
 
     def add_dependents(fn1):
         for ms in index[fn1]['ms_depends']:
-            for fn2 in get_dists(ms):
+            for fn2 in get_max_dists(ms):
                 if fn2 in res:
                     continue
                 res.add(fn2)
@@ -156,28 +156,32 @@ def main():
     print 'OK'
 
 
-ranks = {}
+verscores = {}
 def select_dists_spec(spec):
     mspec = spec.replace('=', ' ')
     if spec.count('=') == 1:
         mspec += '*'
     ms = MatchSpec(mspec)
 
-    pkgs = [Package(fn2) for fn2 in find_matches(ms)]
-    for i, p in enumerate(sorted(pkgs)):
-        ranks[p.fn] = i
+    pkgs = [Package(fn) for fn in find_matches(ms)]
+    pkgs.sort()
+    vs = 0
+    for i, p in enumerate(pkgs):
+        verscores[p.fn] = vs
+        if i + 1 < len(pkgs) and pkgs[i + 1] > p:
+            vs += 1
     return [p.fn for p in pkgs]
 
 def select_root_dists(specs, features, installed):
     args = [select_dists_spec(spec) for spec in specs]
     candidates = defaultdict(list)
     for dists in itertools.product(*args):
-        fsd = ssm = olx = rnk = 0
+        fsd = ssm = olx = vs = 0
         for fn in dists:
             fsd += len(features ^ index[fn]['features'])
             ssm += sum(sum(ms.match(fn2[:-8]) for fn2 in installed)
                        for ms in index[fn]['ms_depends'])
-            rnk += ranks[fn]
+            vs += verscores[fn]
         for fn1 in dists:
             for fn2 in dists:
                 if fn1 != fn2:
@@ -185,7 +189,7 @@ def select_root_dists(specs, features, installed):
                     olx += sum(ms.match(fn2[:-8])
                                for ms in index[fn1]['ms_depends'])
 
-        key = -fsd, olx, rnk, ssm
+        key = -fsd, olx, vs, ssm
         #print dists, key
         candidates[key].append(dists)
 
@@ -194,7 +198,7 @@ def select_root_dists(specs, features, installed):
 
     mc = candidates[maxkey]
     if len(mc) != 1:
-        print 'WARNING:'
+        print 'WARNING:', len(mc)
         for c in mc:
             print '\t', c
 
