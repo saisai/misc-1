@@ -151,8 +151,6 @@ def main():
     for fn in index:
         if fn in ignore or '-np15py' in fn:
             continue
-        if index[fn]['name'] == 'anaconda':
-            continue
         for features in set([]), set(['mkl']):
             solve([fn], features)
     print 'OK'
