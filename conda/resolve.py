@@ -43,6 +43,25 @@ class Package(object):
     def __repr__(self):
         return self.fn
 
+class Resolve(object):
+
+    def __init__(self, index):
+        self.index = index
+        self.groups = defaultdict(list) # map name to list of filenames
+        for fn, info in index.iteritems():
+            self.groups[info['name']].append(fn)
+
+    def find_matches(self, ms):
+        for fn in self.groups[ms.name]:
+            if ms.match(fn):
+                yield fn
+                
+    def ms_depends(self, fn):        
+        try:
+            return self._msd[fn]
+        except KeyError:
+            self._msd[fn] = [MatchSpec(d) for d in self.index[fn]['depends']]
+            return self._msd[fn]
 
 def get_max_dists(ms):
     pkgs = set(Package(fn) for fn in find_matches(ms))
@@ -224,6 +243,14 @@ def test_all():
             solve2([fn], features)
     print 'OK'
 
+def get_index():
+    import json
+    import trans
+    with open('joined.json') as fi:
+        index = json.load(fi)
+    trans.add_all_depends(index)
+    return index
+
 if __name__ == '__main__':
     p = OptionParser(usage="usage: %prog [options] SPEC")
     p.add_option("--mkl", action="store_true")
@@ -232,6 +259,7 @@ if __name__ == '__main__':
     if len(args) == 0:
         test_all()
     else:
+        #index = get_index()
         features = set(['mkl']) if opts.mkl else set()
         installed = solve2({'anaconda-1.5.0-np17py27_0.tar.bz2'}, set())
         pprint(solve(args, features, installed, verbose=True))
