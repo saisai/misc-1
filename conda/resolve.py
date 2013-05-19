@@ -190,8 +190,7 @@ def select_root_dists(specs, features, installed):
 def solve(specs, features, installed, verbose=False):
     dists = select_root_dists(specs, features, installed)
     for fn in dists:
-        info = index[fn]
-        track_features = set(info.get('track_features', '').split())
+        track_features = set(index[fn].get('track_features', '').split())
         features.update(track_features)
     if verbose:
         print dists, features
