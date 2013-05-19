@@ -187,6 +187,16 @@ def select_root_dists(specs, features, installed):
 
     return set(candidates[maxkey][0])
 
+def solve(specs, features, installed, verbose=False):
+    dists = select_root_dists(specs, features, installed)
+    for fn in dists:
+        info = index[fn]
+        track_features = set(info.get('track_features', '').split())
+        features.update(track_features)
+    if verbose:
+        print dists, features
+    return solve2(dists, features, verbose)
+
 
 def test_all():
     ignore = set(['statsmodels-0.4.3-np16py26_0.tar.bz2',
@@ -201,18 +211,6 @@ def test_all():
         for features in set([]), set(['mkl']):
             solve2([fn], features)
     print 'OK'
-
-
-def solve(specs, features, installed, verbose=False):
-    dists = select_root_dists(specs, features, installed)
-    for fn in dists:
-        info = index[fn]
-        track_features = set(info.get('track_features', '').split())
-        features.update(track_features)
-    if verbose:
-        print dists, features
-    return solve2(dists, features, verbose)
-
 
 if __name__ == '__main__':
     p = OptionParser(usage="usage: %prog [options] SPEC")
