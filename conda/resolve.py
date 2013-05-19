@@ -204,7 +204,7 @@ def test_all():
 
 
 def solve(specs, features, installed, verbose=False):
-    dists = select_root_dists(args, features, installed)
+    dists = select_root_dists(specs, features, installed)
     if verbose:
         print dists, features
     return solve2(dists, features, verbose)
