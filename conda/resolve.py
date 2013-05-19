@@ -177,7 +177,7 @@ def select_root_dists(specs, features, installed):
         candidates[key].append(dists)
 
     maxkey = max(candidates)
-    print 'maxkey:', maxkey
+    #print 'maxkey:', maxkey
 
     mc = candidates[maxkey]
     if len(mc) != 1:
