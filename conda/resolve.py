@@ -203,6 +203,13 @@ def test_all():
     print 'OK'
 
 
+def solve(specs, features, installed, verbose=False):
+    dists = select_root_dists(args, features, installed)
+    if verbose:
+        print dists, features
+    return solve2(dists, features, verbose)
+
+
 if __name__ == '__main__':
     p = OptionParser(usage="usage: %prog [options] SPEC")
     p.add_option("--mkl", action="store_true")
@@ -213,7 +220,4 @@ if __name__ == '__main__':
     else:
         features = set(['mkl']) if opts.mkl else set()
         installed = solve2({'anaconda-1.5.0-np17py27_0.tar.bz2'}, set())
-
-        files = select_root_dists(args, features, installed)
-        print files, features
-        pprint(solve2(files, features, verbose=True))
+        pprint(solve(args, features, installed, verbose=True))
