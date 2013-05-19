@@ -154,7 +154,7 @@ def select_dists_spec(spec):
 
 @memoized
 def sum_matches(fn1, fn2):
-    return sum(ms.match(fn2[:-8]) for ms in index[fn1]['ms_depends'])
+    return sum(ms.match(fn2) for ms in index[fn1]['ms_depends'])
 
 def select_root_dists(specs, features, installed):
     args = [select_dists_spec(spec) for spec in specs]

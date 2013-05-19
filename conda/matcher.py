@@ -18,8 +18,9 @@ class MatchSpec(object):
         elif self.strictness == 3:
             self.ver_build = tuple(parts[1:3])
 
-    def match(self, dist):
-        name, version, build = dist.rsplit('-', 2)
+    def match(self, fn):
+        assert fn.endswith('.tar.bz2')
+        name, version, build = fn[:-8].rsplit('-', 2)
         if name != self.name:
             return False
         if self.strictness == 2 and self.ver_pat.match(version) is None:
@@ -47,4 +48,4 @@ if __name__ == '__main__':
                        ('python', False),
                        ]:
         m = MatchSpec(mspec)
-        assert m.match('numpy-1.7.1-py27_0') == res, mspec
+        assert m.match('numpy-1.7.1-py27_0.tar.bz2') == res, mspec

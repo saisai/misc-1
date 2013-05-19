@@ -39,7 +39,7 @@ def itergroup(name):
 
 def find_matches(ms):
     for fn2 in itergroup(ms.name):
-        if ms.match(fn2[:-8]):
+        if ms.match(fn2):
             yield fn2
 
 clauses = []
