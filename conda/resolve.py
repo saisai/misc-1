@@ -187,17 +187,16 @@ def select_root_dists(specs, features, installed):
 
     return set(candidates[maxkey][0])
 
-def update_with_features(dists, features):
-    for fn in dists:
-        info = index[fn]
-        for fs, depends_updates in info.get('with_features', {}).iteritems():
-            if not set(fs.split()).issubset(features):
-                continue
-            updates = {ms.name: ms for ms in [MatchSpec(mspec)
-                                              for mspec in depends_updates]}
-            for i, ms in enumerate(info['ms_depends']):
-                if ms.name in updates:
-                    info['ms_depends'][i] = updates[ms.name]
+def update_with_features(fn, features):
+    info = index[fn]
+    for fs, depends_updates in info.get('with_features', {}).iteritems():
+        if not set(fs.split()).issubset(features):
+            continue
+        updates = {ms.name: ms for ms in [MatchSpec(mspec)
+                                          for mspec in depends_updates]}
+        for i, ms in enumerate(info['ms_depends']):
+            if ms.name in updates:
+                info['ms_depends'][i] = updates[ms.name]
 
 def solve(specs, features, installed, verbose=False):
     dists = select_root_dists(specs, features, installed)
@@ -206,7 +205,8 @@ def solve(specs, features, installed, verbose=False):
         features.update(track_features)
     if verbose:
         print dists, features
-    update_with_features(dists, features)
+    for fn in dists:
+        update_with_features(fn, features)
     return solve2(dists, features, verbose)
 
 
