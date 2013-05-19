@@ -74,6 +74,13 @@ class TestSolve(unittest.TestCase):
                           'unixodbc-2.3.1-0.tar.bz2',
                           'zlib-1.2.7-0.tar.bz2'])
 
+    def test_mkl(self):
+        self.assertEqual(solve(['mkl'], set(), installed),
+                         solve(['mkl'], f_mkl, installed))
+
+    def test_accelerate(self):
+        self.assertEqual(solve(['accelerate'], set(), installed),
+                         solve(['accelerate'], f_mkl, installed))
 
 if __name__ == '__main__':
     unittest.main()
