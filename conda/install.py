@@ -37,6 +37,11 @@ def itergroup(name):
         assert info['name'] == name
         yield fn
 
+def find_matches(ms):
+    for fn2 in itergroup(ms.name):
+        if ms.match(fn2[:-8]):
+            yield fn2
+
 clauses = []
 
 for filenames in groups.itervalues():
@@ -47,11 +52,6 @@ for filenames in groups.itervalues():
             v2 = v[fn2]
             if v1 < v2:
                 clauses.append([-v1, -v2])
-
-def find_matches(ms):
-    for fn2 in itergroup(ms.name):
-        if ms.match(fn2[:-8]):
-            yield fn2
 
 def add_clauses(fn1):
     # translate the requirements of package `fn` to clauses
