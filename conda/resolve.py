@@ -291,34 +291,32 @@ class Resolve(object):
         return self.solve2(dists, features, verbose)
 
 
-def test_all():
-    ignore = set(['statsmodels-0.4.3-np16py26_0.tar.bz2',
-                  'statsmodels-0.4.3-np16py27_0.tar.bz2',
-                  'statsmodels-0.4.3-np17py27_0.tar.bz2',
-                  'statsmodels-0.4.3-np17py26_0.tar.bz2',
-                  'anaconda-launcher-0.0-py27_0.tar.bz2',
-                  ])
-    r = Resolve(get_index())
-    for fn in r.index:
-        if fn in ignore or '-np15py' in fn:
-            continue
-        for features in set([]), set(['mkl']):
-            r.solve2([fn], features)
-    print 'OK'
-
-def get_index():
-    import json
-    with open('joined.json') as fi:
-        index = json.load(fi)
-    return index
-
-def arg2spec(arg):
-    spec = arg.replace('=', ' ')
-    if arg.count('=') == 1:
-        spec += '*'
-    return spec
-
 if __name__ == '__main__':
+    import json
+
+    with open('joined.json') as fi:
+        r = Resolve(json.load(fi))
+
+    def test_all():
+        ignore = set(['statsmodels-0.4.3-np16py26_0.tar.bz2',
+                      'statsmodels-0.4.3-np16py27_0.tar.bz2',
+                      'statsmodels-0.4.3-np17py27_0.tar.bz2',
+                      'statsmodels-0.4.3-np17py26_0.tar.bz2',
+                      'anaconda-launcher-0.0-py27_0.tar.bz2',
+                      ])
+        for fn in r.index:
+            if fn in ignore or '-np15py' in fn:
+                continue
+            for features in set([]), set(['mkl']):
+                r.solve2([fn], features)
+        print 'OK'
+
+    def arg2spec(arg):
+        spec = arg.replace('=', ' ')
+        if arg.count('=') == 1:
+            spec += '*'
+        return spec
+
     p = OptionParser(usage="usage: %prog [options] SPEC")
     p.add_option("--mkl", action="store_true")
     opts, args = p.parse_args()
@@ -329,6 +327,5 @@ if __name__ == '__main__':
         features = set(['mkl']) if opts.mkl else set()
         installed = ['numpy-1.7.1-py27_0.tar.bz2',
                      'python-2.7.5-0.tar.bz2']
-        r = Resolve(get_index())
         specs = [arg2spec(arg) for arg in args]
         pprint(r.solve(specs, installed, features, verbose=True))

@@ -1,6 +1,15 @@
+import json
 import unittest
 
-from resolve import MatchSpec, Resolve, get_index
+from resolve import MatchSpec, Resolve
+
+
+
+with open('joined.json') as fi:
+    r = Resolve(json.load(fi))
+
+installed = r.solve2({'anaconda-1.5.0-np17py27_0.tar.bz2'}, set())
+f_mkl = set(['mkl'])
 
 
 class TestMatchSpec(unittest.TestCase):
@@ -23,16 +32,13 @@ class TestMatchSpec(unittest.TestCase):
 
     def test_hash(self):
         a, b = MatchSpec('numpy 1.7*'), MatchSpec('numpy 1.7*')
+        self.assertTrue(a is not b)
         self.assertEqual(a, b)
         self.assertEqual(hash(a), hash(b))
         c, d = MatchSpec('python'), MatchSpec('python 2.7.4')
         self.assertNotEqual(a, c)
         self.assertNotEqual(hash(a), hash(c))
 
-
-r = Resolve(get_index())
-installed = r.solve2({'anaconda-1.5.0-np17py27_0.tar.bz2'}, set())
-f_mkl = set(['mkl'])
 
 class TestSelectRoot(unittest.TestCase):
 
