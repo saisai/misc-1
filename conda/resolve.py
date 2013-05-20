@@ -1,3 +1,4 @@
+import re
 import itertools
 from pprint import pprint
 from collections import defaultdict
@@ -7,7 +8,46 @@ import pycosat
 
 import verlib
 from utils import iter_pairs, memoized, memoize
-from matcher import MatchSpec
+
+
+class MatchSpec(object):
+
+    def __init__(self, spec):
+        self.spec = spec
+        parts = spec.split()
+        self.strictness = len(parts)
+        assert 1 <= self.strictness <= 3
+        self.name = parts[0]
+
+        if self.strictness == 2:
+            rx = parts[1]
+            rx = rx.replace('.', r'\.')
+            rx = rx.replace('*', r'.*')
+            rx = r'(%s)$' % rx
+            self.ver_pat = re.compile(rx)
+
+        elif self.strictness == 3:
+            self.ver_build = tuple(parts[1:3])
+
+    def match(self, fn):
+        assert fn.endswith('.tar.bz2')
+        name, version, build = fn[:-8].rsplit('-', 2)
+        if name != self.name:
+            return False
+        if self.strictness == 2 and self.ver_pat.match(version) is None:
+            return False
+        if self.strictness == 3 and ((version, build) != self.ver_build):
+            return False
+        return True
+
+    def __eq__(self, other):
+        return self.spec == other.spec
+
+    def __hash__(self):
+        return hash(self.spec)
+
+    def __repr__(self):
+        return 'MatchSpec(%r)' % (self.spec)
 
 
 class Package(object):
