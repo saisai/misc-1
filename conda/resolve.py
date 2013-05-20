@@ -37,7 +37,7 @@ class Package(object):
                        (other.version, other.build_number))
 
     def __repr__(self):
-        return self.fn
+        return '<Package %s>' % self.fn
 
 class Resolve(object):
 
