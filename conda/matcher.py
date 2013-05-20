@@ -58,6 +58,6 @@ if __name__ == '__main__':
         assert m.match('numpy-1.7.1-py27_0.tar.bz2') == res, mspec
 
     a, b = MatchSpec('numpy 1.7*'), MatchSpec('numpy 1.7*')
-    c, d = MatchSpec('python'), MatchSpec('python 2.7*')
+    c, d = MatchSpec('python'), MatchSpec('python 2.7.4')
     assert a == b and hash(a) == hash(b)
     assert a != c and hash(a) != hash(c)

@@ -1,3 +1,4 @@
+import collections
 import itertools
 from pprint import pprint
 from collections import defaultdict
@@ -67,8 +68,13 @@ class Resolve(object):
             self._msd[fn] = [MatchSpec(d) for d in self.index[fn]['depends']]
             return self._msd[fn]
 
+@memoized
+def get_pkgs(ms):
+    #print ms, isinstance(ms, collections.Hashable)
+    return [Package(fn) for fn in find_matches(ms)]
+
 def get_max_dists(ms):
-    pkgs = set(Package(fn) for fn in find_matches(ms))
+    pkgs = get_pkgs(ms)
     assert pkgs
     maxpkg = max(pkgs)
     for pkg in pkgs:
@@ -165,8 +171,7 @@ def select_dists_spec(spec):
         mspec += '*'
     ms = MatchSpec(mspec)
 
-    pkgs = [Package(fn) for fn in find_matches(ms)]
-    pkgs.sort()
+    pkgs = sorted(get_pkgs(ms))
     vs = 0
     for p1, p2 in iter_pairs(pkgs):
         verscores[p1.fn] = vs
