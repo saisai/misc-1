@@ -140,12 +140,13 @@ class Resolve(object):
             dists.update(self.all_deps(root_fn))
             dists.add(root_fn)
 
-        groups = defaultdict(list) # map name to list of filenames
+        l_groups = defaultdict(list) # map name to list of filenames
         for fn in dists:
-            groups[self.index[fn]['name']].append(fn)
+            l_groups[self.index[fn]['name']].append(fn)
 
-        if len(groups) == len(dists):
-            assert all(len(filenames) == 1 for filenames in groups.itervalues())
+        if len(l_groups) == len(dists):
+            assert all(len(filenames) == 1
+                       for filenames in l_groups.itervalues())
             if verbose:
                 print "No duplicate name, no SAT needed."
             return sorted(dists)
@@ -158,7 +159,7 @@ class Resolve(object):
 
         clauses = []
 
-        for filenames in groups.itervalues():
+        for filenames in l_groups.itervalues():
             # ensure packages with the same name conflict
             for fn1 in filenames:
                 v1 = v[fn1]
