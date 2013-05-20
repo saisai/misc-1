@@ -258,7 +258,7 @@ class Resolve(object):
         return res
 
     def update_with_features(self, fn, features):
-        with_features = self.index[fn].get('with_features')
+        with_features = self.index[fn].get('with_features_depends')
         if with_features is None:
             return
         key = ''
@@ -268,13 +268,11 @@ class Resolve(object):
                 key = fstr
         if not key:
             return
-        updates = {ms.name: ms for ms in [MatchSpec(spec)
-                                          for spec in with_features[key]]}
-        # ensure cache for fn exists
-        self.ms_depends(fn)
-        for i, ms in enumerate(self.msd_cache[fn]):
-            if ms.name in updates:
-                self.msd_cache[fn][i] = updates[ms.name]
+        d = {ms.name: ms for ms in self.ms_depends(fn)}
+        for spec in with_features[key]:
+            ms = MatchSpec(spec)
+            d[ms.name] = ms
+        self.msd_cache[fn] = d.values()
 
     def solve(self, specs, installed=None, features=None, verbose=False):
         if installed is None:

@@ -3836,7 +3836,7 @@
       "zeromq 2.2.0 1",
       "zlib 1.2.7 0"
     ],
-    "with_features": {
+    "with_features_depends": {
       "mkl": [
         "numpy 1.7.1 py27_p0",
         "numexpr 2.0.1 np17py27_p3",
