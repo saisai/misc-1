@@ -1,6 +1,33 @@
 import unittest
 
-from resolve import Resolve, get_index
+from resolve import MatchSpec, Resolve, get_index
+
+
+class TestMatchSpec(unittest.TestCase):
+
+    def test_match(self):
+        for mspec, res in [('numpy 1.7*', True),
+                           ('numpy 1.7.1', True),
+                           ('numpy 1.7', False),
+                           ('numpy 1.5*', False),
+                           ('numpy 1.6*|1.7*', True),
+                           ('numpy 1.6*|1.8*', False),
+                           ('numpy 1.6.2|1.7*', True),
+                           ('numpy 1.6.2|1.7.1', True),
+                           ('numpy 1.6.2|1.7.0', False),
+                           ('numpy 1.7.1 py27_0', True),
+                           ('numpy 1.7.1 py26_0', False),
+                           ('python', False)]:
+            m = MatchSpec(mspec)
+            self.assertEqual(m.match('numpy-1.7.1-py27_0.tar.bz2'), res)
+
+    def test_hash(self):
+        a, b = MatchSpec('numpy 1.7*'), MatchSpec('numpy 1.7*')
+        self.assertEqual(a, b)
+        self.assertEqual(hash(a), hash(b))
+        c, d = MatchSpec('python'), MatchSpec('python 2.7.4')
+        self.assertNotEqual(a, c)
+        self.assertNotEqual(hash(a), hash(c))
 
 
 r = Resolve(get_index())
