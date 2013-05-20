@@ -243,11 +243,12 @@ def test_all():
                   'statsmodels-0.4.3-np17py26_0.tar.bz2',
                   'anaconda-launcher-0.0-py27_0.tar.bz2',
                   ])
-    for fn in index:
+    r = Resolve(get_index())
+    for fn in r.index:
         if fn in ignore or '-np15py' in fn:
             continue
         for features in set([]), set(['mkl']):
-            solve2([fn], features)
+            r.solve2([fn], features)
     print 'OK'
 
 def get_index():
