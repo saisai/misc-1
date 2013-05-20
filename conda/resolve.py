@@ -223,17 +223,17 @@ class Resolve(object):
                 if ms.name in updates:
                     self.msd[fn][i] = updates[ms.name]
 
-def solve(index, specs, features, installed, verbose=False):
-    r = Resolve(index)
-    dists = r.select_root_dists(specs, features, installed)
-    for fn in dists:
-        track_features = set(index[fn].get('track_features', '').split())
-        features.update(track_features)
-    if verbose:
-        print dists, features
-    for fn in dists:
-        r.update_with_features(fn, features)
-    return r.solve2(dists, features, verbose)
+    def solve(self, specs, features, installed, verbose=False):
+        dists = self.select_root_dists(specs, features, installed)
+        for fn in dists:
+            track_features = set(
+                       self.index[fn].get('track_features', '').split())
+            features.update(track_features)
+        if verbose:
+            print dists, features
+        for fn in dists:
+            self.update_with_features(fn, features)
+        return self.solve2(dists, features, verbose)
 
 
 def test_all():
@@ -266,8 +266,8 @@ if __name__ == '__main__':
     if len(args) == 0:
         test_all()
     else:
-        idx = get_index()
         features = set(['mkl']) if opts.mkl else set()
         installed = ['numpy-1.7.1-py27_0.tar.bz2',
                      'python-2.7.5-0.tar.bz2']
-        pprint(solve(idx, args, features, installed, verbose=True))
+        r = Resolve(get_index())
+        pprint(r.solve(args, features, installed, verbose=True))
