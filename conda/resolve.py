@@ -308,10 +308,8 @@ def test_all():
 
 def get_index():
     import json
-    import trans
     with open('joined.json') as fi:
         index = json.load(fi)
-    trans.add_all_depends(index)
     return index
 
 def arg2spec(arg):

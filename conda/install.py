@@ -4,16 +4,13 @@ import time
 from collections import defaultdict
 from pprint import pprint
 
-import trans
-from matcher import MatchSpec
+from resolve import MatchSpec
 
 import pycosat
 
 
 with open('joined.json') as fi:
     index = json.load(fi)
-
-trans.add_all_depends(index)
 
 v = {} # map fn to variable number
 w = {} # map variable number to fn
