@@ -117,9 +117,11 @@ class TestSolve(unittest.TestCase):
                          r.solve(['accelerate'], installed, f_mkl))
 
     def test_anaconda(self):
-        self.assertEqual(len(r.solve(['anaconda 1.5.0*'],
-                                     ['numpy-1.7.1-py27_0.tar.bz2',
-                                      'python-2.7.5-0.tar.bz2'])), 107)
+        dists = r.solve(['anaconda 1.5.0*'],
+                        ['numpy-1.7.1-py27_0.tar.bz2',
+                         'python-2.7.5-0.tar.bz2'])
+        self.assertEqual(len(dists), 107)
+        self.assertTrue('scipy-0.12.0-np17py27_0.tar.bz2' in dists)
 
 
 if __name__ == '__main__':
