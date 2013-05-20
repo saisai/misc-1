@@ -123,6 +123,13 @@ class TestSolve(unittest.TestCase):
         self.assertEqual(len(dists), 107)
         self.assertTrue('scipy-0.12.0-np17py27_0.tar.bz2' in dists)
 
+        # to test "with_features_depends"
+        dists = r.solve(['anaconda 1.5.0*'],
+                        ['numpy-1.7.1-py27_0.tar.bz2',
+                         'python-2.7.5-0.tar.bz2'], f_mkl)
+        self.assertEqual(len(dists), 107)
+        self.assertTrue('scipy-0.12.0-np17py27_p0.tar.bz2' in dists)
+
 
 if __name__ == '__main__':
     unittest.main()
