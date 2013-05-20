@@ -50,13 +50,17 @@ class Resolve(object):
         self.groups = defaultdict(list) # map name to list of filenames
         for fn, info in index.iteritems():
             self.groups[info['name']].append(fn)
+        self.reset_cache()
+
+    def reset_cache(self):
+        self._msd = {}
 
     def find_matches(self, ms):
         for fn in self.groups[ms.name]:
             if ms.match(fn):
                 yield fn
-                
-    def ms_depends(self, fn):        
+
+    def ms_depends(self, fn):
         try:
             return self._msd[fn]
         except KeyError:
