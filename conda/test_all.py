@@ -1,6 +1,6 @@
 import unittest
 
-from resolve import solve2, select_root_dists, solve
+from resolve import Resolve, get_index
 
 
 installed = solve2({'anaconda-1.5.0-np17py27_0.tar.bz2'}, set())

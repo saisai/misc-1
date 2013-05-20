@@ -1,4 +1,3 @@
-import collections
 import itertools
 from pprint import pprint
 from collections import defaultdict
@@ -212,6 +211,15 @@ class Resolve(object):
 
         return set(candidates[maxkey][0])
 
+    def tracked_features(self, installed):
+        res = set()
+        for fn in installed:
+            try:
+                res.update(self.features(fn))
+            except KeyError:
+                pass
+        return res
+
     def update_with_features(self, fn, features):
         info = self.index[fn]
         for fs, depends_updates in info.get('with_features', {}).iteritems():
@@ -223,7 +231,11 @@ class Resolve(object):
                 if ms.name in updates:
                     self.msd[fn][i] = updates[ms.name]
 
-    def solve(self, specs, features, installed, verbose=False):
+    def solve(self, specs, installed=None, features=None, verbose=False):
+        if installed is None:
+            installed = []
+        if features is None:
+            features = self.tracked_features(installed)
         dists = self.select_root_dists(specs, features, installed)
         for fn in dists:
             track_features = set(
@@ -271,4 +283,4 @@ if __name__ == '__main__':
         installed = ['numpy-1.7.1-py27_0.tar.bz2',
                      'python-2.7.5-0.tar.bz2']
         r = Resolve(get_index())
-        pprint(r.solve(args, features, installed, verbose=True))
+        pprint(r.solve(args, installed, features, verbose=True))
