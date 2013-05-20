@@ -116,5 +116,11 @@ class TestSolve(unittest.TestCase):
         self.assertEqual(r.solve(['accelerate'], installed, set()),
                          r.solve(['accelerate'], installed, f_mkl))
 
+    def test_anaconda(self):
+        self.assertEqual(len(r.solve(['anaconda 1.5.0*'],
+                                     ['numpy-1.7.1-py27_0.tar.bz2',
+                                      'python-2.7.5-0.tar.bz2'])), 107)
+
+
 if __name__ == '__main__':
     unittest.main()
