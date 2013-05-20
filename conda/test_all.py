@@ -13,10 +13,10 @@ class TestSelectRoot(unittest.TestCase):
         self.assertEqual(r.select_root_dists(['python'], set(), []),
                          set(['python-3.3.2-0.tar.bz2']))
 
-        self.assertEqual(r.select_root_dists(['python=2'], set(), installed),
+        self.assertEqual(r.select_root_dists(['python 2*'], set(), installed),
                          set(['python-2.7.5-0.tar.bz2']))
 
-        self.assertEqual(r.select_root_dists(['python=3'], set(), installed),
+        self.assertEqual(r.select_root_dists(['python 3*'], set(), installed),
                          set(['python-3.3.2-0.tar.bz2']))
 
     def test_pycosat(self):
@@ -34,14 +34,14 @@ class TestSelectRoot(unittest.TestCase):
         self.assertEqual(r.select_root_dists(['anaconda'], set(), installed),
                          set(['anaconda-1.5.0-np17py27_0.tar.bz2']))
 
-        self.assertEqual(r.select_root_dists(['anaconda', 'python=3'],
+        self.assertEqual(r.select_root_dists(['anaconda', 'python 3*'],
                                            set(), installed),
                          set(['anaconda-1.5.0-np17py33_0.tar.bz2',
                               'python-3.3.1-0.tar.bz2']))
 
-        self.assertEqual(r.select_root_dists(['anaconda=1.4',
-                                              'python=2.6',
-                                              'numpy=1.6'],
+        self.assertEqual(r.select_root_dists(['anaconda 1.4*',
+                                              'python 2.6*',
+                                              'numpy 1.6*'],
                                            set(), installed),
                          set(['anaconda-1.4.0-np16py26_0.tar.bz2',
                               'python-2.6.8-6.tar.bz2',

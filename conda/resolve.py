@@ -162,11 +162,7 @@ class Resolve(object):
 
     verscores = {}
     def select_dists_spec(self, spec):
-        mspec = spec.replace('=', ' ')
-        if spec.count('=') == 1:
-            mspec += '*'
-
-        pkgs = sorted(self.get_pkgs(MatchSpec(mspec)))
+        pkgs = sorted(self.get_pkgs(MatchSpec(spec)))
         vs = 0
         for p1, p2 in iter_pairs(pkgs):
             self.verscores[p1.fn] = vs
@@ -231,8 +227,8 @@ class Resolve(object):
                 key = fstr
         if not key:
             return
-        updates = {ms.name: ms for ms in [MatchSpec(mspec)
-                                          for mspec in with_features[key]]}
+        updates = {ms.name: ms for ms in [MatchSpec(spec)
+                                          for spec in with_features[key]]}
         for i, ms in enumerate(self.msd_cache[fn]):
             if ms.name in updates:
                 self.msd_cache[fn][i] = updates[ms.name]
@@ -277,6 +273,12 @@ def get_index():
     trans.add_all_depends(index)
     return index
 
+def arg2spec(arg):
+    spec = arg.replace('=', ' ')
+    if arg.count('=') == 1:
+        spec += '*'
+    return spec
+
 if __name__ == '__main__':
     p = OptionParser(usage="usage: %prog [options] SPEC")
     p.add_option("--mkl", action="store_true")
@@ -289,4 +291,5 @@ if __name__ == '__main__':
         installed = ['numpy-1.7.1-py27_0.tar.bz2',
                      'python-2.7.5-0.tar.bz2']
         r = Resolve(get_index())
-        pprint(r.solve(args, installed, features, verbose=True))
+        specs = [arg2spec(arg) for arg in args]
+        pprint(r.solve(specs, installed, features, verbose=True))
