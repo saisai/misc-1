@@ -229,6 +229,8 @@ class Resolve(object):
             return
         updates = {ms.name: ms for ms in [MatchSpec(spec)
                                           for spec in with_features[key]]}
+        # ensure cache for fn exists
+        self.ms_depends(fn)
         for i, ms in enumerate(self.msd_cache[fn]):
             if ms.name in updates:
                 self.msd_cache[fn][i] = updates[ms.name]
