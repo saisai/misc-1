@@ -39,6 +39,7 @@ class Package(object):
     def __repr__(self):
         return '<Package %s>' % self.fn
 
+
 class Resolve(object):
 
     def __init__(self, index):
@@ -46,7 +47,7 @@ class Resolve(object):
         self.groups = defaultdict(list) # map name to list of filenames
         for fn, info in index.iteritems():
             self.groups[info['name']].append(fn)
-        self.msd = {}
+        self.msd_cache = {}
 
     def find_matches(self, ms):
         for fn in self.groups[ms.name]:
@@ -55,10 +56,10 @@ class Resolve(object):
 
     def ms_depends(self, fn):
         try:
-            res = self.msd[fn]
+            res = self.msd_cache[fn]
         except KeyError:
-            res = self.msd[fn] = [MatchSpec(d)
-                                  for d in self.index[fn]['depends']]
+            res = self.msd_cache[fn] = [MatchSpec(d)
+                                        for d in self.index[fn]['depends']]
         return res
 
     @memoize
@@ -164,9 +165,8 @@ class Resolve(object):
         mspec = spec.replace('=', ' ')
         if spec.count('=') == 1:
             mspec += '*'
-        ms = MatchSpec(mspec)
 
-        pkgs = sorted(self.get_pkgs(ms))
+        pkgs = sorted(self.get_pkgs(MatchSpec(mspec)))
         vs = 0
         for p1, p2 in iter_pairs(pkgs):
             self.verscores[p1.fn] = vs
@@ -227,9 +227,9 @@ class Resolve(object):
                 continue
             updates = {ms.name: ms for ms in [MatchSpec(mspec)
                                               for mspec in depends_updates]}
-            for i, ms in enumerate(self.msd[fn]):
+            for i, ms in enumerate(self.msd_cache[fn]):
                 if ms.name in updates:
-                    self.msd[fn][i] = updates[ms.name]
+                    self.msd_cache[fn][i] = updates[ms.name]
 
     def solve(self, specs, installed=None, features=None, verbose=False):
         if installed is None:
