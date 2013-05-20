@@ -221,15 +221,21 @@ class Resolve(object):
         return res
 
     def update_with_features(self, fn, features):
-        info = self.index[fn]
-        for fs, depends_updates in info.get('with_features', {}).iteritems():
-            if not set(fs.split()).issubset(features):
-                continue
-            updates = {ms.name: ms for ms in [MatchSpec(mspec)
-                                              for mspec in depends_updates]}
-            for i, ms in enumerate(self.msd_cache[fn]):
-                if ms.name in updates:
-                    self.msd_cache[fn][i] = updates[ms.name]
+        with_features = self.index[fn].get('with_features')
+        if with_features is None:
+            return
+        key = ''
+        for fstr in with_features:
+            fs = set(fstr.split())
+            if fs.issubset(features) and len(fs) > len(set(key.split())):
+                key = fstr
+        if not key:
+            return
+        updates = {ms.name: ms for ms in [MatchSpec(mspec)
+                                          for mspec in with_features[key]]}
+        for i, ms in enumerate(self.msd_cache[fn]):
+            if ms.name in updates:
+                self.msd_cache[fn][i] = updates[ms.name]
 
     def solve(self, specs, installed=None, features=None, verbose=False):
         if installed is None:
