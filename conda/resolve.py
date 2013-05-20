@@ -7,7 +7,7 @@ from optparse import OptionParser
 import pycosat
 
 import verlib
-from utils import iter_pairs, memoized
+from utils import iter_pairs, memoized, memoize
 from install import index, find_matches
 from matcher import MatchSpec
 
@@ -20,9 +20,7 @@ class Package(object):
         self.name = info['name']
         self.version = info['version']
         self.build_number = info['build_number']
-        self.add_norm_version()
 
-    def add_norm_version(self):
         v = self.version
         v = v.replace('rc', '.dev99999')
         if v.endswith('.dev'):
@@ -51,22 +49,15 @@ class Resolve(object):
         self.groups = defaultdict(list) # map name to list of filenames
         for fn, info in index.iteritems():
             self.groups[info['name']].append(fn)
-        self.reset_cache()
-
-    def reset_cache(self):
-        self._msd = {}
 
     def find_matches(self, ms):
         for fn in self.groups[ms.name]:
             if ms.match(fn):
                 yield fn
 
+    @memoize
     def ms_depends(self, fn):
-        try:
-            return self._msd[fn]
-        except KeyError:
-            self._msd[fn] = [MatchSpec(d) for d in self.index[fn]['depends']]
-            return self._msd[fn]
+        return [MatchSpec(d) for d in self.index[fn]['depends']]
 
 @memoized
 def get_pkgs(ms):
