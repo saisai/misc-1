@@ -3,6 +3,7 @@ import re
 class MatchSpec(object):
 
     def __init__(self, spec):
+        self.spec = spec
         parts = spec.split()
         self.strictness = len(parts)
         assert 1 <= self.strictness <= 3
@@ -29,8 +30,14 @@ class MatchSpec(object):
             return False
         return True
 
+    def __eq__(self, other):
+        return self.spec == other.spec
+
+    def __hash__(self):
+        return hash(self.spec)
+
     def __repr__(self):
-        return '<MatchSpec %s %d>' % (self.name, self.strictness)
+        return 'MatchSpec(%r)' % (self.spec)
 
 
 if __name__ == '__main__':
@@ -49,3 +56,8 @@ if __name__ == '__main__':
                        ]:
         m = MatchSpec(mspec)
         assert m.match('numpy-1.7.1-py27_0.tar.bz2') == res, mspec
+
+    a, b = MatchSpec('numpy 1.7*'), MatchSpec('numpy 1.7*')
+    c, d = MatchSpec('python'), MatchSpec('python 2.7*')
+    assert a == b and hash(a) == hash(b)
+    assert a != c and hash(a) != hash(c)
