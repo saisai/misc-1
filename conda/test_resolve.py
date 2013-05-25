@@ -62,7 +62,7 @@ class TestSolve2(unittest.TestCase):
     def setUp(self):
         r.msd_cache = {}
 
-    def test_iopro(self):
+    def test_iopro_nomkl(self):
         self.assertEqual(
             r.solve2(['iopro 1.4*', 'python 2.7*', 'numpy 1.7*'],
                      set()),
@@ -76,9 +76,10 @@ class TestSolve2(unittest.TestCase):
              'tk-8.5.13-0.tar.bz2',
              'unixodbc-2.3.1-0.tar.bz2',
              'zlib-1.2.7-0.tar.bz2'])
-        return
+
+    def test_iopro_mkl(self):
         self.assertEqual(
-            r.solve(['iopro 1.4*', 'python 2.7*', 'numpy 1.7*'],
+            r.solve2(['iopro 1.4*', 'python 2.7*', 'numpy 1.7*'],
                     f_mkl),
             ['iopro-1.4.3-np17py27_p0.tar.bz2',
              'mkl-rt-11.0-p0.tar.bz2',
