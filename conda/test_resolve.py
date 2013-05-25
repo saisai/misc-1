@@ -5,7 +5,7 @@ from resolve import MatchSpec, Resolve
 
 
 
-with open('joined.json') as fi:
+with open('index.json') as fi:
     r = Resolve(json.load(fi))
 
 installed = r.solve2({'anaconda-1.5.0-np17py27_0.tar.bz2'}, set())

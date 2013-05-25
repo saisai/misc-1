@@ -17,5 +17,5 @@ data = json.dumps(index, indent=2, sort_keys=True)
 data = '\n'.join(line.rstrip() for line in data.split('\n'))
 if not data.endswith('\n'):
     data += '\n'
-with open('joined.json', 'w') as fo:
+with open('index.json', 'w') as fo:
     fo.write(data)

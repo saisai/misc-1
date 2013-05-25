@@ -9,7 +9,7 @@ from resolve import MatchSpec
 import pycosat
 
 
-with open('joined.json') as fi:
+with open('index.json') as fi:
     index = json.load(fi)
 
 v = {} # map fn to variable number

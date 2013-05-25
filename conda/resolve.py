@@ -294,7 +294,7 @@ class Resolve(object):
 if __name__ == '__main__':
     import json
 
-    with open('joined.json') as fi:
+    with open('index.json') as fi:
         r = Resolve(json.load(fi))
 
     def test_all():
