@@ -1,10 +1,9 @@
 import re
 import sys
-import itertools
 from collections import defaultdict
 
 import verlib
-from utils import iter_pairs, memoized, memoize
+from utils import memoize
 
 try:
     import pycosat
@@ -193,7 +192,8 @@ class Resolve(object):
             for feature in features:
                 clause = [v[fn] for fn in filenames
                           if feature in self.features(fn)]
-                if len(clause) > 0:
+                if clause and len(clause) > 0:
+                    pprint([w[lit] for lit in clause])
                     clauses.append(clause)
 
         for fn1 in dists:
@@ -211,6 +211,8 @@ class Resolve(object):
             assert len(clause) >= 1
             clauses.append(clause)
 
+        print 'variables;', len(v)
+        print 'clauses:', len(clauses)
         candidates = defaultdict(list)
         n = 0
         for sol in pycosat.itersolve(clauses):
@@ -227,46 +229,9 @@ class Resolve(object):
             print "Error: UNSAT"
             return []
 
-    verscores = {}
-    def select_dists_spec(self, spec):
-        pkgs = sorted(self.get_pkgs(MatchSpec(spec)))
-        if not pkgs:
-            print "Error: no packages matches: %s" % spec
-        vs = 0
-        for p1, p2 in iter_pairs(pkgs):
-            self.verscores[p1.fn] = vs
-            if p2 and p2 > p1:
-                vs += 1
-        #pprint(self.verscores)
-        return [p.fn for p in pkgs]
-
     @memoize
     def sum_matches(self, fn1, fn2):
         return sum(ms.match(fn2) for ms in self.ms_depends(fn1))
-
-    def select_root_dists(self, specs, features, installed):
-        # TODO: think about how to handle many specs...
-        args = [self.select_dists_spec(spec) for spec in specs]
-
-        @memoized
-        def installed_matches(fn):
-            return sum(self.sum_matches(fn, fn2) for fn2 in installed)
-
-        candidates = defaultdict(list)
-        for dists in itertools.product(*args):
-            fsd = olx = svs = sim = 0
-            for fn1 in dists:
-                fsd += len(features ^ self.features(fn1))
-                olx += sum(self.sum_matches(fn1, fn2)
-                           for fn2 in dists if fn1 != fn2)
-                svs += self.verscores[fn1]
-                sim += installed_matches(fn1)
-
-            key = -fsd, olx, svs, sim
-            #print dists, key
-            candidates[key].append(dists)
-
-        return set(get_candidate(candidates, max))
 
     def find_substitute(self, fn, installed, features):
         """
@@ -316,6 +281,7 @@ class Resolve(object):
         for spec in with_features[key]:
             ms = MatchSpec(spec)
             d[ms.name] = ms
+            print d
         self.msd_cache[fn] = d.values()
 
     def solve(self, specs, installed=None, features=None,
@@ -327,14 +293,16 @@ class Resolve(object):
             installed = []
         if features is None:
             features = self.installed_features(installed)
-        dists = self.select_root_dists(specs, features, installed)
-        for fn in dists:
-            features.update(self.track_features(fn))
+        for spec in specs:
+            ms = MatchSpec(spec)
+            for fn in self.get_max_dists(ms):
+                features.update(self.track_features(fn))
         if verbose:
-            print dists, features
-        for fn in dists:
-            self.update_with_features(fn, features)
-        return self.solve2(dists, features, verbose, ensure_sat)
+            print specs, features
+        for spec in specs:
+            for fn in self.get_max_dists(MatchSpec(spec)):
+                self.update_with_features(fn, features)
+        return self.solve2(specs, features, verbose)
 
 
 if __name__ == '__main__':
@@ -351,6 +319,5 @@ if __name__ == '__main__':
     opts, args = p.parse_args()
 
     features = set(['mkl']) if opts.mkl else set()
-    #installed = ['numpy-1.7.1-py27_0.tar.bz2', 'python-2.7.5-0.tar.bz2']
     specs = [arg2spec(arg) for arg in args]
-    pprint(r.solve2(specs, features, verbose=True))
+    pprint(r.solve(specs, [], features, verbose=True))

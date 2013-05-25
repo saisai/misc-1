@@ -2,7 +2,7 @@ import json
 import unittest
 from os.path import dirname, join
 
-from conda.resolve import MatchSpec, Package, Resolve
+from resolve import MatchSpec, Package, Resolve
 
 
 
@@ -57,46 +57,6 @@ class TestPackage(unittest.TestCase):
                 'llvm-3.1-1.tar.bz2', 'python-2.7.5-0.tar.bz2']]
         self.assertRaises(ValueError, pkgs.sort)
 
-
-class TestSelectRoot(unittest.TestCase):
-
-    def test_python(self):
-        self.assertEqual(r.select_root_dists(['python'], set(), []),
-                         set(['python-3.3.2-0.tar.bz2']))
-
-        self.assertEqual(r.select_root_dists(['python 2*'], set(), installed),
-                         set(['python-2.7.5-0.tar.bz2']))
-
-        self.assertEqual(r.select_root_dists(['python 3*'], set(), installed),
-                         set(['python-3.3.2-0.tar.bz2']))
-
-    def test_pycosat(self):
-        self.assertEqual(r.select_root_dists(['pycosat'], set(), installed),
-                         set(['pycosat-0.6.0-py27_0.tar.bz2']))
-
-    def test_numpy(self):
-        self.assertEqual(r.select_root_dists(['numpy'], set(), installed),
-                         set(['numpy-1.7.1-py27_0.tar.bz2']))
-
-        self.assertEqual(r.select_root_dists(['numpy'], f_mkl, installed),
-                         set(['numpy-1.7.1-py27_p0.tar.bz2']))
-
-    def test_anaconda(self):
-        self.assertEqual(r.select_root_dists(['anaconda'], set(), installed),
-                         set(['anaconda-1.5.0-np17py27_0.tar.bz2']))
-
-        self.assertEqual(r.select_root_dists(['anaconda', 'python 3*'],
-                                           set(), installed),
-                         set(['anaconda-1.5.0-np17py33_0.tar.bz2',
-                              'python-3.3.1-0.tar.bz2']))
-
-        self.assertEqual(r.select_root_dists(['anaconda 1.4*',
-                                              'python 2.6*',
-                                              'numpy 1.6*'],
-                                           set(), installed),
-                         set(['anaconda-1.4.0-np16py26_0.tar.bz2',
-                              'python-2.6.8-6.tar.bz2',
-                              'numpy-1.6.2-py26_3.tar.bz2']))
 
 class TestSolve(unittest.TestCase):
 
