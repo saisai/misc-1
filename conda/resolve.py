@@ -6,6 +6,13 @@ from collections import defaultdict
 import verlib
 from utils import iter_pairs, memoized, memoize
 
+try:
+    import pycosat
+except ImportError:
+    sys.exit("cannot import pycosat, try: conda install pycosat")
+
+from pprint import pprint
+
 
 class MatchSpec(object):
 
@@ -151,27 +158,22 @@ class Resolve(object):
         add_dependents(root_fn)
         return res
 
-    def solve2(self, root_dists, features, verbose=False, ensure_sat=False):
+    def solve2(self, specs, features, verbose=False):
         dists = set()
-        for root_fn in root_dists:
-            dists.update(self.all_deps(root_fn))
-            dists.add(root_fn)
+        mss = [MatchSpec(spec) for spec in specs]
+        for ms in mss:
+            for fn in self.get_max_dists(ms):
+                if fn in dists:
+                    continue
+                dists.update(self.all_deps(fn))
+                dists.add(fn)
+
+        pprint(dists)
+        #sys.exit(0)
 
         l_groups = defaultdict(list) # map name to list of filenames
         for fn in dists:
             l_groups[self.index[fn]['name']].append(fn)
-
-        if not ensure_sat and len(l_groups) == len(dists):
-            assert all(len(filenames) == 1
-                       for filenames in l_groups.itervalues())
-            if verbose:
-                print "No duplicate name, no SAT needed."
-            return sorted(dists)
-
-        try:
-            import pycosat
-        except ImportError:
-            sys.exit("cannot import pycosat, try: conda install pycosat")
 
         v = {} # map fn to variable number
         w = {} # map variable number to fn
@@ -200,16 +202,19 @@ class Resolve(object):
                 assert len(clause) > 1, fn1
                 clauses.append(clause)
 
-        for root_fn in root_dists:
-            clauses.append([v[root_fn]])
+        for ms in mss:
+            clause = [v[fn] for fn in self.find_matches(ms) if fn in dists]
+            assert len(clause) >= 1
+            clauses.append(clause)
 
         candidates = defaultdict(list)
         for sol in pycosat.itersolve(clauses):
             pkgs = [w[lit] for lit in sol if lit > 0]
             fsd = sum(len(features ^ self.features(fn)) for fn in pkgs)
             key = fsd, len(pkgs)
-            #print key, pkgs
+            #pprint((key, pkgs))
             candidates[key].append(pkgs)
+        print len(candidates)
 
         if candidates:
             return get_candidate(candidates, min)
@@ -341,6 +346,6 @@ if __name__ == '__main__':
     opts, args = p.parse_args()
 
     features = set(['mkl']) if opts.mkl else set()
-    installed = ['numpy-1.7.1-py27_0.tar.bz2', 'python-2.7.5-0.tar.bz2']
+    #installed = ['numpy-1.7.1-py27_0.tar.bz2', 'python-2.7.5-0.tar.bz2']
     specs = [arg2spec(arg) for arg in args]
-    pprint(r.solve(specs, installed, features, verbose=True, ensure_sat=True))
+    pprint(r.solve2(specs, features, verbose=True))
