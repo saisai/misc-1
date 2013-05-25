@@ -1,10 +1,7 @@
 import re
+import sys
 import itertools
-from pprint import pprint
 from collections import defaultdict
-from optparse import OptionParser
-
-import pycosat
 
 import verlib
 from utils import iter_pairs, memoized, memoize
@@ -68,7 +65,9 @@ class Package(object):
             self.norm_version = self.version
 
     def __cmp__(self, other):
-        assert self.name == other.name, '%r %r' % (self.fn, other.fn)
+        if self.name != other.name:
+            raise ValueError('cannot compare packages with different '
+                             'names: %r %r' % (self.fn, other.fn))
         try:
             return cmp((self.norm_version, self.build_number),
                        (other.norm_version, other.build_number))
@@ -79,6 +78,18 @@ class Package(object):
     def __repr__(self):
         return '<Package %s>' % self.fn
 
+
+def get_candidate(candidates, min_or_max):
+    key = min_or_max(candidates)
+    #print '%skey: %r' % (min_or_max.__name__, key)
+
+    mc = candidates[key]
+    if len(mc) != 1:
+        print 'WARNING:', len(mc)
+        for c in mc:
+            print '\t', c
+
+    return mc[0]
 
 class Resolve(object):
 
@@ -95,6 +106,8 @@ class Resolve(object):
                 yield fn
 
     def ms_depends(self, fn):
+        # the reason we don't use @memoize here is to allow resetting the
+        # cache using self.msd_cache = {}, which is used during testing
         try:
             res = self.msd_cache[fn]
         except KeyError:
@@ -105,6 +118,10 @@ class Resolve(object):
     @memoize
     def features(self, fn):
         return set(self.index[fn].get('features', '').split())
+
+    @memoize
+    def track_features(self, fn):
+        return set(self.index[fn].get('track_features', '').split())
 
     @memoize
     def get_pkgs(self, ms):
@@ -134,7 +151,7 @@ class Resolve(object):
         add_dependents(root_fn)
         return res
 
-    def solve2(self, root_dists, features, verbose=False):
+    def solve2(self, root_dists, features, verbose=False, ensure_sat=False):
         dists = set()
         for root_fn in root_dists:
             dists.update(self.all_deps(root_fn))
@@ -144,12 +161,17 @@ class Resolve(object):
         for fn in dists:
             l_groups[self.index[fn]['name']].append(fn)
 
-        if len(l_groups) == len(dists):
+        if not ensure_sat and len(l_groups) == len(dists):
             assert all(len(filenames) == 1
                        for filenames in l_groups.itervalues())
             if verbose:
                 print "No duplicate name, no SAT needed."
             return sorted(dists)
+
+        try:
+            import pycosat
+        except ImportError:
+            sys.exit("cannot import pycosat, try: conda install pycosat")
 
         v = {} # map fn to variable number
         w = {} # map variable number to fn
@@ -189,21 +211,17 @@ class Resolve(object):
             #print key, pkgs
             candidates[key].append(pkgs)
 
-        if not candidates:
+        if candidates:
+            return get_candidate(candidates, min)
+        else:
             print "Error: UNSAT"
             return []
-
-        minkey = min(candidates)
-
-        mc = candidates[minkey]
-        if len(mc) != 1:
-            print 'WARNING:', len(mc), root_dists, features
-
-        return candidates[minkey][0]
 
     verscores = {}
     def select_dists_spec(self, spec):
         pkgs = sorted(self.get_pkgs(MatchSpec(spec)))
+        if not pkgs:
+            print "Error: no packages matches: %s" % spec
         vs = 0
         for p1, p2 in iter_pairs(pkgs):
             self.verscores[p1.fn] = vs
@@ -217,6 +235,7 @@ class Resolve(object):
         return sum(ms.match(fn2) for ms in self.ms_depends(fn1))
 
     def select_root_dists(self, specs, features, installed):
+        # TODO: think about how to handle many specs...
         args = [self.select_dists_spec(spec) for spec in specs]
 
         @memoized
@@ -237,18 +256,33 @@ class Resolve(object):
             #print dists, key
             candidates[key].append(dists)
 
-        maxkey = max(candidates)
-        #print 'maxkey:', maxkey
+        return set(get_candidate(candidates, max))
 
-        mc = candidates[maxkey]
-        if len(mc) != 1:
-            print 'WARNING:', len(mc)
-            for c in mc:
-                print '\t', c
+    def find_substitute(self, fn, installed, features):
+        """
+        Find a substitute package for `fn` (given `installed` packages)
+        which does *NOT* have `featues`.  If found, the substitute will
+        have the same package namd and version and its dependencies will
+        match the installed packages as closely as possible.
+        If no substribute is found, None is returned.
+        """
+        name, version, unused_build = fn.rsplit('-', 2)
+        candidates = defaultdict(list)
+        for fn1 in self.get_max_dists(MatchSpec(name + ' ' + version)):
+            if self.features(fn1).intersection(features):
+                continue
+            key = sum(self.sum_matches(fn1, fn2) for fn2 in installed)
+            candidates[key].append(fn1)
 
-        return set(candidates[maxkey][0])
+        if candidates:
+            return get_candidate(candidates, max)
+        else:
+            return None
 
-    def tracked_features(self, installed):
+    def installed_features(self, installed):
+        """
+        Return the set of all features of all `installed` packages,
+        """
         res = set()
         for fn in installed:
             try:
@@ -274,58 +308,39 @@ class Resolve(object):
             d[ms.name] = ms
         self.msd_cache[fn] = d.values()
 
-    def solve(self, specs, installed=None, features=None, verbose=False):
+    def solve(self, specs, installed=None, features=None,
+                    verbose=False, ensure_sat=False):
+        if verbose:
+            print "Resolve.solve(): installed:", installed
+
         if installed is None:
             installed = []
         if features is None:
-            features = self.tracked_features(installed)
+            features = self.installed_features(installed)
         dists = self.select_root_dists(specs, features, installed)
         for fn in dists:
-            track_features = set(
-                       self.index[fn].get('track_features', '').split())
-            features.update(track_features)
+            features.update(self.track_features(fn))
         if verbose:
             print dists, features
         for fn in dists:
             self.update_with_features(fn, features)
-        return self.solve2(dists, features, verbose)
+        return self.solve2(dists, features, verbose, ensure_sat)
 
 
 if __name__ == '__main__':
     import json
+    from pprint import pprint
+    from optparse import OptionParser
+    from conda.plan import arg2spec
 
-    with open('index.json') as fi:
+    with open('./index.json') as fi:
         r = Resolve(json.load(fi))
 
-    def test_all():
-        ignore = set(['statsmodels-0.4.3-np16py26_0.tar.bz2',
-                      'statsmodels-0.4.3-np16py27_0.tar.bz2',
-                      'statsmodels-0.4.3-np17py27_0.tar.bz2',
-                      'statsmodels-0.4.3-np17py26_0.tar.bz2',
-                      'anaconda-launcher-0.0-py27_0.tar.bz2',
-                      ])
-        for fn in r.index:
-            if fn in ignore or '-np15py' in fn:
-                continue
-            for features in set([]), set(['mkl']):
-                r.solve2([fn], features)
-        print 'OK'
-
-    def arg2spec(arg):
-        spec = arg.replace('=', ' ')
-        if arg.count('=') == 1:
-            spec += '*'
-        return spec
-
-    p = OptionParser(usage="usage: %prog [options] SPEC")
+    p = OptionParser(usage="usage: %prog [options] SPEC(s)")
     p.add_option("--mkl", action="store_true")
     opts, args = p.parse_args()
 
-    if len(args) == 0:
-        test_all()
-    else:
-        features = set(['mkl']) if opts.mkl else set()
-        installed = ['numpy-1.7.1-py27_0.tar.bz2',
-                     'python-2.7.5-0.tar.bz2']
-        specs = [arg2spec(arg) for arg in args]
-        pprint(r.solve(specs, installed, features, verbose=True))
+    features = set(['mkl']) if opts.mkl else set()
+    installed = ['numpy-1.7.1-py27_0.tar.bz2', 'python-2.7.5-0.tar.bz2']
+    specs = [arg2spec(arg) for arg in args]
+    pprint(r.solve(specs, installed, features, verbose=True, ensure_sat=True))

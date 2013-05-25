@@ -1,11 +1,12 @@
 import json
 import unittest
+from os.path import dirname, join
 
-from resolve import MatchSpec, Resolve
+from conda.resolve import MatchSpec, Package, Resolve
 
 
 
-with open('index.json') as fi:
+with open(join(dirname(__file__), 'index.json')) as fi:
     r = Resolve(json.load(fi))
 
 installed = r.solve2({'anaconda-1.5.0-np17py27_0.tar.bz2'}, set())
@@ -38,6 +39,23 @@ class TestMatchSpec(unittest.TestCase):
         c, d = MatchSpec('python'), MatchSpec('python 2.7.4')
         self.assertNotEqual(a, c)
         self.assertNotEqual(hash(a), hash(c))
+
+
+class TestPackage(unittest.TestCase):
+
+    def test_llvm(self):
+        ms = MatchSpec('llvm')
+        pkgs = [Package(fn, r.index[fn]) for fn in r.find_matches(ms)]
+        pkgs.sort()
+        self.assertEqual([p.fn for p in pkgs],
+                         ['llvm-3.1-0.tar.bz2',
+                          'llvm-3.1-1.tar.bz2',
+                          'llvm-3.2-0.tar.bz2'])
+
+    def test_different_names(self):
+        pkgs = [Package(fn, r.index[fn]) for fn in [
+                'llvm-3.1-1.tar.bz2', 'python-2.7.5-0.tar.bz2']]
+        self.assertRaises(ValueError, pkgs.sort)
 
 
 class TestSelectRoot(unittest.TestCase):
@@ -82,8 +100,11 @@ class TestSelectRoot(unittest.TestCase):
 
 class TestSolve(unittest.TestCase):
 
+    def setUp(self):
+        r.msd_cache = {}
+
     def test_iopro(self):
-        self.assertEqual(r.solve(['iopro'], installed),
+        self.assertEqual(r.solve(['iopro 1.4*'], installed, ensure_sat=True),
                          ['iopro-1.4.3-np17py27_p0.tar.bz2',
                           'numpy-1.7.1-py27_0.tar.bz2',
                           'openssl-1.0.1c-0.tar.bz2',
@@ -95,7 +116,8 @@ class TestSolve(unittest.TestCase):
                           'unixodbc-2.3.1-0.tar.bz2',
                           'zlib-1.2.7-0.tar.bz2'])
 
-        self.assertEqual(r.solve(['iopro'], installed, f_mkl),
+        self.assertEqual(r.solve(['iopro 1.4*'], installed, f_mkl,
+                                 ensure_sat=True),
                          ['iopro-1.4.3-np17py27_p0.tar.bz2',
                           'mkl-rt-11.0-p0.tar.bz2',
                           'numpy-1.7.1-py27_p0.tar.bz2',
@@ -109,26 +131,46 @@ class TestSolve(unittest.TestCase):
                           'zlib-1.2.7-0.tar.bz2'])
 
     def test_mkl(self):
-        self.assertEqual(r.solve(['mkl'], installed, set()),
-                         r.solve(['mkl'], installed, f_mkl))
+        self.assertEqual(r.solve(['mkl'], installed, set(), ensure_sat=True),
+                         r.solve(['mkl'], installed, f_mkl, ensure_sat=True))
 
     def test_accelerate(self):
-        self.assertEqual(r.solve(['accelerate'], installed, set()),
-                         r.solve(['accelerate'], installed, f_mkl))
+        self.assertEqual(
+            r.solve(['accelerate'], installed, set(), ensure_sat=True),
+            r.solve(['accelerate'], installed, f_mkl, ensure_sat=True))
 
     def test_anaconda(self):
-        dists = r.solve(['anaconda 1.5.0*'],
+        dists = r.solve(['anaconda 1.5.0'],
                         ['numpy-1.7.1-py27_0.tar.bz2',
-                         'python-2.7.5-0.tar.bz2'])
+                         'python-2.7.5-0.tar.bz2'], ensure_sat=True)
         self.assertEqual(len(dists), 107)
         self.assertTrue('scipy-0.12.0-np17py27_0.tar.bz2' in dists)
 
         # to test "with_features_depends"
-        dists = r.solve(['anaconda 1.5.0*'],
+        dists = r.solve(['anaconda 1.5.0'],
                         ['numpy-1.7.1-py27_0.tar.bz2',
-                         'python-2.7.5-0.tar.bz2'], f_mkl)
-        self.assertEqual(len(dists), 107)
+                         'python-2.7.5-0.tar.bz2'], f_mkl, ensure_sat=True)
+        self.assertEqual(len(dists), 108)
         self.assertTrue('scipy-0.12.0-np17py27_p0.tar.bz2' in dists)
+
+
+class TestFindSubstitute(unittest.TestCase):
+
+    def setUp(self):
+        r.msd_cache = {}
+
+    def test1(self):
+        installed = r.solve(['anaconda 1.5.0'],
+                            ['numpy-1.7.1-py27_0.tar.bz2',
+                             'python-2.7.5-0.tar.bz2'],
+                            f_mkl, ensure_sat=True)
+        for old, new in [('numpy-1.7.1-py27_p0.tar.bz2',
+                          'numpy-1.7.1-py27_0.tar.bz2'),
+                         ('scipy-0.12.0-np17py27_p0.tar.bz2',
+                          'scipy-0.12.0-np17py27_0.tar.bz2'),
+                         ('mkl-rt-11.0-p0.tar.bz2', None)]:
+            self.assertTrue(old in installed)
+            self.assertEqual(r.find_substitute(old, installed, f_mkl), new)
 
 
 if __name__ == '__main__':
