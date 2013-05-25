@@ -172,15 +172,21 @@ class Resolve(object):
         for fn in dists:
             l_groups[self.index[fn]['name']].append(fn)
 
+        fvars = set()
+        for feat in features:
+            for fn in dists:
+                if feat in self.features(fn):
+                    fvars.add('%s@%s' % (feat, self.index[fn]['name']))
+
         v = {} # map fn to variable number
         w = {} # map variable number to fn
-        for i, fn in enumerate(sorted(dists)):
+        for i, fn in enumerate(sorted(dists) + sorted(fvars)):
             v[fn] = i + 1
             w[i + 1] = fn
 
         clauses = []
 
-        for filenames in l_groups.itervalues():
+        for name, filenames in l_groups.iteritems():
             # ensure packages with the same name conflict
             for fn1 in filenames:
                 v1 = v[fn1]
@@ -189,11 +195,15 @@ class Resolve(object):
                     if v1 < v2:
                         clauses.append([-v1, -v2])
 
-            for feature in features:
-                clause = [v[fn] for fn in filenames
-                          if feature in self.features(fn)]
-                if clause and len(clause) > 0:
-                    pprint([w[lit] for lit in clause])
+            for feat in features:
+                try:
+                    clause = [-v['%s@%s' % (feat, name)]]
+                except KeyError:
+                    continue
+                for fn in filenames:
+                    if feat in self.features(fn):
+                        clause.append(v[fn])
+                if len(clause) > 1:
                     clauses.append(clause)
 
         for fn1 in dists:
@@ -281,7 +291,6 @@ class Resolve(object):
         for spec in with_features[key]:
             ms = MatchSpec(spec)
             d[ms.name] = ms
-            print d
         self.msd_cache[fn] = d.values()
 
     def solve(self, specs, installed=None, features=None,
