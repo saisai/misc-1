@@ -169,7 +169,6 @@ class Resolve(object):
                 dists.add(fn)
 
         pprint(dists)
-        #sys.exit(0)
 
         l_groups = defaultdict(list) # map name to list of filenames
         for fn in dists:
@@ -192,6 +191,13 @@ class Resolve(object):
                     if v1 < v2:
                         clauses.append([-v1, -v2])
 
+            for feature in features:
+                clause = [v[fn] for fn in filenames
+                          if feature in self.features(fn)]
+                if clause:
+                    print clause
+                    clauses.append(clause)
+
         for fn1 in dists:
             for ms in self.ms_depends(fn1):
                 clause = [-v[fn1]]
@@ -210,8 +216,8 @@ class Resolve(object):
         candidates = defaultdict(list)
         for sol in pycosat.itersolve(clauses):
             pkgs = [w[lit] for lit in sol if lit > 0]
-            fsd = sum(len(features ^ self.features(fn)) for fn in pkgs)
-            key = fsd, len(pkgs)
+            #fsd = sum(len(features ^ self.features(fn)) for fn in pkgs)
+            key = len(pkgs)
             #pprint((key, pkgs))
             candidates[key].append(pkgs)
         print len(candidates)
