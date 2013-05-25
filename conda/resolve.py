@@ -167,6 +167,7 @@ class Resolve(object):
                     continue
                 dists.update(self.all_deps(fn))
                 dists.add(fn)
+        #pprint(dists)
 
         l_groups = defaultdict(list) # map name to list of filenames
         for fn in dists:
@@ -211,12 +212,14 @@ class Resolve(object):
             clauses.append(clause)
 
         candidates = defaultdict(list)
+        n = 0
         for sol in pycosat.itersolve(clauses):
+            n += 1
             pkgs = [w[lit] for lit in sol if lit > 0]
             key = len(pkgs)
             #pprint((key, pkgs))
             candidates[key].append(pkgs)
-        print len(candidates)
+        print len(candidates),      'n=%d' % n
 
         if candidates:
             return get_candidate(candidates, min)
