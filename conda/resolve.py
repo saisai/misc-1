@@ -83,9 +83,9 @@ class Package(object):
         return '<Package %s>' % self.fn
 
 
-def get_candidate(candidates, min_or_max):
-    key = min_or_max(candidates)
-    #print '%skey: %r' % (min_or_max.__name__, key)
+def get_candidate(candidates):
+    key = min(candidates)
+    #print 'minkey: %r' % key
     mc = candidates[key]
     if len(mc) != 1:
         print 'WARNING:', len(mc)
@@ -220,7 +220,7 @@ class Resolve(object):
         #print len(candidates), '     n=%d' % n
 
         if candidates:
-            return get_candidate(candidates, min)
+            return get_candidate(candidates)
         else:
             print "Error: UNSAT"
             return []
@@ -242,11 +242,11 @@ class Resolve(object):
         for fn1 in self.get_max_dists(MatchSpec(name + ' ' + version)):
             if self.features(fn1).intersection(features):
                 continue
-            key = sum(self.sum_matches(fn1, fn2) for fn2 in installed)
+            key = -sum(self.sum_matches(fn1, fn2) for fn2 in installed)
             candidates[key].append(fn1)
 
         if candidates:
-            return get_candidate(candidates, max)
+            return get_candidate(candidates)
         else:
             return None
 
