@@ -62,6 +62,11 @@ class TestSolve(unittest.TestCase):
     def setUp(self):
         r.msd_cache = {}
 
+    def assert_have_mkl(self, dists, names):
+        for fn in dists:
+            if fn.rsplit('-', 2)[0] in names:
+                self.assertEqual(r.features(fn), f_mkl)
+
     def test_iopro_nomkl(self):
         self.assertEqual(
             r.solve2(['iopro 1.4*', 'python 2.7*', 'numpy 1.7*'],
@@ -111,18 +116,21 @@ class TestSolve(unittest.TestCase):
         # to test "with_features_depends"
         dists = r.solve(['anaconda 1.5.0', 'python 2.7*', 'numpy 1.7*'],
                         f_mkl)
+        self.assert_have_mkl(dists,
+                             ('numpy', 'scipy', 'numexpr', 'scikit-learn'))
         self.assertTrue('scipy-0.12.0-np17py27_p0.tar.bz2' in dists)
         self.assertTrue('mkl-rt-11.0-p0.tar.bz2' in dists)
         self.assertEqual(len(dists), 108)
 
         dists2 = r.solve(['anaconda 1.5.0',
                           'python 2.7*', 'numpy 1.7*', 'mkl'])
-        self.assertTrue(set(dists).issubset(set(dists2)))
+        self.assertTrue(set(dists) <= set(dists2))
         self.assertEqual(len(dists2), 110)
 
     def test_anaconda_mkl_3(self):
         # to test "with_features_depends"
         dists = r.solve(['anaconda 1.5.0', 'python 3*'], f_mkl)
+        self.assert_have_mkl(dists, ('numpy', 'scipy'))
         self.assertTrue('scipy-0.12.0-np17py33_p0.tar.bz2' in dists)
         self.assertTrue('mkl-rt-11.0-p0.tar.bz2' in dists)
         self.assertEqual(len(dists), 61)

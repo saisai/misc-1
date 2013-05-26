@@ -269,7 +269,7 @@ class Resolve(object):
         key = ''
         for fstr in with_features:
             fs = set(fstr.split())
-            if fs.issubset(features) and len(fs) > len(set(key.split())):
+            if fs <= features and len(fs) > len(set(key.split())):
                 key = fstr
         if not key:
             return
