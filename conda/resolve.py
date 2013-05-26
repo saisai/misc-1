@@ -157,30 +157,13 @@ class Resolve(object):
         add_dependents(root_fn)
         return res
 
-    def solve2(self, specs, features, verbose=False):
-        dists = set()
-        mss = [MatchSpec(spec) for spec in specs]
-        for ms in mss:
-            for fn in self.get_max_dists(ms):
-                if fn in dists:
-                    continue
-                dists.update(self.all_deps(fn))
-                dists.add(fn)
-        #pprint(dists)
-
-        l_groups = defaultdict(list) # map name to list of filenames
+    def mk_clauses(self, v, dists, specs, features):
+        groups = defaultdict(list) # map name to list of filenames
         for fn in dists:
-            l_groups[self.index[fn]['name']].append(fn)
-
-        v = {} # map fn to variable number
-        w = {} # map variable number to fn
-        for i, fn in enumerate(sorted(dists)):
-            v[fn] = i + 1
-            w[i + 1] = fn
+            groups[self.index[fn]['name']].append(fn)
 
         clauses = []
-
-        for filenames in l_groups.itervalues():
+        for filenames in groups.itervalues():
             # ensure packages with the same name conflict
             for fn1 in filenames:
                 v1 = v[fn1]
@@ -195,22 +178,43 @@ class Resolve(object):
                 for fn2 in self.find_matches(ms):
                     if fn2 in dists:
                         clause.append(v[fn2])
-
                 assert len(clause) > 1, fn1
                 clauses.append(clause)
 
                 for feat in features:
                     clause = [-v[fn1]]
-                    for fn2 in l_groups[ms.name]:
+                    for fn2 in groups[ms.name]:
                          if feat in self.features(fn2):
                              clause.append(v[fn2])
                     if len(clause) > 1:
                         clauses.append(clause)
 
-        for ms in mss:
-            clause = [v[fn] for fn in self.find_matches(ms) if fn in dists]
+        for spec in specs:
+            clause = [v[fn] for fn in self.find_matches(MatchSpec(spec))
+                      if fn in dists]
             assert len(clause) >= 1
             clauses.append(clause)
+
+        return clauses
+
+    def solve2(self, specs, features, verbose=False):
+        dists = set()
+        mss = [MatchSpec(spec) for spec in specs]
+        for ms in mss:
+            for fn in self.get_max_dists(ms):
+                if fn in dists:
+                    continue
+                dists.update(self.all_deps(fn))
+                dists.add(fn)
+        #pprint(dists)
+
+        v = {} # map fn to variable number
+        w = {} # map variable number to fn
+        for i, fn in enumerate(sorted(dists)):
+            v[fn] = i + 1
+            w[i + 1] = fn
+
+        clauses = self.mk_clauses(v, dists, specs, features)
 
         candidates = defaultdict(list)
         n = 0
