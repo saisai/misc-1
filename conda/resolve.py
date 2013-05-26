@@ -10,8 +10,6 @@ try:
 except ImportError:
     sys.exit("cannot import pycosat, try: conda install pycosat")
 
-from pprint import pprint
-
 
 class MatchSpec(object):
 
@@ -88,13 +86,11 @@ class Package(object):
 def get_candidate(candidates, min_or_max):
     key = min_or_max(candidates)
     #print '%skey: %r' % (min_or_max.__name__, key)
-
     mc = candidates[key]
     if len(mc) != 1:
         print 'WARNING:', len(mc)
         for c in mc:
             print '\t', c
-
     return mc[0]
 
 class Resolve(object):
@@ -131,7 +127,6 @@ class Resolve(object):
 
     @memoize
     def get_pkgs(self, ms):
-        #print ms, isinstance(ms, collections.Hashable)
         return [Package(fn, self.index[fn]) for fn in self.find_matches(ms)]
 
     def get_max_dists(self, ms):
@@ -162,7 +157,7 @@ class Resolve(object):
         for fn in dists:
             groups[self.index[fn]['name']].append(fn)
 
-        clauses = []
+        res = []
         for filenames in groups.itervalues():
             # ensure packages with the same name conflict
             for fn1 in filenames:
@@ -170,7 +165,7 @@ class Resolve(object):
                 for fn2 in filenames:
                     v2 = v[fn2]
                     if v1 < v2:
-                        clauses.append([-v1, -v2])
+                        res.append([-v1, -v2])
 
         for fn1 in dists:
             for ms in self.ms_depends(fn1):
@@ -179,7 +174,7 @@ class Resolve(object):
                     if fn2 in dists:
                         clause.append(v[fn2])
                 assert len(clause) > 1, fn1
-                clauses.append(clause)
+                res.append(clause)
 
                 for feat in features:
                     clause = [-v[fn1]]
@@ -187,26 +182,24 @@ class Resolve(object):
                          if feat in self.features(fn2):
                              clause.append(v[fn2])
                     if len(clause) > 1:
-                        clauses.append(clause)
+                        res.append(clause)
 
         for spec in specs:
             clause = [v[fn] for fn in self.find_matches(MatchSpec(spec))
                       if fn in dists]
             assert len(clause) >= 1
-            clauses.append(clause)
+            res.append(clause)
 
-        return clauses
+        return res
 
-    def solve2(self, specs, features, verbose=False):
+    def solve2(self, specs, features):
         dists = set()
-        mss = [MatchSpec(spec) for spec in specs]
-        for ms in mss:
-            for fn in self.get_max_dists(ms):
+        for spec in specs:
+            for fn in self.get_max_dists(MatchSpec(spec)):
                 if fn in dists:
                     continue
                 dists.update(self.all_deps(fn))
                 dists.add(fn)
-        #pprint(dists)
 
         v = {} # map fn to variable number
         w = {} # map variable number to fn
@@ -303,7 +296,7 @@ class Resolve(object):
         for spec in specs:
             for fn in self.get_max_dists(MatchSpec(spec)):
                 self.update_with_features(fn, features)
-        return self.solve2(specs, features, verbose)
+        return self.solve2(specs, features)
 
 
 if __name__ == '__main__':
