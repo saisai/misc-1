@@ -212,8 +212,6 @@ class Resolve(object):
             assert len(clause) >= 1
             clauses.append(clause)
 
-        print 'variables;', len(v)
-        print 'clauses:', len(clauses)
         candidates = defaultdict(list)
         n = 0
         for sol in pycosat.itersolve(clauses):
@@ -222,7 +220,7 @@ class Resolve(object):
             key = len(pkgs)
             #pprint((key, pkgs))
             candidates[key].append(pkgs)
-        print len(candidates), '     n=%d' % n
+        #print len(candidates), '     n=%d' % n
 
         if candidates:
             return get_candidate(candidates, min)

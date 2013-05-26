@@ -57,7 +57,7 @@ class TestPackage(unittest.TestCase):
         self.assertRaises(ValueError, pkgs.sort)
 
 
-class TestSolve2(unittest.TestCase):
+class TestSolve(unittest.TestCase):
 
     def setUp(self):
         r.msd_cache = {}
@@ -136,7 +136,6 @@ class TestFindSubstitute(unittest.TestCase):
     def test1(self):
         installed = r.solve(['anaconda 1.5.0', 'python 2.7*', 'numpy 1.7*'],
                             features=f_mkl)
-        print 'xxxx', len(installed)
         for old, new in [('numpy-1.7.1-py27_p0.tar.bz2',
                           'numpy-1.7.1-py27_0.tar.bz2'),
                          ('scipy-0.12.0-np17py27_p0.tar.bz2',
