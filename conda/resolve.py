@@ -284,8 +284,7 @@ class Resolve(object):
             d[ms.name] = ms
         self.msd_cache[fn] = d.values()
 
-    def solve(self, specs, installed=None, features=None,
-                    verbose=False, ensure_sat=False):
+    def solve(self, specs, features=None, installed=None, verbose=False):
         if verbose:
             print "Resolve.solve(): installed:", installed
 
@@ -320,4 +319,4 @@ if __name__ == '__main__':
 
     features = set(['mkl']) if opts.mkl else set()
     specs = [arg2spec(arg) for arg in args]
-    pprint(r.solve(specs, [], features, verbose=True))
+    pprint(r.solve(specs, features, verbose=True))

@@ -93,27 +93,39 @@ class TestSolve2(unittest.TestCase):
              'unixodbc-2.3.1-0.tar.bz2',
              'zlib-1.2.7-0.tar.bz2'])
 
-#    def test_mkl(self):
-#        self.assertEqual(r.solve(['mkl'], installed, set(), ensure_sat=True),
-#                         r.solve(['mkl'], installed, f_mkl, ensure_sat=True))
+    def test_mkl(self):
+        self.assertEqual(r.solve(['mkl'], set()),
+                         r.solve(['mkl'], f_mkl))
 
-#    def test_accelerate(self):
-#        self.assertEqual(
-#            r.solve(['accelerate'], installed, set(), ensure_sat=True),
-#            r.solve(['accelerate'], installed, f_mkl, ensure_sat=True))
+    def test_accelerate(self):
+        self.assertEqual(
+            r.solve(['accelerate'], set()),
+            r.solve(['accelerate'], f_mkl))
 
     def test_anaconda_nomkl(self):
-        dists = r.solve2(['anaconda 1.5.0', 'python 2.7*', 'numpy 1.7*'],
-                         set())
+        dists = r.solve(['anaconda 1.5.0', 'python 2.7*', 'numpy 1.7*'])
         self.assertEqual(len(dists), 107)
         self.assertTrue('scipy-0.12.0-np17py27_0.tar.bz2' in dists)
 
-    def test_anaconda_mkl(self):
+    def test_anaconda_mkl_2(self):
         # to test "with_features_depends"
         dists = r.solve(['anaconda 1.5.0', 'python 2.7*', 'numpy 1.7*'],
-                        features=f_mkl)
-        self.assertEqual(len(dists), 108)
+                        f_mkl)
         self.assertTrue('scipy-0.12.0-np17py27_p0.tar.bz2' in dists)
+        self.assertTrue('mkl-rt-11.0-p0.tar.bz2' in dists)
+        self.assertEqual(len(dists), 108)
+
+        dists2 = r.solve(['anaconda 1.5.0',
+                          'python 2.7*', 'numpy 1.7*', 'mkl'])
+        self.assertTrue(set(dists).issubset(set(dists2)))
+        self.assertEqual(len(dists2), 110)
+
+    def test_anaconda_mkl_3(self):
+        # to test "with_features_depends"
+        dists = r.solve(['anaconda 1.5.0', 'python 3*'], f_mkl)
+        self.assertTrue('scipy-0.12.0-np17py33_p0.tar.bz2' in dists)
+        self.assertTrue('mkl-rt-11.0-p0.tar.bz2' in dists)
+        self.assertEqual(len(dists), 61)
 
 
 class TestFindSubstitute(unittest.TestCase):
