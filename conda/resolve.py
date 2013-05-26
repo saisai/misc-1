@@ -172,21 +172,15 @@ class Resolve(object):
         for fn in dists:
             l_groups[self.index[fn]['name']].append(fn)
 
-        fvars = set()
-        for feat in features:
-            for fn in dists:
-                if feat in self.features(fn):
-                    fvars.add('%s@%s' % (feat, self.index[fn]['name']))
-
         v = {} # map fn to variable number
         w = {} # map variable number to fn
-        for i, fn in enumerate(sorted(dists) + sorted(fvars)):
+        for i, fn in enumerate(sorted(dists)):
             v[fn] = i + 1
             w[i + 1] = fn
 
         clauses = []
 
-        for name, filenames in l_groups.iteritems():
+        for filenames in l_groups.itervalues():
             # ensure packages with the same name conflict
             for fn1 in filenames:
                 v1 = v[fn1]
@@ -194,17 +188,6 @@ class Resolve(object):
                     v2 = v[fn2]
                     if v1 < v2:
                         clauses.append([-v1, -v2])
-
-            for feat in features:
-                try:
-                    clause = [-v['%s@%s' % (feat, name)]]
-                except KeyError:
-                    continue
-                for fn in filenames:
-                    if feat in self.features(fn):
-                        clause.append(v[fn])
-                if len(clause) > 1:
-                    clauses.append(clause)
 
         for fn1 in dists:
             for ms in self.ms_depends(fn1):
@@ -215,6 +198,14 @@ class Resolve(object):
 
                 assert len(clause) > 1, fn1
                 clauses.append(clause)
+
+                clause = [-v[fn1]]
+                for fn2 in l_groups[ms.name]:
+                    for feat in features:
+                         if feat in self.features(fn2):
+                             clause.append(v[fn2])
+                if len(clause) > 1:
+                    clauses.append(clause)
 
         for ms in mss:
             clause = [v[fn] for fn in self.find_matches(ms) if fn in dists]
@@ -231,7 +222,7 @@ class Resolve(object):
             key = len(pkgs)
             #pprint((key, pkgs))
             candidates[key].append(pkgs)
-        print len(candidates),      'n=%d' % n
+        print len(candidates), '     n=%d' % n
 
         if candidates:
             return get_candidate(candidates, min)
