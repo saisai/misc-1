@@ -199,13 +199,13 @@ class Resolve(object):
                 assert len(clause) > 1, fn1
                 clauses.append(clause)
 
-                clause = [-v[fn1]]
-                for fn2 in l_groups[ms.name]:
-                    for feat in features:
+                for feat in features:
+                    clause = [-v[fn1]]
+                    for fn2 in l_groups[ms.name]:
                          if feat in self.features(fn2):
                              clause.append(v[fn2])
-                if len(clause) > 1:
-                    clauses.append(clause)
+                    if len(clause) > 1:
+                        clauses.append(clause)
 
         for ms in mss:
             clause = [v[fn] for fn in self.find_matches(ms) if fn in dists]
