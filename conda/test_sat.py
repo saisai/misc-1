@@ -131,7 +131,6 @@ def test_sat(index):
 
 if __name__ == '__main__':
     import json
-    from pprint import pprint
 
     with open('./index.json') as fi:
         index = json.load(fi)
