@@ -112,7 +112,7 @@ def test_sat(index):
         ['numpy 1.7*', 'python 2.7*', 'conda'],
         ['numpy 1.7*', 'python 2.7*'],
         ['numpy 1.7*', 'python 2.6*'],
-        #['numpy 1.7*', 'python 3.3*'],
+        ['numpy 1.7*', 'python 3.3*'],
         ['numpy 1.6*', 'python 2.7*'],
         ['numpy 1.6*', 'python 2.6*'],
         ]:
@@ -123,7 +123,10 @@ def test_sat(index):
             for features in set(), set(['mkl']):
                 print specs, features
                 r.msd_cache = {}
-                assert r.solve(specs, features=features)
+                try:
+                    assert r.solve(specs, features=features)
+                except RuntimeError:
+                    print 'UNSAT'
 
 
 if __name__ == '__main__':
