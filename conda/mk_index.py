@@ -1,9 +1,11 @@
 import json
 
-from conda.api import get_index
+from conda.fetch import fetch_index
 
 
-index = get_index()
+index = fetch_index(('http://repo.continuum.io/pkgs/free/win-32/',
+                     'http://repo.continuum.io/pkgs/pro/win-32/',
+                     ))
 for info in index.itervalues():
     del info['md5'], info['size']
     channel = info['channel']
