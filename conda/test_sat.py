@@ -132,7 +132,6 @@ def test_sat(index):
 if __name__ == '__main__':
     import json
     from pprint import pprint
-    from optparse import OptionParser
 
     with open('./index.json') as fi:
         index = json.load(fi)
