@@ -1,5 +1,5 @@
-Ana(conda)
-==========
+Conda packaging sprint - SciPy 2013
+===================================
 
 Anaconda:
 ---------
@@ -20,11 +20,26 @@ Conda:
   * uses SAT solver (PicoSAT) for dependency resolution
   * allows building packages using "conda-recipes"
 
-Binstar:
---------
+Conda-recipe:
+-------------
+  * for conda what a .spec file is for rpm
+  * a single (usually flat) directory
+  * has a meta-data file
+  * build scripts
+  * patches (if any)
+  * tests
+
+binstar.org:
+------------
   * free package hosting
   * user accounts
   * different package formats:
       - conda
       - rpm
       - PyPI
+
+Goals for this sprint:
+----------------------
+  * enable YOU to build conda packages and upload them to binstar.org
+  * get your feedback on usability of the tools
+  * create conda-recipes
