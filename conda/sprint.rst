@@ -18,9 +18,9 @@ Conda:
   * Python agnostic!!!
   * allows multiple environments (using hard links)
   * uses SAT solver (PicoSAT) for dependency resolution
-  * allows building packages using "conda-recipes"
+  * allows building packages using "conda recipes"
 
-Conda-recipe:
+Conda recipe:
 -------------
   * for conda what a .spec file is for rpm
   * a single (usually flat) directory
