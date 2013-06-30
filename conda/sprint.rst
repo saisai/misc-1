@@ -7,7 +7,7 @@ Anaconda:
   * for Linux, MacOSX, Windows
   * supports Python 2.6, 2.7 and 3.3
   * Python, NumPy, SciPy, matplotlib, Qt, Erlang, HDF5, ...
-  * maintained my Continuum Analytics
+  * maintained by Continuum Analytics
 
 Conda:
 ------
