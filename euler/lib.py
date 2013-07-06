@@ -15,7 +15,7 @@ class Prime:
                 while val < limit:
                     tmp[val] = False
                     val += i
-                    
+
     def isprime(self,n):
         if n < self.limit: return self.isp[n]
         if n%6 not in [1,5]: return False
@@ -50,17 +50,17 @@ def getPerms(a):
                 yield [this] + p
 
 def gcd(a, b):
-    while b:      
+    while b:
         a, b = b, a % b
     return a
 
 
 class Memoize:
-    def __init__(self, func): 
+    def __init__(self, func):
         self.func = func
         self.cache = {}
     def __call__(self, *args, **keywords):
         key = (args, tuple(keywords.items()))
-        if key not in self.cache: 
+        if key not in self.cache:
             self.cache[key] = self.func(*args, **keywords)
         return self.cache[key]
