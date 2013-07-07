@@ -1,7 +1,7 @@
 ILAN SCHNELL
 ------------
 
-| 1221 South Congress Avenue, Apt. 1317
+| 3816 South Lamar Blvd, Apt. 801
 | Austin, TX 78704
 | ilanschnell@gmail.com
 
