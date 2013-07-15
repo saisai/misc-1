@@ -1,0 +1,37 @@
+Das Conda Packaging System
+
+Conda ist ein Packaging System was für die Anaconda Python
+Distribution von Continuum Analytics entwickelt wurde (unter der offenen
+BSD-Lizenz).  Das System ist sowohl System als auch Python agnostisch,
+und erlaubt das Erzeugen von "Environments" und das Erstellen von eigenen
+Paketen mittels Rezepten, die leicht mittels binstar.org an andere
+Benutzer weiterverteilt werden können.
+
+Das Problem der Distribution von Python Paketen besteht schon seid über
+zehn Jahren, und wurde (meiner Ansicht nach) durch Projekte wir setuptools
+oder pip nur teilweise gelöst.  Das Hauptproblem besteht darin, dass diese
+Werkzeuge zu sehr auf Python zugeschnitten sind, was große Probleme
+bereitet wenn Python Pakete andere (meisst C-Level) Abhängigkeiten haben,
+wie zum Beispiel HDF5.  Das Problem lässt sich allerdings auf recht einfache
+Weise lösen, wenn man einen Schritt zurück geht und sich nicht auf Python
+Pakete einschränkt, sondern allgemein bleibt.  Ein Beispiel dafür ist
+wie Python Pakete unter Linux Paket Managern gehandhabt werden.
+Das Conda Packaging System ist sowohl System als auch Python agnostisch.
+Alle binären Pakete, wie z.B. Python, NumPy, HDF5, LLVM oder llvmpy,
+haben dieselbe einfache Struktur in der Form von Tar-Archiven.
+Obwohl das Conda System Python agnostisch ist, ist es in Python geschrieben
+und unterstützt Unix und Windows Betriebssysteme.
+Ein besonderes Feature von Conda ist die Möglichkeit verschiedene
+"Environments" zu erzeugen.  Diese bestehen aus Hard-Links und sind
+voneinander unabhängig.  So ist es möglich Python 2.7 ein einem Environment
+und Python 3.3 in einem anderen Environment gleichzeitig zu haben.
+Weiter ist es möglich binären Conda Pakete mittels Rezepten selber
+herzustellen, die dann ohne viel Aufwand an andere Benutzer weiterverteilt
+werden können.
+
+Der Vortrag gliedert sich wie folgt:
+  * Einleitung
+  * Das Auffinden von Paket Abhängigkeiten in Conda mittels eines SAT
+    Solvers (Boolean satisfiability problem)
+  * Environments
+  * Build Rezepte und binstar.org
