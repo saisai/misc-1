@@ -2,7 +2,7 @@ Das Conda Packaging System
 
 Conda ist ein Packaging System was für die Anaconda Python
 Distribution von Continuum Analytics entwickelt wurde (unter der offenen
-BSD-Lizenz).  Das System ist sowohl System als auch Python agnostisch,
+BSD-Lizenz).  Das Conda System ist sowohl OS als auch Python agnostisch,
 und erlaubt das Erzeugen von "Environments" und das Erstellen von eigenen
 Paketen mittels Rezepten, die leicht mittels binstar.org an andere
 Benutzer weiterverteilt werden können.
