@@ -6,3 +6,4 @@ do
     make clean
     make test || exit 1
 done
+
