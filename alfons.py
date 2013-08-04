@@ -17,7 +17,6 @@ def height(r, a):
             phi_l = phi_m
     print phi_m
     print 'h =', r * (1.0 / cos(phi_m) - 1)
-
 #    print 9.0 * (a ** 2) * r / (32.0 * h ** 3)
 
 #for i in [1]:#xrange(-10,10):
