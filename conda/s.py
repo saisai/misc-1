@@ -8,6 +8,7 @@ s.connect((host, port))
 req = '''\
 GET /pkgs/gpl/osx-64/repodata.json HTTP/1.1
 Host: %s
+Connection: keep-alive
 If-Modified-Since: Thu, 04 Jul 2013 06:37:11 GMT
 If-None-Match: "2f1bf63044f924c048e0dce972929c4b"
 
