@@ -1,5 +1,7 @@
 import bz2
 import json
+import shelve
+import urllib2
 from logging import getLogger
 from os.path import join
 
@@ -7,32 +9,40 @@ from conda.connection import connectionhandled_urlopen
 
 log = getLogger(__name__)
 
-retries = 3
-
 
 def fetch_repodata(url):
-    for x in range(retries):
-        for fn in 'repodata.json.bz2', 'repodata.json':
-            try:
-                fi = connectionhandled_urlopen(url + fn)
-                if fi is None:
-                    raise RuntimeError("failed to fetch repo data from %s" %
-                                       url)
+    request = urllib2.Request(url + 'repodata.json.bz2')
+    if url in cache:
+        d = cache[url]
+        if '_etag' in d:
+            request.add_header('If-None-Match', d['_etag'])
+        if '_mod' in d:
+            request.add_header('If-Modified-Since', d['_mod'])
 
-                log.debug("fetched: %s [%s] ..." % (fn, url))
-                data = fi.read()
-                fi.close()
-                if fn.endswith('.bz2'):
-                    data = bz2.decompress(data).decode('utf-8')
-                return json.loads(data)
+    try:
+        u = connectionhandled_urlopen(request)
+        data = u.read()
+        u.close()
+        d = json.loads(bz2.decompress(data).decode('utf-8'))
+        etag = u.info().getheader('Etag')
+        if etag:
+            d['_etag'] = etag
+        timestamp = u.info().getheader('Last-Modified')
+        if timestamp:
+            d['_mod'] = timestamp
+        cache[url] = d
 
-            except IOError:
-                log.debug('download failed try: %d' % x)
+    except urllib2.HTTPError as e:
+        print e.code, e.msg
+        if e.code != 304:
+            raise
 
-    raise RuntimeError("failed to fetch repodata from %r" % url)
+    return cache[url]
 
 
 if __name__ == '__main__':
+    cache = shelve.open('etags')
+
     URL = 'http://repo.continuum.io/pkgs/free/osx-64/'
     d = fetch_repodata(URL)
     print len(d['packages'])
