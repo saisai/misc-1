@@ -32,7 +32,7 @@ def fetch_repodata(url, cache={}):
         cache[url] = d
 
     except urllib2.HTTPError as e:
-        sys.stderr.write("HTTPError: %d %s\n" % (e.code, e.msg))
+        sys.stderr.write("HTTPError: %d  %s\n" % (e.code, e.msg))
         if e.code != 304:
             raise
 
