@@ -1,10 +1,7 @@
 import bz2
-import dbm
 import json
-import shelve
 import urllib2
 from logging import getLogger
-from os.path import join
 
 from conda.connection import connectionhandled_urlopen
 
@@ -45,13 +42,17 @@ def fetch_repodata(url, cache={}):
 
 
 if __name__ == '__main__':
+    cache_path = 'etags.json'
     try:
-        cache = shelve.open('etags')
-    except dbm.error:
+        cache = json.load(open(cache_path))
+    except IOError:
         cache = {}
     URL = 'http://repo.continuum.io/pkgs/free/osx-64/'
     d = fetch_repodata(URL, cache)
     print len(d['packages'])
 
-    if not isinstance(cache, dict):
-        cache.close()
+    try:
+        with open(cache_path, 'w') as fo:
+            json.dump(cache, fo, indent=2, sort_keys=True)
+    except IOError:
+        pass
