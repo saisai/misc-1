@@ -1,4 +1,5 @@
 import bz2
+import dbm
 import json
 import shelve
 import urllib2
@@ -44,7 +45,13 @@ def fetch_repodata(url, cache={}):
 
 
 if __name__ == '__main__':
-    cache = shelve.open('etags')
+    try:
+        cache = shelve.open('etags')
+    except dbm.error:
+        cache = {}
     URL = 'http://repo.continuum.io/pkgs/free/osx-64/'
     d = fetch_repodata(URL, cache)
     print len(d['packages'])
+
+    if not isinstance(cache, dict):
+        cache.close()
