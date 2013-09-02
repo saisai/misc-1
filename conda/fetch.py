@@ -32,12 +32,12 @@ def fetch_repodata(url, cache={}):
         cache[url] = d
 
     except urllib2.HTTPError as e:
-        print e.code, e.msg
+        sys.stderr.write("HTTPError: %d %s\n" % (e.code, e.msg))
         if e.code != 304:
             raise
 
     except urllib2.URLError:
-        sys.stderr.write("Error: host unknown in: %s\n" % url)
+        sys.stderr.write("Error: unknown host: %s\n" % url)
 
     return cache[url]
 
@@ -48,9 +48,9 @@ if __name__ == '__main__':
         cache = json.load(open(cache_path))
     except IOError:
         cache = {}
-    URL = 'http://repo.continuum.io/pkgs/free/osx-64/'
+    URL = 'http://repo.continuum.io/pkgs/pro/osx-64/'
     d = fetch_repodata(URL, cache)
-    print len(d['packages'])
+    print(len(d['packages']))
 
     try:
         with open(cache_path, 'w') as fo:
