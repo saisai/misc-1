@@ -38,7 +38,7 @@ def fetch_repodata(url):
             raise
 
     except urllib2.URLError:
-        print "host unknown"
+        print "host unknown in:", url
 
     return cache[url]
 
