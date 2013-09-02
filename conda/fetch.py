@@ -10,7 +10,7 @@ from conda.connection import connectionhandled_urlopen
 log = getLogger(__name__)
 
 
-def fetch_repodata(url):
+def fetch_repodata(url, cache={}):
     request = urllib2.Request(url + 'repodata.json.bz2')
     if url in cache:
         d = cache[url]
@@ -45,7 +45,6 @@ def fetch_repodata(url):
 
 if __name__ == '__main__':
     cache = shelve.open('etags')
-
     URL = 'http://repo.continuum.io/pkgs/free/osx-64/'
-    d = fetch_repodata(URL)
+    d = fetch_repodata(URL, cache)
     print len(d['packages'])
