@@ -37,6 +37,9 @@ def fetch_repodata(url):
         if e.code != 304:
             raise
 
+    except urllib2.URLError:
+        print "host unknown"
+
     return cache[url]
 
 
