@@ -1,4 +1,5 @@
 import bz2
+import sys
 import json
 import urllib2
 from logging import getLogger
@@ -36,7 +37,7 @@ def fetch_repodata(url, cache={}):
             raise
 
     except urllib2.URLError:
-        print "host unknown in:", url
+        sys.stderr.write("Error: host unknown in: %s\n" % url)
 
     return cache[url]
 
