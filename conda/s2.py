@@ -15,7 +15,9 @@ except urllib2.HTTPError as e:
 except urllib2.URLError:
     print "host unknown"
 
-content = u.read()
-u.close()
-
-print content
+try:
+    content = u.read()
+    u.close()
+    print content
+except NameError:
+    pass
