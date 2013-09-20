@@ -1,0 +1,23 @@
+ANACONDA
+Freie Python Distribution für kommerzielle Anwendungen.
+Unterstützt Linux, Mac OS X und Windows Betriebssysteme.
+Beinhaltet Python, NumPy, Scipy und über 90 weitere Pakete.
+
+WAKARI
+Web-basierte Python Plattform für das Analysieren von Daten.
+Erstellen von Daten-Visualisierungs-Anwendungen wird dem
+Benutzer leicht gemacht.  Unterstützt das Arbeiten mit
+Kollegen an gemeinsamen Projekten, beruhend auf einer
+Anaconda-Installation.
+
+TRAINING
+Wir bieten weltweit Python Trainingkurse an, auch in deutscher
+Sprache.  Unsere Kurse können auch auf Ihre Bedürfnisse,
+zugeschnitten werden.  Im Mittelpunkt stehen Möglichkeiten,
+mit Python Ihre spezifischen Probleme zu lösen.
+
+CONSULTING
+Wo immer Sie es mit großen Datenmengen zu tun haben, können
+wir dank unserer jahrelangen Erfahrung in Wissenschaft
+und Softwareentwicklung behilflich sein, effiziente Lösungen
+zu finden.
