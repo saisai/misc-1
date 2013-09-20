@@ -10,11 +10,6 @@
  * On OSX 10.4 (and earlier) this falls back to using exec because the
  * posix_spawnv functions aren't available there.
  */
-#pragma weak_import posix_spawnattr_init
-#pragma weak_import posix_spawnattr_setbinpref_np
-#pragma weak_import posix_spawnattr_setflags
-#pragma weak_import posix_spawn
-
 #include <Python.h>
 #include <unistd.h>
 #ifdef HAVE_SPAWN_H
@@ -71,6 +66,7 @@ static char* get_python_path(void)
     }
 
     strcpy(g_path, info.dli_fname);
+    printf("g_path: %s\n", g_path);
     end = g_path + len - 1;
     while (end != g_path && *end != '/') {
         end --;
@@ -79,7 +75,7 @@ static char* get_python_path(void)
     if (*end == '.') {
         end++;
     }
-    strcpy(end, "Resources/Python.app/Contents/MacOS/" PYTHONFRAMEWORK);
+    strcpy(end, "Resources/Python.app/Contents/MacOS/");
 
     return g_path;
 }
@@ -92,9 +88,6 @@ setup_spawnattr(posix_spawnattr_t* spawnattr)
     size_t count;
     cpu_type_t cpu_types[1];
     short flags = 0;
-#ifdef __LP64__
-    int   ch;
-#endif
 
     if ((errno = posix_spawnattr_init(spawnattr)) != 0) {
         err(2, "posix_spawnattr_int");
