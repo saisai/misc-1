@@ -46,7 +46,7 @@ def main():
     if args:
         p.error('no arguments expected')
 
-    if not isfile('setup.py'):
+    if not opts.dst and not isfile('setup.py'):
         sys.exit("Error: no such file: setup.py")
 
     dst = opts.dst or '%(name)s-%(version)s.tar.gz' % get_name_version()
