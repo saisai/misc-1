@@ -8,9 +8,9 @@ def f(s):
     b = a.tobytes()
     print repr(b)
     c = b.decode('utf-8')
+    print repr(c)
     print c
 
 f('010 00001')
 f('110 01111  10 000001')
-f('1110 0111  10 100001  10 100111')
-
+f('1110 0111  10 000001  10 100111')
