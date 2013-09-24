@@ -34,7 +34,7 @@ Programming Experience
 
   * Design and management of the Anaconda project at Continuum Analytics
   * Design and implementation of installers for the Enthought Python
-    Distribution on Linux, Mac OS X, Windowx, and Solaris
+    Distribution on Linux, Mac OS X, Windows, and Solaris
   * Building and packaging EPD on all platfroms
   * Development of software for first principle electronic band-structure
     calculations
