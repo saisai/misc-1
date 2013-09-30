@@ -32,7 +32,7 @@ def cleanup(data, expand_tabs=True):
 
 def clean_file(path, dry_run=False):
     if not isfile(path):
-        print "Ignoring non-existing file:", path
+        print("Ignoring non-existing file: %s" % path)
         return
     with open(path) as fi:
         old_data = fi.read()
@@ -40,16 +40,16 @@ def clean_file(path, dry_run=False):
     if new_data == old_data:
         return
     if dry_run:
-        print "Dry-run: rewriting", path
+        print("Dry-run: rewriting %s" % path)
         return
-    print "Rewriting", path
+    print("Rewriting %s" % path)
     with open(path, 'wb') as fo:
         fo.write(new_data)
 
 
 def clean_dir(dir_path, dry_run=False):
     if not isdir(dir_path):
-        print "Not a directory:", dir_path
+        print("Not a directory: %s" % dir_path)
         return
     for root, dirs, files in os.walk(dir_path):
         parts = root.split(os.sep)
