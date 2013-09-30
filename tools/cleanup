@@ -44,7 +44,7 @@ def clean_file(path, dry_run=False):
         return
     print("Rewriting %s" % path)
     with open(path, 'wb') as fo:
-        fo.write(new_data)
+        fo.write(new_data.encode('utf-8'))
 
 
 def clean_dir(dir_path, dry_run=False):
