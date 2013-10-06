@@ -3,7 +3,7 @@ Alaska          AK
 Arizona         AZ x 96    98             03 04 05 06       09
 Arkansas        AR x                01                   08       11
 California      CA x 96                         05 06    08          12 13
-Colorado        CO x       98 99    01 02 03 04 05 06                12
+Colorado        CO x       98 99    01 02 03 04 05 06                12 13
 Connecticut     CT x                            05 06
 Delaware        DE x    97
 District        DC y    97                      05 06
