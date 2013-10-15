@@ -1,5 +1,8 @@
-Conda packaging - Lightning Talk, PyCon DE 2013 Köln
-====================================================
+Conda packaging
+===============
+
+(Lightning Talk, PyCon DE 2013 Köln)
+------------------------------------
 
 ANACONDA:
 ---------
