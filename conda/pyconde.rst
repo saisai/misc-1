@@ -1,8 +1,8 @@
 Conda packaging
 ===============
 
-(Lightning Talk, PyCon DE 2013 Köln)
-------------------------------------
+Lightning Talk, PyCon DE 2013 Köln
+----------------------------------
 
 ANACONDA:
 ---------
@@ -40,9 +40,3 @@ binstar.org:
       - conda
       - rpm
       - PyPI
-
-Goals for this sprint:
-----------------------
-  * enable YOU to build conda packages and upload them to binstar.org
-  * get your feedback on usability of the tools
-  * create conda-recipes
