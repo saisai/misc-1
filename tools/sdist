@@ -15,7 +15,7 @@ import tarfile
 
 
 def exclude_func(path):
-    if path.endswith(('~', '.pyc', '.pyo')):
+    if path.endswith(('~', '.pyc', '.pyo', '.tar.gz')):
         return True
     parts = path.split(os.sep)
     assert parts[0] == '.', path
