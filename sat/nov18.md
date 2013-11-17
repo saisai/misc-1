@@ -44,8 +44,7 @@ Reason:
 8 Queens problem:
 =================
 
-Encoding the 8 queens problem.
-One variable per checker board field (Queen = True; no Queen = False)
+One variable per checker board field (Queen = True; no Queen = False) = 64
 <pre>
 ......Q.
 ...Q....
@@ -62,3 +61,16 @@ Clauses:
   * total: 744
 
 <a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/8queens.py">Exmaple code to generate clauses</a>
+
+
+Sudoku problem:
+===============
+
+One variable for each digit (1..9) in each field: 729
+
+11745 clauses
+
+<a href="https://www.lri.fr/~conchon/mpri/weber.pdf">
+"A SAT-based Sudoku solver" by Tjark Weber</a>
+
+<a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/sudoku.py">Exmaple code to generate clauses</a>
