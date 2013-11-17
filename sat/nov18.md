@@ -41,8 +41,9 @@ Reason:
   * (one can encode quite a bit in a million variables)
 
 Many of-the-shelf Solvers:
-  * MiniSAT (C++)
   * PicoSAT (C with Python bindings pycosat)
+  * MiniSAT (C++)
+  * RSat, BooleForce, SATzilla, ...
 
 
 8 Queens problem:
