@@ -76,3 +76,11 @@ One variable for each digit (1..9) in each field: 729
 "A SAT-based Sudoku solver" by Tjark Weber</a>
 
 <a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/sudoku.py">Exmaple code to generate clauses</a>
+
+
+Install problem:
+================
+
+
+Conda package manager and Anaconda:
+===================================
