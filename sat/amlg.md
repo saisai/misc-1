@@ -90,6 +90,10 @@ Install problem:
   * each package represented by boolean
 
 
+<a href="http://www.cs.ucsd.edu/~lerner/papers/opium.pdf">
+OPIUM: Optimal Package Install/Uninstall Manager</a>
+
+
 Conda package manager and Anaconda:
 ===================================
 
