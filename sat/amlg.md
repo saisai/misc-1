@@ -79,7 +79,7 @@ One variable for each digit (1..9) in each field: 729
 11745 clauses
 
 <a href="https://www.lri.fr/~conchon/mpri/weber.pdf">
-"A SAT-based Sudoku solver" by Tjark Weber</a>
+"A SAT-based Sudoku solver" by Tjark Weber</a> (2005)
 
 <a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/sudoku.py">Exmaple code to generate clauses</a>
 
