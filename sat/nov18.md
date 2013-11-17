@@ -56,3 +56,9 @@ Q.......
 ..Q.....
 .....Q..
 </pre>
+Clauses:
+  * rows or columns 16 * (1 + 28)
+  * diagonal clauses 280
+  * total: 744
+
+<a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/8queens.py">Exmaple code to generate clauses</a>
