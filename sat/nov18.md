@@ -8,8 +8,9 @@ Outline:
   * what is the SAT problem?
   * a brief history of SAT solvers
   * what problems can be translated into SAT problems?
-  * Examples: 8 Queen, Sudoku, install problem
-  * The conda package installer and Anaconda
+  * examples: 8 Queen, Sudoku, install problem
+  * the conda package installer and Anaconda
+  * summary
 
 
 What is the SAT problem?
@@ -88,5 +89,12 @@ Install problem:
 
   * each package represented by boolean
 
+
 Conda package manager and Anaconda:
 ===================================
+
+
+Summary:
+========
+
+  *
