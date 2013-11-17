@@ -18,7 +18,7 @@ What is the SAT problem?
   * Boolean satisfiability problem
   * NP-complete problem
   * conjunctive normal form (CNF).  Example
-      * (x_1 ∨ ¬x_5) ∧ (¬x1 ∨ x2 ∨ x3) ∧ ¬x1
+      * (x1 ∨ ¬x5 ∨ x4) ∧ (¬x1 ∨ x5 ∨ x3 ∨ x4) ∧ (¬x3 ∨ ¬x4)
       * DIMACS format
         <pre>p cnf 5 3
         1 -5 4 0
