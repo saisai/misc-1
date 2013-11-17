@@ -19,8 +19,9 @@ What is the SAT problem?
   * NP-complete problem
   * conjunctive normal form (CNF).  Example
       * (x1 ∨ ¬x5 ∨ x4) ∧ (¬x1 ∨ x5 ∨ x3 ∨ x4) ∧ (¬x3 ∨ ¬x4)
-      * DIMACS format
+      * DIMACS cnf format
         <pre>p cnf 5 3
         1 -5 4 0
         -1 5 3 4 0
         -3 -4 0</pre>
+      * (A) solution: x1 = x5 = True, x2 = x3 = x4 = False
