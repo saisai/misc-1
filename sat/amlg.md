@@ -66,7 +66,8 @@ Clauses:
   * diagonal clauses 280
   * total: 744
 
-<a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/8queens.py">Exmaple code</a> to generate clauses
+<a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/8queens.py">
+Exmaple code</a> to generate clauses
 
 
 Sudoku problem:
@@ -81,17 +82,28 @@ One variable for each digit (1..9) in each field: 729
 <a href="https://www.lri.fr/~conchon/mpri/weber.pdf">
 "A SAT-based Sudoku solver" by Tjark Weber</a> (2005)
 
-<a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/sudoku.py">Exmaple code</a> to generate clauses
+<a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/sudoku.py">
+Exmaple code</a> to generate clauses
 
 
 Install problem:
 ================
 
-  * each package represented by boolean
+Find consistent set of packages to be installed given a requirement
 
+  * packages with same name (usually) *conflict*
+  * each package *depends* on other packages
+
+Solution
+
+  * represent each package represented by boolean
+  * create clauses for conflicts and dependencies
 
 <a href="http://www.cs.ucsd.edu/~lerner/papers/opium.pdf">
 OPIUM: Optimal Package Install/Uninstall Manager</a>
+
+<a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/opium.py">
+Exmaple code</a> to generate clauses
 
 
 Conda package manager and Anaconda:
