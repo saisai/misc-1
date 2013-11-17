@@ -41,3 +41,18 @@ Reason:
   * (one can encode quite a bit in a million variables)
 
 
+8 Queens problem:
+=================
+
+Encoding the 8 queens problem.  One variable per checker board field (Queen = True - no Queen = False)
+<pre>
+......Q.
+...Q....
+.Q......
+....Q...
+.......Q
+Q.......
+..Q.....
+.....Q..
+</pre>
+
