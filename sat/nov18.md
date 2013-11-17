@@ -15,8 +15,7 @@ Outline:
 What is the SAT problem?
 ========================
 
-Boolean satisfiability problem
-NP-complete problem
-conjunctive normal form (CNF)
-
-
+  * Boolean satisfiability problem
+  * NP-complete problem
+  * conjunctive normal form (CNF)
+      * (x1 ∨ ¬x2) ∧ (¬x1 ∨ x2 ∨ x3) ∧ ¬x1
