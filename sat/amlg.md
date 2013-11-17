@@ -66,7 +66,7 @@ Clauses:
   * diagonal clauses 280
   * total: 744
 
-<a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/8queens.py">Exmaple code to generate clauses</a>
+<a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/8queens.py">Exmaple code</a> to generate clauses
 
 
 Sudoku problem:
@@ -81,7 +81,7 @@ One variable for each digit (1..9) in each field: 729
 <a href="https://www.lri.fr/~conchon/mpri/weber.pdf">
 "A SAT-based Sudoku solver" by Tjark Weber</a> (2005)
 
-<a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/sudoku.py">Exmaple code to generate clauses</a>
+<a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/sudoku.py">Exmaple code</a> to generate clauses
 
 
 Install problem:
