@@ -40,6 +40,10 @@ Reason:
   * 1 million variables and 5 million constraints (today)
   * (one can encode quite a bit in a million variables)
 
+Many of-the-shelf Solvers:
+  * MiniSAT (C++)
+  * PicoSAT (C with Python bindings pycosat)
+
 
 8 Queens problem:
 =================
@@ -81,6 +85,7 @@ One variable for each digit (1..9) in each field: 729
 Install problem:
 ================
 
+  * each package represented by boolean
 
 Conda package manager and Anaconda:
 ===================================
