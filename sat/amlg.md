@@ -67,7 +67,7 @@ Clauses:
   * total: 744
 
 <a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/8queens.py">
-Exmaple code</a> to generate clauses
+Example code</a> to generate clauses
 
 
 Sudoku problem:
@@ -79,11 +79,14 @@ One variable for each digit (1..9) in each field: 729
 
 11745 clauses
 
+Extremely efficient (compared to backtracking algorithms), see
+<a href="http://continuum.io/blog/sudoku>blog post</a>.
+
 <a href="https://www.lri.fr/~conchon/mpri/weber.pdf">
 "A SAT-based Sudoku solver" by Tjark Weber</a> (2005)
 
 <a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/sudoku.py">
-Exmaple code</a> to generate clauses
+Example code</a> to generate clauses
 
 
 Install problem:
@@ -96,14 +99,14 @@ Find consistent set of packages to be installed given a requirement
 
 Solution:
 
-  * represent each package represented by boolean
+  * represent each package represented by Boolean
   * create clauses for conflicts and dependencies
 
 <a href="http://www.cs.ucsd.edu/~lerner/papers/opium.pdf">
 OPIUM: Optimal Package Install/Uninstall Manager</a>
 
 <a href="https://github.com/ContinuumIO/pycosat/blob/master/examples/opium.py">
-Exmaple code</a> to generate clauses
+Example code</a> to generate clauses
 
 
 Conda package manager and Anaconda:
@@ -127,6 +130,6 @@ Summary:
 ========
 
   * SAT solvers provide real solutions for many industrial problems
-  * Your problem only need to be *rephrased* as a boolean problem
+  * Your problem only need to be *rephrased* as a Boolean problem
   * Many of-the-shelf SAT solvers available
-  * When programning in Python, use PycoSAT (part of Anaconda)
+  * When programming in Python, use PycoSAT (part of Anaconda)
