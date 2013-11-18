@@ -94,7 +94,7 @@ Find consistent set of packages to be installed given a requirement
   * packages with same name (usually) *conflict*
   * each package *depends* on other packages
 
-Solution
+Solution:
 
   * represent each package represented by boolean
   * create clauses for conflicts and dependencies
@@ -108,6 +108,9 @@ Exmaple code</a> to generate clauses
 
 Conda package manager and Anaconda:
 ===================================
+
+
+
 
 
 Summary:
