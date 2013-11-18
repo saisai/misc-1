@@ -2,6 +2,7 @@ SAT Solvers
 ===========
 
 Austin Machine Learning Group
+
 Ilan Schnell - November 18, 2013
 
 Outline:
