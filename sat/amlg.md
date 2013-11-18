@@ -109,11 +109,24 @@ Exmaple code</a> to generate clauses
 Conda package manager and Anaconda:
 ===================================
 
+<a href="https://github.com/ContinuumIO/conda">Conda</a>:
 
+  * package manager
+  * cross platform
+  * multiple environments
+  * build packages from recipes
 
+<a href="http://continuum.io/downloads">Anaconda</a>:
+
+  * free scientific Python distribution
+  * uses conda package manager
+  * Linux, Mac OS X, Windows
 
 
 Summary:
 ========
 
-  *
+  * SAT solvers provide real solutions for many industrial problems
+  * Your problem only need to be *rephrased* as a boolean problem
+  * Many of-the-shelf SAT solvers available
+  * When programning in Python, use PycoSAT (part of Anaconda)
