@@ -79,6 +79,8 @@ One variable for each digit (1..9) in each field: 729
 <img src="http://3.bp.blogspot.com/_Kh0CZuWd0T8/Sn_y7ihXuyI/AAAAAAAAFC4/DB1NpTv3gbk/s400/printable+sudoku+%281%29.jpg">
 
 11745 clauses
+<a href="https://github.com/ilanschnell/misc/blob/master/sat/sudoku.cnf">
+DIMACS cnf format</a>
 
 Extremely efficient (compared to backtracking algorithms), see
 <a href="http://continuum.io/blog/sudoku>blog post</a>.
