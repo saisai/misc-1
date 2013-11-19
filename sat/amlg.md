@@ -125,6 +125,10 @@ Conda package manager and Anaconda:
 <a href="http://continuum.io/downloads">Anaconda</a>:
 
   * free scientific Python distribution
+     * numpy / scipy
+     * pandas
+     * scikit-learn
+     * NLTK (Natural Learning Tool Kit)
   * uses conda package manager
   * Linux, Mac OS X, Windows
 
