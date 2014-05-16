@@ -1,14 +1,14 @@
 import socket
 
 
-HOST, PORT = 'binstar.org', 80
+HOST, PORT = 'api.alpha.binstar.org', 80
 
 
 def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((HOST, PORT))
     req = '''\
-POST /phone-home HTTP/1.1
+POST /package-manager/successful-install HTTP/1.1
 Host: %s
 
 name=__NAME__&version=__VERSION__&platform=__PLATFORM__
