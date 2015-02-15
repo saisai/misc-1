@@ -1,0 +1,159 @@
+#!/usr/bin/python
+"""Usage: %s [file] [file]*
+
+Draws RGB histograms and displays them.
+If the directory %r exists, the histograms are stored in this
+directory and not displayed.
+Configuration file is %r
+
+Author: Ilan Schnell, 2007"""
+
+import os
+import Image, ImageDraw, ImageFont
+from ImageColor import getrgb as rgb
+
+
+def histImg(height, rgbwHist, i):
+    """
+    Returns an image of size 256 x height containing one histogram.
+    The list rgbwHist always contains four bands: red, green, blue and white
+    The integer i selects which band is plotted:   0     1      2        3
+    """
+    if i<3:
+        dispHist = rgbwHist[256*i:256*(i+1)]
+        col = rgb(['#f00','#0f0','#00f'][i])
+    else:
+        dispHist = rgbwHist[256*3:]
+        col = rgb('#fff')
+    
+    res = Image.new('RGB', (256, height), rgb(HIST_BG))
+    
+    if sum(dispHist):
+        maxv = max(dispHist)
+        dispHist = [int(0.95*height*x/maxv) for x in dispHist]
+        draw = ImageDraw.Draw(res)
+        for j in xrange(256):
+            draw.line((j, height-1, j, height-1-dispHist[j]), fill=col)
+    return res
+
+
+def ratio(size):
+    w, h = size
+    return float(w)/h
+
+
+def getRGBWhist(image):
+    """
+    Returns the RGBW (see above) histogram list which is always of length 1024.
+    When the image mode can not be used to retrieve this information,
+    None is returned.
+    """
+    try:
+        hist = image.histogram()
+        mode = image.mode
+    except:
+        print "An error occurred while reading."
+        return
+    
+    if mode=='L':
+        return 3*256*[0] + hist[:256]
+    
+    elif mode in ['RGB', 'RGBA']:
+        return hist[:3*256] + [sum(hist[256*c+j] for c in xrange(3))
+                               for j in xrange(256)]
+    else:
+        print 'Mode %r is not supported.' % mode
+        return
+
+
+def mkHistImg(image, name):
+    """
+    Returns the complete result image, i.e. with the original image, the
+    histograms and text.  Again, if something goes wrong, None is returned.
+    """
+    rgbwhist = getRGBWhist(image)
+    if not rgbwhist:
+        return
+    
+    nh = 4 * HIST_HEIGHT + 5 * MARGENS
+    if TEXT_SIZE: nh += 2*(TEXT_SIZE+MARGENS)
+    nw = int(nh*ratio(image.size))
+    
+    out = Image.new('RGB' + ('A' if len(image.getbands())==4 else ''),
+                    (nw+256+2*MARGENS, nh), rgb(BG))
+    
+    out.paste(image.resize((nw, nh), Image.BILINEAR),
+              (0, 0, nw, nh))
+
+    x0, y0 = nw+MARGENS, MARGENS
+    for i in xrange(4):
+        out.paste(histImg(HIST_HEIGHT, rgbwhist, i),
+                  (x0, y0, x0+256, y0+HIST_HEIGHT))
+        y0 += HIST_HEIGHT + MARGENS
+        
+    if TEXT_SIZE:
+        draw = ImageDraw.Draw(out)
+        draw.text((x0, y0), name,
+                  fill = rgb(FILE_FG), font = _font)
+        draw.text((x0, y0+TEXT_SIZE+MARGENS), '%s x %s'%image.size,
+                  fill = rgb(SIZE_FG), font = _font)
+
+    return out
+
+def process(name):
+    """
+    Processes the file named.
+    """
+    print 'processing %r ...' % name
+    try:
+        image = Image.open(name)
+    except IOError:
+        print "Can't read/identify file %r." % name
+        return
+
+    out = mkHistImg(image, name)
+    if not out:
+        return
+
+    if os.access(HIST_DIR, os.W_OK):
+        out.save(HIST_DIR+name+'.png')
+        
+    else:
+        import tempfile
+        tmpfile = tempfile.mkstemp(".png")[1]
+        out.save(tmpfile)
+        os.system("%s %s; rm -f %s" % (VIEWCMD, tmpfile, tmpfile))
+
+if __name__ == '__main__':
+    import sys, os.path
+    files = sys.argv[1:]
+
+    rc_file = '~/.histogramrc'
+    rc_expand = os.path.expanduser(rc_file)
+    try:
+        exec(file(rc_expand))
+    except IOError:
+        print "Error: Can't open resource file %r." % rc_expand
+        sys.exit(1)
+
+    if not HIST_DIR.endswith('/'):
+        print "Warning: HIST_DIR %r does not have trailing '/'." % HIST_DIR
+    
+    if not files:
+        print __doc__ % (sys.argv[0], HIST_DIR, rc_file)
+        sys.exit(2)
+
+    if TEXT_SIZE:
+        try:
+            _font = ImageFont.truetype(TTF, TEXT_SIZE)
+        except:
+            print 'Warning: Could not read %r, switching text off.' % TTF
+            TEXT_SIZE = 0
+
+    for f in files:
+        process(f)
+
+
+# Local Variables:
+# mode: python
+# End:
