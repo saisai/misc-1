@@ -20,20 +20,20 @@ def histImg(height, rgbwHist, i):
     The integer i selects which band is plotted:   0     1      2        3
     """
     if i<3:
-        dispHist = rgbwHist[256*i:256*(i+1)]
+        dispHist = rgbwHist[256 * i:256 * (i + 1)]
         col = rgb(['#f00','#0f0','#00f'][i])
     else:
-        dispHist = rgbwHist[256*3:]
+        dispHist = rgbwHist[256 * 3:]
         col = rgb('#fff')
-    
+
     res = Image.new('RGB', (256, height), rgb(HIST_BG))
-    
+
     if sum(dispHist):
         maxv = max(dispHist)
-        dispHist = [int(0.95*height*x/maxv) for x in dispHist]
+        dispHist = [int(0.95 * height * x / maxv) for x in dispHist]
         draw = ImageDraw.Draw(res)
         for j in xrange(256):
-            draw.line((j, height-1, j, height-1-dispHist[j]), fill=col)
+            draw.line((j, height - 1, j, height - 1 - dispHist[j]), fill=col)
     return res
 
 
@@ -54,13 +54,13 @@ def getRGBWhist(image):
     except:
         print "An error occurred while reading."
         return
-    
+
     if mode=='L':
-        return 3*256*[0] + hist[:256]
-    
+        return 3 * 256 * [0] + hist[:256]
+
     elif mode in ['RGB', 'RGBA']:
-        return hist[:3*256] + [sum(hist[256*c+j] for c in xrange(3))
-                               for j in xrange(256)]
+        return hist[:3 * 256] + [sum(hist[256 * c + j] for c in xrange(3))
+                                 for j in xrange(256)]
     else:
         print 'Mode %r is not supported.' % mode
         return
@@ -74,28 +74,28 @@ def mkHistImg(image, name):
     rgbwhist = getRGBWhist(image)
     if not rgbwhist:
         return
-    
+
     nh = 4 * HIST_HEIGHT + 5 * MARGENS
-    if TEXT_SIZE: nh += 2*(TEXT_SIZE+MARGENS)
-    nw = int(nh*ratio(image.size))
-    
-    out = Image.new('RGB' + ('A' if len(image.getbands())==4 else ''),
-                    (nw+256+2*MARGENS, nh), rgb(BG))
-    
+    if TEXT_SIZE: nh += 2 * (TEXT_SIZE + MARGENS)
+    nw = int(nh * ratio(image.size))
+
+    out = Image.new('RGB' + ('A' if len(image.getbands()) == 4 else ''),
+                    (nw + 256 + 2 * MARGENS, nh), rgb(BG))
+
     out.paste(image.resize((nw, nh), Image.BILINEAR),
               (0, 0, nw, nh))
 
     x0, y0 = nw+MARGENS, MARGENS
     for i in xrange(4):
         out.paste(histImg(HIST_HEIGHT, rgbwhist, i),
-                  (x0, y0, x0+256, y0+HIST_HEIGHT))
+                  (x0, y0, x0 + 256, y0 + HIST_HEIGHT))
         y0 += HIST_HEIGHT + MARGENS
-        
+
     if TEXT_SIZE:
         draw = ImageDraw.Draw(out)
         draw.text((x0, y0), name,
                   fill = rgb(FILE_FG), font = _font)
-        draw.text((x0, y0+TEXT_SIZE+MARGENS), '%s x %s'%image.size,
+        draw.text((x0, y0 + TEXT_SIZE + MARGENS), '%s x %s' % image.size,
                   fill = rgb(SIZE_FG), font = _font)
 
     return out
@@ -116,8 +116,8 @@ def process(name):
         return
 
     if os.access(HIST_DIR, os.W_OK):
-        out.save(HIST_DIR+name+'.png')
-        
+        out.save(HIST_DIR + name + '.png')
+
     else:
         import tempfile
         tmpfile = tempfile.mkstemp(".png")[1]
@@ -138,7 +138,7 @@ if __name__ == '__main__':
 
     if not HIST_DIR.endswith('/'):
         print "Warning: HIST_DIR %r does not have trailing '/'." % HIST_DIR
-    
+
     if not files:
         print __doc__ % (sys.argv[0], HIST_DIR, rc_file)
         sys.exit(2)
