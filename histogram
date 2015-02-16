@@ -12,6 +12,37 @@ import os
 import Image, ImageDraw, ImageFont
 from ImageColor import getrgb as rgb
 
+# true type font
+TTF = "/home/fonts/ttf/courbd.ttf"
+
+# background color
+BG = "#000"
+
+# background color of all histograms
+HIST_BG = "#888"
+
+# color of filename
+FILE_FG = "#fff"
+
+# color of image size, e.g. the text "3008 x 2000"
+SIZE_FG = "#7af"
+
+# height of all histograms (in pixels)
+HIST_HEIGHT = 175
+
+# margens (in pixels)
+MARGENS = 5
+
+# text size (in pixels)
+# Note: 0 means no text
+TEXT_SIZE = 20
+
+# directory to put histograms
+# Note: If directory is not accessible, histograms are stored
+#       in TMP_FILE and displayed with the VIEWCMD, and removed
+#       when the program is finished.
+HIST_DIR = "hist/"
+
 
 def histImg(height, rgbwHist, i):
     """
@@ -100,6 +131,7 @@ def mkHistImg(image, name):
 
     return out
 
+
 def process(name):
     """
     Processes the file named.
@@ -122,19 +154,12 @@ def process(name):
         import tempfile
         tmpfile = tempfile.mkstemp(".png")[1]
         out.save(tmpfile)
-        os.system("%s %s; rm -f %s" % (VIEWCMD, tmpfile, tmpfile))
+        print("%s" % tmpfile)
+
 
 if __name__ == '__main__':
     import sys, os.path
     files = sys.argv[1:]
-
-    rc_file = '~/.histogramrc'
-    rc_expand = os.path.expanduser(rc_file)
-    try:
-        exec(file(rc_expand))
-    except IOError:
-        print "Error: Can't open resource file %r." % rc_expand
-        sys.exit(1)
 
     if not HIST_DIR.endswith('/'):
         print "Warning: HIST_DIR %r does not have trailing '/'." % HIST_DIR
@@ -152,8 +177,3 @@ if __name__ == '__main__':
 
     for f in files:
         process(f)
-
-
-# Local Variables:
-# mode: python
-# End:
