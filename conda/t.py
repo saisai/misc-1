@@ -29,7 +29,9 @@ print public_key_text
 k2 = RSA.importKey(private_key_text)
 assert k2.publickey().exportKey() == public_key_text
 
+cnt = 0
 while 1:
+    cnt += 1
     data = Random.new().read(100)
     hash = SHA256.new(data).digest()
     sig = key.sign(hash, '')[0]
@@ -38,3 +40,4 @@ while 1:
     #print s
     assert ascii2sig(s) == sig, sig
     assert key.verify(hash, (ascii2sig(s),))
+    print cnt
