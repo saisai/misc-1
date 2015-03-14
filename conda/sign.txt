@@ -1,1 +1,2 @@
 http://www.laurentluce.com/posts/python-and-cryptography-with-pycrypto/
+http://www.xinotes.net/notes/note/1895/
