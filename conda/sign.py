@@ -1,66 +1,95 @@
-import json
-import shutil
+import base64
 import hashlib
-import tarfile
-import tempfile
-from os.path import join
 
 from Crypto.PublicKey import RSA
+from Crypto import Random
 
-from ll.utils import tar_update
 
+def sig2ascii(i):
+    ret = []
+    while i:
+        i, r = divmod(i, 256)
+        ret.append(r)
+    return base64.b64encode(''.join(chr(n) for n in ret[::-1]))
 
-def info_m(t, m):
-    if m.isfile():
-        h = hashlib.new('sha256')
-        f = t.extractfile(m.path)
+def ascii2sig(s):
+    res = 0
+    for c in base64.b64decode(s):
+        res *= 256
+        res += ord(c)
+    return res
+
+def keygen(name):
+    random_generator = Random.new().read
+    key = RSA.generate(1024, random_generator)
+    with open('%s.priv' % name, 'w') as fo:
+        fo.write(key.exportKey())
+        fo.write('\n')
+    with open('%s.pub' % name, 'w') as fo:
+        fo.write(key.publickey().exportKey())
+        fo.write('\n')
+
+def hash_file(path):
+    h = hashlib.new('sha256')
+    with open(path, 'rb') as fi:
         while True:
-            chunk = f.read(262144)
+            chunk = fi.read(262144)
             if not chunk:
                 break
             h.update(chunk)
-        return h.hexdigest()
-    if m.isdir():
-        return 'DIR'
-    if m.issym():
-        return '-> %s' % m.linkname
-    return '<UNKNOWN>'
+    return h.digest()
 
-def list_t(t):
-    for m in sorted(t.getmembers(), key=lambda m: m.path):
-        if m.path == 'info/signatures.json':
-            continue
-        yield '%s %s\n' % (m.path, info_m(t, m))
+def sign(path, key):
+    return sig2ascii(key.sign(hash_file(path), '')[0])
 
-def sha256_t(t):
-    h = hashlib.new('sha256')
-    for line in list_t(t):
-        h.update(line)
-    return h
+def verify(path, key, sig):
+    return key.verify(hash_file(path),
+                      (ascii2sig(sig),))
 
-def read_signatures_t(t):
-    try:
-        return json.load(t.extractfile('info/signatures.json'))
-    except (KeyError, AttributeError):
-        return {}
+def main():
+    from optparse import OptionParser
 
-def sign(path, keyname):
-    key = RSA.importKey(open('%s.priv' % keyname).read())
-    t = tarfile.open(path)
-    h = sha256_t(t)
-    signatures = read_signatures_t(t)
-    t.close()
-    sig = key.sign(h.digest(), '')[0]
-    signatures[keyname] = str(sig)
+    p = OptionParser(
+        usage="usage: %prog [option] NAME [FILE ...]",
+        description="tool for signing")
 
-    tmp_dir = tempfile.mkdtemp()
-    sig_path = join(tmp_dir, 'signatures.json')
-    with open(sig_path, 'w') as fo:
-        json.dump(signatures, fo, indent=2, sort_keys=True)
-    tar_update(path, {'info/signatures.json': sig_path})
-    shutil.rmtree(tmp_dir)
+    p.add_option('--keygen',
+                 action="store_true",
+                 help="generate a public-private key pair")
 
-#sign("python-2.7.4-1.tar.bz2", 'cio')
-t = tarfile.open("python-2.7.4-1.tar.bz2")
-print read_signatures_t(t)
-t.close()
+    p.add_option('--sign',
+                 action="store_true",
+                 help="sign FILE(s) using NAME.priv")
+
+    p.add_option('--verify',
+                 action="store_true",
+                 help="verify a FILE(s) file using NAME.pub")
+
+    opts, args = p.parse_args()
+
+    if len(args) == 0:
+        p.error('at least one argument (NAME) expected')
+
+    keyname, files = args[0], args[1:]
+
+    if opts.keygen:
+        keygen(keyname)
+        return
+
+    if opts.sign:
+        key = RSA.importKey(open('%s.priv' % keyname).read())
+        for f in files:
+            sig = sign(f, key)
+            with open('%s.sig' % f, 'w') as fo:
+                fo.write(sig)
+
+    if opts.verify:
+        key = RSA.importKey(open('%s.pub' % keyname).read())
+        for f in files:
+            with open('%s.sig' % f) as fi:
+                sig = fi.read().strip()
+            print verify(f, key, sig)
+
+
+if __name__ == '__main__':
+    main()
