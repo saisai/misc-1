@@ -38,14 +38,20 @@ def sha256_t(t):
         h.update(line)
     return h
 
-def sign(path, name):
-    key = RSA.importKey(open('%s.priv' % name).read())
+def read_signatures_t(t):
+    try:
+        return json.load(t.extractfile('info/signatures.json'))
+    except (KeyError, AttributeError):
+        return {}
+
+def sign(path, keyname):
+    key = RSA.importKey(open('%s.priv' % keyname).read())
     t = tarfile.open(path)
     h = sha256_t(t)
-    signatures = {} # read from tar
+    signatures = read_signatures_t(t)
     t.close()
     sig = key.sign(h.digest(), '')[0]
-    signatures[name] = str(sig)
+    signatures[keyname] = str(sig)
 
     tmp_dir = tempfile.mkdtemp()
     sig_path = join(tmp_dir, 'signatures.json')
@@ -54,5 +60,7 @@ def sign(path, name):
     tar_update(path, {'info/signatures.json': sig_path})
     shutil.rmtree(tmp_dir)
 
-
-sign("python-2.7.4-1.tar.bz2", 'cio')
+#sign("python-2.7.4-1.tar.bz2", 'cio')
+t = tarfile.open("python-2.7.4-1.tar.bz2")
+print read_signatures_t(t)
+t.close()
