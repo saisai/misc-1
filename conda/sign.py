@@ -79,6 +79,7 @@ def main():
     if opts.sign:
         key = RSA.importKey(open('%s.priv' % keyname).read())
         for f in files:
+            print 'signing:', f
             sig = sign(f, key)
             with open('%s.sig' % f, 'w') as fo:
                 fo.write(sig)
@@ -88,7 +89,7 @@ def main():
         for f in files:
             with open('%s.sig' % f) as fi:
                 sig = fi.read().strip()
-            print verify(f, key, sig)
+            print '%-70s %s' % (f, verify(f, key, sig))
 
 
 if __name__ == '__main__':
