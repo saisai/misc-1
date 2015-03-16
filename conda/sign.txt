@@ -1,2 +1,3 @@
 http://www.laurentluce.com/posts/python-and-cryptography-with-pycrypto/
 http://www.xinotes.net/notes/note/1895/
+https://www.devco.net/archives/2006/02/13/public_-_private_key_encryption_using_openssl.php
