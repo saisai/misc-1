@@ -33,21 +33,19 @@ O4NaRivYsorIPxK37QIDAQAB
 -----END PUBLIC KEY-----
 '''
 
-MESSAGE = b'This message needs to be signed.\n'
-
-SIGNATURE = b'Pb8+ax78X5lbyei7tThELaDkodwL5XdJ6uOGDZE6aBlzJZ89XhwP6GpePwsR0D45Z4MoESN75DP0IkIEU891t8y7RG1afGt5+6/RKBM8V4Xh8zCVvnIOszysNeXA2uI2AhoE+R62KzRt9GzSKTRm5qTgnUtJHKxZJ5UxuXRIc04='
+SIGNATURE = 'Pb8+ax78X5lbyei7tThELaDkodwL5XdJ6uOGDZE6aBlzJZ89XhwP6GpePwsR0D45Z4MoESN75DP0IkIEU891t8y7RG1afGt5+6/RKBM8V4Xh8zCVvnIOszysNeXA2uI2AhoE+R62KzRt9GzSKTRm5qTgnUtJHKxZJ5UxuXRIc04='
 
 def write_message(path):
     with open(path, 'wb') as fo:
-        fo.write(MESSAGE)
+        fo.write(b'This message needs to be signed.\n')
 
 def test_sig2ascii():
-    assert sign.sig2ascii(64) == b'QA=='
-    assert sign.sig2ascii(1234567890123) == b'AR9x+wTL'
+    assert sign.sig2ascii(64) == 'QA=='
+    assert sign.sig2ascii(1234567890123) == 'AR9x+wTL'
 
 def test_ascii2sig():
-    assert sign.ascii2sig(b'QA==') == 64
-    assert sign.ascii2sig(b'AR9x+wTL') == 1234567890123
+    assert sign.ascii2sig('QA==') == 64
+    assert sign.ascii2sig('AR9x+wTL') == 1234567890123
 
 def test_sign():
     key = RSA.importKey(PRIVATE_KEY)

@@ -18,7 +18,7 @@ def sig2ascii(i):
         s = bytes(n for n in ret[::-1])
     else:
         s = ''.join(chr(n) for n in ret[::-1])
-    return base64.b64encode(s)
+    return base64.b64encode(s).decode('utf-8')
 
 def ascii2sig(s):
     res = 0
@@ -30,12 +30,12 @@ def ascii2sig(s):
 def keygen(name):
     random_generator = Random.new().read
     key = RSA.generate(1024, random_generator)
-    with open('%s.priv' % name, 'w') as fo:
-        fo.write(key.exportKey().decode('utf-8'))
-        fo.write('\n')
-    with open('%s.pub' % name, 'w') as fo:
-        fo.write(key.publickey().exportKey().decode('utf-8'))
-        fo.write('\n')
+    with open('%s.priv' % name, 'wb') as fo:
+        fo.write(key.exportKey())
+        fo.write(b'\n')
+    with open('%s.pub' % name, 'wb') as fo:
+        fo.write(key.publickey().exportKey())
+        fo.write(b'\n')
 
 def hash_file(path):
     h = hashlib.new('sha256')
@@ -92,7 +92,7 @@ def main():
             print('signing:', f)
             sig = sign(f, key)
             with open('%s.sig' % f, 'w') as fo:
-                fo.write(sig.decode('utf-8'))
+                fo.write(sig)
                 fo.write('\n')
 
     if opts.verify:
