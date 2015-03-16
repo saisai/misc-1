@@ -27,13 +27,13 @@ def ascii2sig(s):
         res += (c if py3k else ord(c))
     return res
 
-def keygen(name):
+def keygen(path):
     random_generator = Random.new().read
     key = RSA.generate(1024, random_generator)
-    with open('%s.priv' % name, 'wb') as fo:
+    with open('%s.priv' % path, 'wb') as fo:
         fo.write(key.exportKey())
         fo.write(b'\n')
-    with open('%s.pub' % name, 'wb') as fo:
+    with open('%s.pub' % path, 'wb') as fo:
         fo.write(key.publickey().exportKey())
         fo.write(b'\n')
 
