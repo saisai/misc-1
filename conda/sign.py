@@ -61,15 +61,15 @@ def main():
         usage="usage: %prog [option] NAME [FILE ...]",
         description="tool for signing")
 
-    p.add_option('--keygen',
+    p.add_option('-k', '--keygen',
                  action="store_true",
                  help="generate a public-private key pair")
 
-    p.add_option('--sign',
+    p.add_option('-s', '--sign',
                  action="store_true",
                  help="sign FILE(s) using NAME.priv")
 
-    p.add_option('--verify',
+    p.add_option('-v', '--verify',
                  action="store_true",
                  help="verify a FILE(s) file using NAME.pub")
 
@@ -81,6 +81,8 @@ def main():
     keyname, files = args[0], args[1:]
 
     if opts.keygen:
+        if files:
+            p.error('only NAME expected for --keygen')
         keygen(keyname)
         return
 
