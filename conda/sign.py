@@ -1,3 +1,4 @@
+import sys
 import base64
 import hashlib
 
@@ -5,28 +6,35 @@ from Crypto.PublicKey import RSA
 from Crypto import Random
 
 
+py3k = bool(sys.version_info[0] == 3)
+
+
 def sig2ascii(i):
     ret = []
     while i:
         i, r = divmod(i, 256)
         ret.append(r)
-    return base64.b64encode(''.join(chr(n) for n in ret[::-1]))
+    if py3k:
+        s = bytes(n for n in ret[::-1])
+    else:
+        s = ''.join(chr(n) for n in ret[::-1])
+    return base64.b64encode(s)
 
 def ascii2sig(s):
     res = 0
     for c in base64.b64decode(s):
         res *= 256
-        res += ord(c)
+        res += (c if py3k else ord(c))
     return res
 
 def keygen(name):
     random_generator = Random.new().read
     key = RSA.generate(1024, random_generator)
     with open('%s.priv' % name, 'w') as fo:
-        fo.write(key.exportKey())
+        fo.write(key.exportKey().decode('utf-8'))
         fo.write('\n')
     with open('%s.pub' % name, 'w') as fo:
-        fo.write(key.publickey().exportKey())
+        fo.write(key.publickey().exportKey().decode('utf-8'))
         fo.write('\n')
 
 def hash_file(path):
@@ -79,17 +87,18 @@ def main():
     if opts.sign:
         key = RSA.importKey(open('%s.priv' % keyname).read())
         for f in files:
-            print 'signing:', f
+            print('signing:', f)
             sig = sign(f, key)
             with open('%s.sig' % f, 'w') as fo:
-                fo.write(sig)
+                fo.write(sig.decode('utf-8'))
+                fo.write('\n')
 
     if opts.verify:
         key = RSA.importKey(open('%s.pub' % keyname).read())
         for f in files:
             with open('%s.sig' % f) as fi:
                 sig = fi.read().strip()
-            print '%-70s %s' % (f, verify(f, key, sig))
+            print('%-70s %s' % (f, verify(f, key, sig)))
 
 
 if __name__ == '__main__':
