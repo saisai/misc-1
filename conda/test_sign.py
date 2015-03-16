@@ -4,6 +4,7 @@ import tempfile
 from os.path import join
 
 from Crypto.PublicKey import RSA
+from Crypto import Random
 
 
 PRIVATE_KEY = '''\
@@ -53,13 +54,26 @@ def test_sign():
     data_path = join(tmp_dir, 'data')
     write_message(data_path)
     assert sign.sign(data_path, key) == SIGNATURE
+    shutil.rmtree(tmp_dir)
 
 def test_verify():
-    key = RSA.importKey(PRIVATE_KEY)
+    key = RSA.importKey(PUBLIC_KEY)
     tmp_dir = tempfile.mkdtemp()
     data_path = join(tmp_dir, 'data')
     write_message(data_path)
     assert sign.verify(data_path, key, SIGNATURE)
+    shutil.rmtree(tmp_dir)
+
+def test_randomdata():
+    key = RSA.importKey(PRIVATE_KEY)
+    tmp_dir = tempfile.mkdtemp()
+    data_path = join(tmp_dir, 'data')
+    for x in range(100):
+        with open(data_path, 'wb') as fo:
+            fo.write(Random.new().read(100))
+        assert sign.verify(data_path, key,
+                           sign.sign(data_path, key))
+    shutil.rmtree(tmp_dir)
 
 def test_roundabout():
     tmp_dir = tempfile.mkdtemp()
