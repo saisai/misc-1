@@ -9,8 +9,8 @@ req = '''\
 GET /pkgs/gpl/osx-64/repodata.json HTTP/1.1
 Host: %s
 Connection: keep-alive
-If-Modified-Since: Thu, 04 Jul 2013 06:37:11 GMT
-If-None-Match: "2f1bf63044f924c048e0dce972929c4b"
+If-Modified-Since: Sat, 04 Apr 2015 00:40:14 GMT
+If-None-Match: "551f32ee-9b"
 
 ''' % host
 s.send(req.replace('\n', '\r\n'))
