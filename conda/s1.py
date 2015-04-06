@@ -6,8 +6,8 @@ req = '''\
 GET /pkgs/gpl/osx-64/repodata.json HTTP/1.1
 Host: %s
 Connection: keep-alive
-If-Modified-Since: Sat, 04 Apr 2015 00:40:14 GMT
-If-None-Match: "551f32ee-9b"
+If-Modified-Since: Mon, 06 Apr 2015 16:40:14 GMT
+If-None-Match: "5522b6ee-9b"
 User-Agent: Test-User-Agent/1.0.0
 
 ''' % host
