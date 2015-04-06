@@ -8,7 +8,7 @@ Host: %s
 Connection: keep-alive
 If-Modified-Since: Sat, 04 Apr 2015 00:40:14 GMT
 If-None-Match: "551f32ee-9b"
-User-Agent: Test User Agent
+User-Agent: Test-User-Agent/1.0.0
 
 ''' % host
 
