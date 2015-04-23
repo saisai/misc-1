@@ -16,7 +16,7 @@ Indiana         IN x                   02          06 07
 Iowa            IA x    97 98    00 01             06       09    11
 Kansas          KS x       98       01                      09
 Kentucky        KY x                                  07
-Louisiana       LA x                01                   08 09
+Louisiana       LA x                01                   08 09                15
 Maine           ME x                               06
 Maryland        MD x    97                      05 06
 Massachusetts   MA x                            05 06
@@ -41,7 +41,7 @@ Rhode Island    RI x                               06
 South Carolina  SC x                                  07
 South Dakota    SD
 Tennessee       TN x                01                07
-Texas           TX x             00 01 02 03 04 05       08 09 10 11 12 13 14
+Texas           TX x             00 01 02 03 04 05       08 09 10 11 12 13 14 15
 Utah            UT x       98 99             04
 Vermont         VT x                               06
 Virginia        VA x    97                      05 06
