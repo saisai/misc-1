@@ -1,4 +1,4 @@
-Alabama         AL
+Alabama         AL x                                                          15
 Alaska          AK
 Arizona         AZ x 96    98             03 04 05 06       09
 Arkansas        AR x                01                   08       11       14
@@ -7,7 +7,7 @@ Colorado        CO x       98 99    01 02 03 04 05 06                12 13
 Connecticut     CT x                            05 06
 Delaware        DE x    97
 District        DC y    97                      05 06
-Florida         FL
+Florida         FL x                                                          15
 Georgia         GA x                                  07    09
 Hawaii          HI
 Idaho           ID x 96
@@ -22,7 +22,7 @@ Maryland        MD x    97                      05 06
 Massachusetts   MA x                            05 06
 Michigan        MI x    97                         06
 Minnesota       MN x 96 97 98       01 02          06
-Mississippi     MS x                01
+Mississippi     MS x                01                                        15
 Missouri        MO x 96    98       01       04          08 09    11       14
 Montana         MT x 96
 Nebraska        NE x                               06
