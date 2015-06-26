@@ -2,3 +2,4 @@ http://www.laurentluce.com/posts/python-and-cryptography-with-pycrypto/
 http://www.xinotes.net/notes/note/1895/
 https://www.devco.net/archives/2006/02/13/public_-_private_key_encryption_using_openssl.php
 http://www.codealias.info/technotes/openssl_rsa_sign_and_verify_howto
+https://www.dlitz.net/software/pycrypto/api/current/
