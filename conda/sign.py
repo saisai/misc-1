@@ -1,35 +1,15 @@
-import sys
 import base64
-import hashlib
 
+from Crypto.Signature import PKCS1_PSS
 from Crypto.PublicKey import RSA
+from Crypto.Hash import SHA256
 from Crypto import Random
 
 
-py3k = bool(sys.version_info[0] == 3)
-
-
-def sig2ascii(i):
-    ret = []
-    while i:
-        i, r = divmod(i, 256)
-        ret.append(r)
-    if py3k:
-        s = bytes(n for n in ret[::-1])
-    else:
-        s = ''.join(chr(n) for n in ret[::-1])
-    return base64.b64encode(s).decode('utf-8')
-
-def ascii2sig(s):
-    res = 0
-    for c in base64.b64decode(s):
-        res *= 256
-        res += (c if py3k else ord(c))
-    return res
 
 def keygen(path):
     random_generator = Random.new().read
-    key = RSA.generate(1024, random_generator)
+    key = RSA.generate(2048, random_generator)
     with open('%s.priv' % path, 'wb') as fo:
         fo.write(key.exportKey())
         fo.write(b'\n')
@@ -38,21 +18,23 @@ def keygen(path):
         fo.write(b'\n')
 
 def hash_file(path):
-    h = hashlib.new('sha256')
+    h = SHA256.new()
     with open(path, 'rb') as fi:
         while True:
             chunk = fi.read(262144)
             if not chunk:
                 break
             h.update(chunk)
-    return h.digest()
+    return h
 
 def sign(path, key):
-    return sig2ascii(key.sign(hash_file(path), '')[0])
+    signer = PKCS1_PSS.new(key)
+    sig = signer.sign(hash_file(path))
+    return base64.b64encode(sig).decode('utf-8')
 
 def verify(path, key, sig):
-    return key.verify(hash_file(path),
-                      (ascii2sig(sig),))
+    verifier = PKCS1_PSS.new(key)
+    return verifier.verify(hash_file(path), base64.b64decode(sig))
 
 def main():
     from optparse import OptionParser
