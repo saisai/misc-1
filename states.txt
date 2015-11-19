@@ -28,7 +28,7 @@ Montana         MT x 96
 Nebraska        NE x                               06
 Nevada          NV x                         04 05       08 09 10
 New Hampshire   NH x                               06
-New Jersey      NJ x    97          01          05                      13 14
+New Jersey      NJ x    97          01          05                      13 14 15
 New Mexico      NM x       98 99 00 01 02 03 04 05 06                12
 New York        NY x    97          01 02       05 06 07             12
 North Carolina  NC x                                  07 08    10
@@ -36,7 +36,7 @@ North Dakota    ND x 96
 Ohio            OH x    97
 Oklahoma        OK x             00       03 04          08 09    11 12    14
 Oregon          OR x 96
-Pennsylvania    PA x    97                      05
+Pennsylvania    PA x    97                      05                            15
 Rhode Island    RI x                               06
 South Carolina  SC x                                  07
 South Dakota    SD
