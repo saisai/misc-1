@@ -3,6 +3,7 @@ Athenian Grill
 Brass House
 Buenos Aires Cafe
 Casa De Luz
+Cherrywood
 Chilies (near roller skating rink)
 Dong Nai
 Genghis Grill (next to Central Market)
@@ -23,6 +24,7 @@ Mozart's
 New World Deli
 Nova (Rainey St)
 Olive Garden
+OPA
 Ostra (San Antonio)
 Outback Steakhouse (Tallahassee)
 Papalote
@@ -42,4 +44,5 @@ Whip In
 Not including in this list (because they are not real restaurants):
 Starbucks
 Rio Ritas
+Strange Brew
 McDonnalds
