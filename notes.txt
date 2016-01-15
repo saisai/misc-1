@@ -2,3 +2,8 @@ http://jiggerwit.wordpress.com/2013/09/25/the-nsa-back-door-to-nist/
 http://www.slate.com/articles/arts/television/2006/09/foreign_office.html
 http://blog.tremily.us/posts/rpath/
 bandersnatch
+* contributions to default channel: if someone creates a recipe, setp 0
+* trailbox VM: why?
+* cas-installer
+* scipy win-32 Py35
+* nomkl feature
