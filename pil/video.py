@@ -26,6 +26,9 @@ for t in xrange(frames):
         y = randint(0, height - 1)
         c = b.getpixel((x, y))
         d.ellipse((x-r, y-r, x+r, y+r), fill=c)
+        c = 0x33, 0x66, 0x99
+        d.line([(t,      0), (t,        10)], fill=c, width=1)
+        d.line([(t, height), (t, height-10)], fill=c, width=1)
 
     c = numpy.array(b.convert('RGB'))
     c = c[:, :, ::-1].copy()
