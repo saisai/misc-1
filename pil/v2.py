@@ -15,11 +15,11 @@ video = cv2.VideoWriter('out.avi',
 
 for t in xrange(frames):
     f = 1.0 * t / (frames - 1)
-    r = 30.0 * (1.0 - f)
+    r = 25.0 * (1.0 - f)
     print '%3d %10.3f %10.3f' % (t, f, r)
     b = a.copy()
     d = ImageDraw.Draw(b)
-    for unused in xrange(5000):
+    for unused in xrange(10000):
         x = randint(0, width - 1)
         y = randint(0, height - 1)
         c = b.getpixel((x, y))
