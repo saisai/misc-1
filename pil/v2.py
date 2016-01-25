@@ -14,17 +14,16 @@ video = cv2.VideoWriter('out.avi',
                         10, (width, height), True)
 
 for t in xrange(frames):
-    f = 1.0 * t / frames
+    f = 1.0 * t / (frames - 1)
     r = 30.0 * (1.0 - f)
     print '%3d %10.3f %10.3f' % (t, f, r)
     b = a.copy()
-    if r > 1.0:
-        d = ImageDraw.Draw(b)
-        for unused in xrange(5000):
-            x = randint(0, width - 1)
-            y = randint(0, height - 1)
-            c = b.getpixel((x, y))
-            d.ellipse((x-r, y-r, x+r, y+r), fill=c)
+    d = ImageDraw.Draw(b)
+    for unused in xrange(5000):
+        x = randint(0, width - 1)
+        y = randint(0, height - 1)
+        c = b.getpixel((x, y))
+        d.ellipse((x-r, y-r, x+r, y+r), fill=c)
 
     c = numpy.array(b.convert('RGB'))
     c = c[:, :, ::-1].copy()
