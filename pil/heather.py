@@ -22,7 +22,7 @@ def repeat(im, X=1, Y=1):
             res.paste(im, box=(x * w, y * h))
     return res
 
-
-im = Image.open('/Users/ilan/Downloads/heather-hope.jpg').resize((200, 300))
-im2 = repeat(four_flip(im), 3, 2)
-im2.show()
+if __name__ == '__main__':
+    im = Image.open('/Users/ilan/Downloads/heather-hope.jpg').resize((200, 300))
+    im2 = repeat(four_flip(im), 3, 2)
+    im2.show()
