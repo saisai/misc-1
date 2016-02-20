@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import json
 import shutil
@@ -14,15 +15,18 @@ crd = defaultdict(list) # cached repo data - maps fn to list of info
 repo_path = join('repo', config.subdir)
 
 
+def crd_append(path):
+    d = json.load(open(path))
+    for fn, info in d.get('packages', {}).iteritems():
+        crd[fn].append(info)
+
 def read_cached_repodata(): # populates 'crd'
+    pat = re.compile(r'[0-9a-f]{8}\.json$')
     for fn in os.listdir(cache_dir):
-        if not (len(fn) == 13 and fn.endswith('.json')):
-            continue
-        sys.stdout.write('.')
-        sys.stdout.flush()
-        d = json.load(open(join(cache_dir, fn)))
-        for fn, info in d['packages'].iteritems():
-            crd[fn].append(info)
+        if pat.match(fn):
+            crd_append(join(cache_dir, fn))
+            sys.stdout.write('.')
+            sys.stdout.flush()
     print
 
 def find_info(fn):
