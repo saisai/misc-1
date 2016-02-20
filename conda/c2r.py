@@ -13,6 +13,7 @@ pkgs_dir = config.pkgs_dirs[0]
 cache_dir = join(pkgs_dir, 'cache')
 crd = defaultdict(list) # cached repo data - maps fn to list of info
 repo_path = join('repo', config.subdir)
+repodata_path = join(repo_path, 'repodata.json')
 
 
 def crd_append(path):
@@ -63,7 +64,7 @@ def create_repo():
         src = join(pkgs_dir, fn)
         shutil.copyfile(src, dst)
     repodata = {'packages': index}
-    with open(join(repo_path, 'repodata.json'), 'w') as fo:
+    with open(repodata_path, 'w') as fo:
         json.dump(repodata, fo, indent=2, sort_keys=True)
     print
 
