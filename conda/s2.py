@@ -2,7 +2,7 @@ from pprint import pprint
 from conda.connection import CondaSession
 
 
-url = 'http://repo.continuum.io/pkgs/gpl/osx-64/repodata.json'
+url = 'http://repo.continuum.io/pkgs/free/osx-64/repodata.json'
 #url = 'https://conda.binstar.org/ilan/osx-64/repodata.json'
 
 
