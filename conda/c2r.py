@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import bz2
 import json
 import shutil
 from collections import defaultdict
@@ -38,6 +39,14 @@ def read_index():
     except IOError:
         return {}
 
+def write_index(index):
+    repodata = {'packages': index}
+    data = json.dumps(repodata, indent=2, sort_keys=True)
+    with open(repodata_path, 'w') as fo:
+        fo.write(data)
+    with open(repodata_path + '.bz2', 'wb') as fo:
+        fo.write(bz2.compress(data.encode('utf-8')))
+
 def iter_dir(path):
     for fn in os.listdir(path):
         if fn.endswith('.tar.bz2'):
@@ -67,8 +76,7 @@ def create_repo():
             shutil.copyfile(join(pkgs_dir, fn), join(repo_path, fn))
             index[fn] = info
 
-    with open(repodata_path, 'w') as fo:
-        json.dump({'packages': index}, fo, indent=2, sort_keys=True)
+    write_index(index)
     print
 
 def test_repo():
