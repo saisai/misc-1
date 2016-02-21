@@ -31,6 +31,13 @@ def read_cached_repodata(): # populates 'crd'
             sys.stdout.flush()
     print
 
+def read_index():
+    try:
+        d = json.load(open(repodata_path))
+        return d['packages']
+    except IOError:
+        return {}
+
 def iter_dir(path):
     for fn in os.listdir(path):
         if fn.endswith('.tar.bz2'):
@@ -48,31 +55,24 @@ def find_info(fn):
 def create_repo():
     if not isdir(repo_path):
         os.makedirs(repo_path)
-    try:
-        d = json.load(open(repodata_path))
-        index = d['packages']
-    except IOError:
-        index = {}
+    index = read_index()
     read_cached_repodata()
     for fn in iter_dir(pkgs_dir):
         if fn in index:
             continue
         info = find_info(fn)
-        if not info:
-            continue
-        sys.stdout.write('.')
-        sys.stdout.flush()
-        shutil.copyfile(join(pkgs_dir, fn), join(repo_path, fn))
-        index[fn] = info
+        if info:
+            sys.stdout.write('.')
+            sys.stdout.flush()
+            shutil.copyfile(join(pkgs_dir, fn), join(repo_path, fn))
+            index[fn] = info
 
-    repodata = {'packages': index}
     with open(repodata_path, 'w') as fo:
-        json.dump(repodata, fo, indent=2, sort_keys=True)
+        json.dump({'packages': index}, fo, indent=2, sort_keys=True)
     print
 
 def test_repo():
-    d = json.load(open(repodata_path))
-    index = d['packages']
+    index = read_index()
     files = set()
     for fn in iter_dir(repo_path):
         files.add(fn)
