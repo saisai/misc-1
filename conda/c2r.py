@@ -9,6 +9,7 @@ first updated, and the used (instead of the http:// channels).
 This means that NONE of the existing functionality for resolving, downloading,
 extracting, and linking packages is going to have to change.
 """
+from __future__ import print_function, division, absolute_import
 
 import os
 import re
@@ -21,6 +22,7 @@ from os.path import abspath, expanduser, isdir, join, getsize
 
 from conda import config
 from conda.utils import md5_file
+from conda.compat import iteritems
 
 
 pkgs_dir = config.pkgs_dirs[0]
@@ -30,7 +32,7 @@ crd = defaultdict(list) # cached repo data - maps fn to list of info
 
 def crd_append(path):
     d = json.load(open(path))
-    for fn, info in d.get('packages', {}).iteritems():
+    for fn, info in iteritems(d.get('packages', {})):
         crd[fn].append(info)
 
 def read_cached_repodata(): # populates 'crd'
@@ -41,7 +43,7 @@ def read_cached_repodata(): # populates 'crd'
             crd_append(join(dir_path, fn))
             sys.stdout.write('.')
             sys.stdout.flush()
-    print
+    print()
 
 def read_index():
     try:
@@ -88,7 +90,7 @@ def update_repo():
             index[fn] = info
 
     write_index(index)
-    print
+    print()
 
 def test_repo():
     index = read_index()
