@@ -1,3 +1,15 @@
+"""
+This module was created in an attempt to improve conda's offline behavior.
+It contains functionality for creating (and updating) a local channel (located
+in `~/.conda/offline/`) from the package cache (`<root>/pkgs`).
+It should be noted that the package cache is NOT a channel (it was never
+designed to be a channel).
+The idea is that when using conda in offline mode, this local channel is
+first updated, and the used (instead of the http:// channels).
+This means that NONE of the existing functionality for resolving, downloading,
+extracting, and linking packages is going to have to change.
+"""
+
 import os
 import re
 import sys
