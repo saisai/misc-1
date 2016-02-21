@@ -4,8 +4,7 @@ import sys
 import json
 import shutil
 from collections import defaultdict
-from os.path import isdir, isfile, join, getsize
-from pprint import pprint
+from os.path import isdir, join, getsize
 
 from conda import config
 from conda.utils import md5_file
@@ -32,11 +31,15 @@ def read_cached_repodata(): # populates 'crd'
             sys.stdout.flush()
     print
 
+def iter_dir(path):
+    for fn in os.listdir(path):
+        if fn.endswith('.tar.bz2'):
+            yield fn
+
 def find_info(fn):
     if fn not in crd:
         return None
-    path = join(pkgs_dir, fn)
-    md5 = md5_file(path)
+    md5 = md5_file(join(pkgs_dir, fn))
     for info in crd[fn]:
         if md5 == info.get('md5'):
             return info
@@ -51,16 +54,15 @@ def create_repo():
     except IOError:
         index = {}
     read_cached_repodata()
-    for fn in os.listdir(pkgs_dir):
-        if not fn.endswith('.tar.bz2') or fn in index:
+    for fn in iter_dir(pkgs_dir):
+        if fn in index:
             continue
         info = find_info(fn)
         if not info:
             continue
         sys.stdout.write('.')
         sys.stdout.flush()
-        shutil.copyfile(join(pkgs_dir, fn),
-                        join(repo_path, fn))
+        shutil.copyfile(join(pkgs_dir, fn), join(repo_path, fn))
         index[fn] = info
 
     repodata = {'packages': index}
@@ -72,9 +74,7 @@ def test_repo():
     d = json.load(open(repodata_path))
     index = d['packages']
     files = set()
-    for fn in os.listdir(repo_path):
-        if not fn.endswith('.tar.bz2'):
-            continue
+    for fn in iter_dir(repo_path):
         files.add(fn)
         info = index[fn]
         path = join(repo_path, fn)
