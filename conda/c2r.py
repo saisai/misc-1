@@ -5,17 +5,15 @@ import bz2
 import json
 import shutil
 from collections import defaultdict
-from os.path import isdir, join, getsize
+from os.path import abspath, expanduser, isdir, join, getsize
 
 from conda import config
 from conda.utils import md5_file
 
 
 pkgs_dir = config.pkgs_dirs[0]
-cache_dir = join(pkgs_dir, 'cache')
+repo_path = abspath(expanduser('~/.conda/offline/%s' % config.subdir))
 crd = defaultdict(list) # cached repo data - maps fn to list of info
-repo_path = join('repo', config.subdir)
-repodata_path = join(repo_path, 'repodata.json')
 
 
 def crd_append(path):
@@ -24,17 +22,18 @@ def crd_append(path):
         crd[fn].append(info)
 
 def read_cached_repodata(): # populates 'crd'
+    dir_path = join(pkgs_dir, 'cache')
     pat = re.compile(r'[0-9a-f]{8}\.json$')
-    for fn in os.listdir(cache_dir):
+    for fn in os.listdir(dir_path):
         if pat.match(fn):
-            crd_append(join(cache_dir, fn))
+            crd_append(join(dir_path, fn))
             sys.stdout.write('.')
             sys.stdout.flush()
     print
 
 def read_index():
     try:
-        d = json.load(open(repodata_path))
+        d = json.load(open(join(repo_path, 'repodata.json')))
         return d['packages']
     except IOError:
         return {}
@@ -42,9 +41,9 @@ def read_index():
 def write_index(index):
     repodata = {'packages': index}
     data = json.dumps(repodata, indent=2, sort_keys=True)
-    with open(repodata_path, 'w') as fo:
+    with open(join(repo_path, 'repodata.json'), 'w') as fo:
         fo.write(data)
-    with open(repodata_path + '.bz2', 'wb') as fo:
+    with open(join(repo_path, 'repodata.json.bz2'), 'wb') as fo:
         fo.write(bz2.compress(data.encode('utf-8')))
 
 def iter_dir(path):
@@ -61,7 +60,7 @@ def find_info(fn):
             return info
     return None
 
-def create_repo():
+def update_repo():
     if not isdir(repo_path):
         os.makedirs(repo_path)
     index = read_index()
@@ -94,5 +93,5 @@ def test_repo():
 
 
 if __name__ == '__main__':
-    create_repo()
+    update_repo()
     test_repo()
