@@ -7,7 +7,7 @@ from optparse import OptionParser
 ASCII_ONLY = False
 
 # file extensions which are cleaned when using the -r option
-FILE_EXT = ('.py', '.txt', '.c', '.pyx', '.pxi', '.yaml', '.xml')
+FILE_EXT = ('.py', '.txt', '.c', '.pyx', '.pxi', '.yaml', '.md', '.xml')
 
 
 def cleanup(data, expand_tabs=True):
