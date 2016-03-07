@@ -23,7 +23,8 @@ for fn, res in [
     ('_tkinter.cpython-35m.so',         '_tkinter.so'),
     ('_tkinter.cpython-35m.pyd',        '_tkinter.pyd'),
     ('_tkinter.cpython-35m.py',         None),
-    ('_bitarray.cp35-win32.so',         '_bitarray.so'),
+    ('_bitarray.cp35-win32.pyd',        '_bitarray.pyd'),
+    ('_bitarray.cp35-win_amd64.pyd',    '_bitarray.pyd'),
     ('bit.array.cp35-win32.so',         None),
     ('phone.so',                        None),
     ]:
