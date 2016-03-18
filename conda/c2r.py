@@ -26,7 +26,7 @@ from conda.compat import iteritems
 
 
 pkgs_dir = config.pkgs_dirs[0]
-repo_path = abspath(expanduser('~/.conda/offline/%s' % config.subdir))
+repo_path = join(pkgs_dirs, 'offline', config.subdir)
 crd = defaultdict(list) # cached repo data - maps fn to list of info
 
 
