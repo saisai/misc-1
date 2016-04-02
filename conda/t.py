@@ -1,32 +1,19 @@
-from conda.api import get_index
-from conda.plan import add_defaults_to_specs
-from conda.resolve import Resolve
-from conda.cli.common import specs_from_args
-
+import os
+import sys
+from time import sleep
+from subprocess import call
 
 
 def main():
-    from optparse import OptionParser
-
-    p = OptionParser(usage="usage: %prog SPEC [SPEC ...]",
-                     description="""\
-creates explicit file from SPECs.""")
-
-    opts, args = p.parse_args()
-
-    specs = specs_from_args(args)
-    index = get_index(())
-    r = Resolve(index)
-    add_defaults_to_specs(r, [], specs)
-    dists = list(r.solve(specs))
-
-    print
-    print
-    print '@EXPLICIT'
-    for dist in dists:
-        url = index[dist]['channel'] + dist
-        print url
+    call(['git', 'pull'])
+    sleep(5)
+    if sys.platform == 'win32':
+        call([os.environ['COMSPEC'], '/c', 'bld.bat'])
+    else:
+        call(['bash', 'build.sh'])
+    sleep(10 * 60)
 
 
 if __name__ == '__main__':
-    main()
+    while 1:
+        main()
