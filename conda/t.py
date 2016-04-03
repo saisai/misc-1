@@ -1,19 +1,12 @@
-import os
-import sys
-from time import sleep
-from subprocess import call
+from subprocess import call, TimeoutExpired
 
 
 def main():
-    call(['git', 'pull'])
-    sleep(5)
-    if sys.platform == 'win32':
-        call([os.environ['COMSPEC'], '/c', 'bld.bat'])
-    else:
-        call(['bash', 'build.sh'])
-    sleep(10 * 60)
+    try:
+        call(['python', 'count.py'], timeout=5)
+    except TimeoutExpired:
+        pass
 
 
 if __name__ == '__main__':
-    while 1:
-        main()
+    main()
