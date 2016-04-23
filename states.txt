@@ -2,7 +2,7 @@ Alabama         AL x                                                          15
 Alaska          AK
 Arizona         AZ x 96    98             03 04 05 06       09
 Arkansas        AR x                01                   08       11       14
-California      CA x 96                         05 06    08          12 13
+California      CA x 96                         05 06    08          12 13       16
 Colorado        CO x       98 99    01 02 03 04 05 06                12 13
 Connecticut     CT x                            05 06
 Delaware        DE x    97
@@ -28,7 +28,7 @@ Montana         MT x 96
 Nebraska        NE x                               06
 Nevada          NV x                         04 05       08 09 10
 New Hampshire   NH x                               06
-New Jersey      NJ x    97          01          05                      13 14 15
+New Jersey      NJ x    97          01          05                      13 14 15 16
 New Mexico      NM x       98 99 00 01 02 03 04 05 06                12
 New York        NY x    97          01 02       05 06 07             12
 North Carolina  NC x                                  07 08    10
@@ -41,7 +41,7 @@ Rhode Island    RI x                               06
 South Carolina  SC x                                  07
 South Dakota    SD
 Tennessee       TN x                01                07
-Texas           TX x             00 01 02 03 04 05       08 09 10 11 12 13 14 15
+Texas           TX x             00 01 02 03 04 05       08 09 10 11 12 13 14 15 16
 Utah            UT x       98 99             04
 Vermont         VT x                               06
 Virginia        VA x    97                      05 06
