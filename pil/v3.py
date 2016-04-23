@@ -5,7 +5,7 @@ import cv2
 import numpy
 
 
-a = Image.open('beach.jpg')
+a = Image.open('hai.jpg')
 a = a.resize((1280, 960))
 print a.size
 width, height = a.size
