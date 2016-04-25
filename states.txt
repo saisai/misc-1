@@ -9,7 +9,7 @@ Delaware        DE x    97
 District        DC y    97                      05 06
 Florida         FL x                                                          15
 Georgia         GA x                                  07    09
-Hawaii          HI
+Hawaii          HI x                                                             16
 Idaho           ID x 96
 Illinois        IL x 96 97 98 99 00 01 02 03 04 05 06 07 08       11 12 13 14
 Indiana         IN x                   02          06 07
