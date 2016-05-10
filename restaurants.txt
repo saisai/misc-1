@@ -1,5 +1,6 @@
 ABGB
 Alamo Drafthouse (South Lamar)
+Artisian House, 600 Main St, Los Angeles, CA 90014
 Athenian Grill
 Auslaender (Fredricksburg)
 Brasserie (The), Sheraton Gateway LAX
@@ -74,7 +75,6 @@ Volcano House (1 Crater Rim Drive, Volcano, HI 96718)
 Waffle House
 Whip In
 Winflo
-S Main St, Los Angeles
 
 
 
