@@ -1,12 +1,8 @@
-from subprocess import call, TimeoutExpired
+import json
 
 
-def main():
-    try:
-        call(['python', 'count.py'], timeout=10)
-    except TimeoutExpired:
-        pass
+d = {'abc': 123,
+     'def': [u'a', str('b'), 'lkjiuh', 4]}
 
-
-if __name__ == '__main__':
-    main()
+with open('about.json', 'w') as fo:
+    json.dump(d, fo, indent=2, sort_keys=True)
