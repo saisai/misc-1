@@ -1,8 +1,9 @@
-import json
+import os
+from subprocess import call
+from os.path import join
 
 
-d = {'abc': 123,
-     'def': [u'a', str('b'), 'lkjiuh', 4]}
+prefix = join(os.getcwd(), 500 * 'a')[:260]
+print len(prefix)
 
-with open('about.json', 'w') as fo:
-    json.dump(d, fo, indent=2, sort_keys=True)
+call(['conda', 'create', '-p', prefix, 'openssl'])
