@@ -12,10 +12,9 @@ KEY = hashlib.sha256(b'PassW0rd').digest()
 def pad(s):
     pad_len = BS - len(s) % BS
     if sys.version_info[0] == 2:
-        s += pad_len * chr(pad_len)
+        return s + pad_len * chr(pad_len)
     else: # Py3k
-        s += bytes(pad_len * [pad_len])
-    return s
+        return s + bytes(pad_len * [pad_len])
 
 def unpad(s):
     pad_len = ord(s[len(s)-1:])
