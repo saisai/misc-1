@@ -17,7 +17,8 @@ def pad(s):
         return s + bytes(pad_len * [pad_len])
 
 def unpad(s):
-    pad_len = ord(s[len(s)-1:])
+    pad_len = ord(s[len(s) - 1:])
+    assert 1 <= pad_len <= BS 
     return s[:-pad_len]
 
 def encrypt(raw):
@@ -28,7 +29,7 @@ def encrypt(raw):
     return iv + cipher.encrypt(raw)
 
 def decrypt(enc):
-    assert len(enc) >= BS
+    assert len(enc) >= 2 * BS
     iv = enc[:BS]
     cipher = AES.new(KEY, AES.MODE_CBC, iv)
     return unpad(cipher.decrypt(enc[BS:]))
