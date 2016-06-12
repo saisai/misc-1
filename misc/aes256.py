@@ -1,3 +1,4 @@
+import sys
 import hashlib
 from Crypto import Random
 from Crypto.Cipher import AES
@@ -10,7 +11,11 @@ KEY = hashlib.sha256(b'PassW0rd').digest()
 
 def pad(s):
     pad_len = BS - len(s) % BS
-    return s + pad_len * chr(pad_len)
+    if sys.version_info[0] == 2:
+        s += pad_len * chr(pad_len)
+    else: # Py3k
+        s += bytes(pad_len * [pad_len])
+    return s
 
 def unpad(s):
     pad_len = ord(s[len(s)-1:])
@@ -25,11 +30,11 @@ def encrypt(raw):
 def decrypt(enc):
     iv = enc[:BS]
     cipher = AES.new(KEY, AES.MODE_CBC, iv)
-    return unpad(cipher.decrypt(enc[BS:])).decode('utf-8')
+    return unpad(cipher.decrypt(enc[BS:]))
 
 
-for n in range(20):
-    msg = ''.join(chr(i) for i in range(n))
+for n in range(2000):
+    msg = Random.new().read(n)
     enc = encrypt(msg)
-    print('%d %d' % (len(msg), len(enc)))
+    #print('%d %d' % (len(msg), len(enc)))
     assert decrypt(enc) == msg
