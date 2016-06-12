@@ -34,8 +34,21 @@ def decrypt(enc):
     cipher = AES.new(KEY, AES.MODE_CBC, iv)
     return unpad(cipher.decrypt(enc[BS:]))
 
-for n in range(2000):
+for n in range(1000):
     msg = Random.new().read(n)
     enc = encrypt(msg)
     #print('%d %d' % (len(msg), len(enc)))
     assert decrypt(enc) == msg
+
+if len(sys.argv) == 2:
+    path = sys.argv[1]
+    if path.endswith('x'):
+        with open(path, 'rb') as fi:
+            enc = fi.read()
+        with open(path[:-1], 'wb') as fo:
+                fo.write(decrypt(enc))
+    else:
+        with open(path, 'rb') as fi:
+            raw = fi.read()
+        with open(path + 'x', 'wb') as fo:
+            fo.write(encrypt(raw))
