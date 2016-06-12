@@ -5,7 +5,7 @@ from Crypto.Cipher import AES
 
 BS = AES.block_size
 assert BS == 16
-KEY = hashlib.sha256('PassW0rd').digest()
+KEY = hashlib.sha256(b'PassW0rd').digest()
 
 
 def pad(s):
@@ -30,7 +30,6 @@ def decrypt(enc):
 
 for n in range(20):
     msg = ''.join(chr(i) for i in range(n))
-    print len(msg),
     enc = encrypt(msg)
-    print len(enc)
+    print('%d %d' % (len(msg), len(enc)))
     assert decrypt(enc) == msg
