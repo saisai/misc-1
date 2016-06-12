@@ -22,15 +22,16 @@ def unpad(s):
 
 def encrypt(raw):
     raw = pad(raw)
+    assert len(raw) % BS == 0
     iv = Random.new().read(BS)
     cipher = AES.new(KEY, AES.MODE_CBC, iv)
     return iv + cipher.encrypt(raw)
 
 def decrypt(enc):
+    assert len(enc) >= BS
     iv = enc[:BS]
     cipher = AES.new(KEY, AES.MODE_CBC, iv)
     return unpad(cipher.decrypt(enc[BS:]))
-
 
 for n in range(2000):
     msg = Random.new().read(n)
