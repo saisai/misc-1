@@ -3,7 +3,8 @@
 
 static PyObject *decrypt(PyObject *enc, const char *key)
 {
-    PyObject *d, *m, *v, *res;
+    static PyObject *res;
+    PyObject *d, *m;
 
     m = PyImport_AddModule("dummy");
     if (m == NULL)
@@ -15,21 +16,20 @@ static PyObject *decrypt(PyObject *enc, const char *key)
 
     PyDict_SetItemString(d, "enc", enc);
     PyDict_SetItemString(d, "key", PyString_FromString(key));
-    v = PyRun_String(
+
+    if (PyRun_String(
 "import hashlib\n"
 "from Crypto.Cipher import AES\n"
 "cipher = AES.new(hashlib.sha256(key).digest(), AES.MODE_CBC, enc[:16])\n"
 "dec = cipher.decrypt(enc[16:])\n"
 "res = dec[:-ord(dec[-1])]\n",
-                     Py_file_input, d, d);
-    if (v == NULL) {
+                     Py_file_input, d, d) == NULL) {
         PyErr_Print();
         return NULL;
     }
     res = PyDict_GetItemString(d, "res");
     if (res == NULL)
         return NULL;
-    Py_DECREF(v);
     return res;
 }
 
