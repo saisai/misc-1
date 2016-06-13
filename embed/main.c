@@ -1,7 +1,7 @@
 #include <Python.h>
 
 
-static PyObject *decrypt(PyObject *enc, const char *key)
+static PyObject *decrypt(PyObject *enc, const char *passphrase)
 {
     static PyObject *res;
     PyObject *d, *m;
@@ -15,12 +15,13 @@ static PyObject *decrypt(PyObject *enc, const char *key)
     d = PyModule_GetDict(m);
 
     PyDict_SetItemString(d, "enc", enc);
-    PyDict_SetItemString(d, "key", PyString_FromString(key));
+    PyDict_SetItemString(d, "passphrase", PyString_FromString(passphrase));
 
     if (PyRun_String(
 "import hashlib\n"
 "from Crypto.Cipher import AES\n"
-"cipher = AES.new(hashlib.sha256(key).digest(), AES.MODE_CBC, enc[:16])\n"
+"key = hashlib.sha256(passphrase).digest()\n"
+"cipher = AES.new(key, AES.MODE_CBC, enc[:16])\n"
 "dec = cipher.decrypt(enc[16:])\n"
 "res = dec[:-ord(dec[-1])]\n",
                      Py_file_input, d, d) == NULL) {
@@ -38,11 +39,11 @@ int main(int argc, char *argv[])
 {
     PyObject *enc, *dec;
     FILE *fp;
-    char buf[1024], *key;
+    char buf[1024], *passphrase;
 
-    key = getenv("KEY");
-    if (key == NULL) {
-        printf("No KEY set\n");
+    passphrase = getenv("PASSPHRASE");
+    if (passphrase == NULL) {
+        printf("No PASSPHRASE set\n");
         return 1;
     }
     fp = fopen("enc.x", "rb");
@@ -53,7 +54,7 @@ int main(int argc, char *argv[])
 
     enc = PyString_FromStringAndSize(buf, 304);
 
-    dec = decrypt(enc, key);
+    dec = decrypt(enc, passphrase);
     if (dec == NULL) {
         printf("Error occured!\n");
         return 1;
