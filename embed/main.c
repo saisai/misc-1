@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     Py_SetProgramName(argv[1]);  /* optional but recommended */
     Py_Initialize();
 
-    m = PyImport_AddModule("wnci128275909");
+    m = PyImport_AddModule("dummy");
     if (m == NULL)
         return 1;
     PyModule_AddObject(m, "__builtins__",
