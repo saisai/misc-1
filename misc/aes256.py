@@ -17,7 +17,7 @@ def pad(s):
         return s + bytes(pad_len * [pad_len])
 
 def unpad(s):
-    pad_len = ord(s[len(s) - 1:])
+    pad_len = ord(s[-1])
     assert 1 <= pad_len <= BS 
     return s[:-pad_len]
 
