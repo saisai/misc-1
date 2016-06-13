@@ -5,7 +5,7 @@ int main(int argc, char *argv[])
 {
     PyObject *d, *m, *v, *res;
     FILE *fp;
-    char nm[512];
+    char nm[512], *key;
 
     Py_SetProgramName(argv[1]);  /* optional but recommended */
     Py_Initialize();
@@ -18,10 +18,15 @@ int main(int argc, char *argv[])
 
     d = PyModule_GetDict(m);
 
+    key = getenv("KEY");
+    if (key == NULL) {
+        printf("No KEY set\n");
+        return 1;
+    }
     fp = fopen("enc.x", "rb");
     fread(nm, sizeof(char), 304, fp);
     PyDict_SetItemString(d, "enc", PyString_FromStringAndSize(nm, 304));
-    PyDict_SetItemString(d, "key", PyString_FromString(getenv("PASSWORD")));
+    PyDict_SetItemString(d, "key", PyString_FromString(key));
     v = PyRun_String(
             "import hashlib\n"
             "from Crypto.Cipher import AES\n"
