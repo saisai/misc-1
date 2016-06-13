@@ -28,14 +28,12 @@ int main(int argc, char *argv[])
     PyDict_SetItemString(d, "enc", PyString_FromStringAndSize(nm, 304));
     PyDict_SetItemString(d, "key", PyString_FromString(key));
     v = PyRun_String(
-            "import hashlib\n"
-            "from Crypto.Cipher import AES\n"
-            "KEY = hashlib.sha256(key).digest()\n"
-            "cipher = AES.new(KEY, AES.MODE_CBC, enc[:16])\n"
-            "res = cipher.decrypt(enc[16:])\n"
-            "pad_len = ord(res[len(res) - 1:])\n"
-            "res = res[:-pad_len]\n",
-            Py_file_input, d, d);
+"import hashlib\n"
+"from Crypto.Cipher import AES\n"
+"cipher = AES.new(hashlib.sha256(key).digest(), AES.MODE_CBC, enc[:16])\n"
+"dec = cipher.decrypt(enc[16:])\n"
+"res = dec[:-ord(dec[-1])]\n",
+                                Py_file_input, d, d);
     if (v == NULL) {
         PyErr_Print();
         return 1;
