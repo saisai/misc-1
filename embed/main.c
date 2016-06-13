@@ -21,10 +21,11 @@ int main(int argc, char *argv[])
     fp = fopen("enc.x", "rb");
     fread(nm, sizeof(char), 304, fp);
     PyDict_SetItemString(d, "enc", PyString_FromStringAndSize(nm, 304));
+    PyDict_SetItemString(d, "key", PyString_FromString(getenv("PASSWORD")));
     v = PyRun_String(
             "import hashlib\n"
             "from Crypto.Cipher import AES\n"
-            "KEY = hashlib.sha256(b'PassW0rd').digest()\n"
+            "KEY = hashlib.sha256(key).digest()\n"
             "cipher = AES.new(KEY, AES.MODE_CBC, enc[:16])\n"
             "res = cipher.decrypt(enc[16:])\n"
             "pad_len = ord(res[len(res) - 1:])\n"
