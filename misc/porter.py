@@ -10,4 +10,4 @@ DATA = """
 """
 
 for s in DATA.split():
-    print s, bitarray(s).tobytes()
+    print(s, bitarray(s).tobytes())
