@@ -14,5 +14,5 @@ while 1:
     resp = session.get(url)
     timeTaken = time.time() - startTime
     print resp.status_code, timeTaken
-    #pprint(dict(resp.headers))
-    time.sleep(random.random() * 10.0)
+    pprint(dict(resp.headers))
+    time.sleep(random.random() * 5.0)
