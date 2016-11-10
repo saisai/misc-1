@@ -29,7 +29,7 @@ Nebraska        NE x                               06
 Nevada          NV x                         04 05       08 09 10
 New Hampshire   NH x                               06
 New Jersey      NJ x    97          01          05                      13 14 15 16
-New Mexico      NM x       98 99 00 01 02 03 04 05 06                12
+New Mexico      NM x       98 99 00 01 02 03 04 05 06                12          16
 New York        NY x    97          01 02       05 06 07             12
 North Carolina  NC x                                  07 08    10
 North Dakota    ND x 96
