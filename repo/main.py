@@ -13,7 +13,7 @@ for fn in sorted(index):
     info1 = index[fn]
     info2 = repodata[fn]
 
-    for key in 'depends', 'requires':
+    for key in 'depends', 'requires', 'license', 'license_family':
         info1[key] = info2[key] = None
     for key in 'arch', 'ucs', 'ctime', 'mtime', 'platform', 'subdir':
         info1.pop(key, None)

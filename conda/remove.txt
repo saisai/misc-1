@@ -1,2 +1,0 @@
-binstar token hiding
-foreign mode
