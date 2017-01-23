@@ -33,6 +33,9 @@ def repack(tar_path):
 
     show_dict_diff(meta1, meta2)
 
+    for key in 'name', 'version', 'build', 'build_number':
+        assert meta1[key] == meta2[key], key
+
     # cleanup files in info/
     for fn in 'git', 'files.json', 'recipe.json':
         rm_rf(join(info_dir, fn))
