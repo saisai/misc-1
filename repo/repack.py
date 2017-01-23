@@ -5,6 +5,7 @@ from pprint import pprint
 from os.path import basename, dirname, join
 
 from ll.utils import tar_cf, tar_xf, rm_rf
+from ll.diffutils import show_dict_diff
 from bt.build import tar_recipe
 
 from anaconda_verify.package import validate_package
@@ -14,6 +15,8 @@ def repack(tar_path):
     repo_dir = dirname(tar_path)
     index = json.load(open(join(repo_dir, 'repodata.json')))['packages']
     meta1 = index[basename(tar_path)]
+    for key in 'md5', 'size':
+        del meta1[key]
     pprint(meta1)
 
     tmp_dir = tempfile.mkdtemp()
@@ -22,6 +25,8 @@ def repack(tar_path):
 
     meta2 = json.load(open(join(info_dir, 'index.json')))
     pprint(meta2)
+
+    show_dict_diff(meta1, meta2)
 
     for fn in 'git', 'files.json', 'recipe.json':
         rm_rf(join(info_dir, fn))
