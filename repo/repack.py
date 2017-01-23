@@ -1,6 +1,8 @@
+import json
 import shutil
 import tempfile
-from os.path import isdir, join
+from pprint import pprint
+from os.path import join
 
 from ll.utils import tar_cf, tar_xf, rm_rf
 from bt.build import tar_recipe
@@ -12,7 +14,9 @@ def repack(tar_path):
     tmp_dir = tempfile.mkdtemp()
     info_dir = join(tmp_dir, 'info')
     tar_xf(tar_path, tmp_dir)
-    assert isdir(info_dir)
+
+    meta = json.load(open(join(info_dir, 'index.json')))
+    pprint(meta)
 
     for fn in 'git', 'files.json', 'recipe.json':
         rm_rf(join(info_dir, fn))
