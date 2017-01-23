@@ -11,12 +11,17 @@ from bt.build import tar_recipe
 from anaconda_verify.package import validate_package
 
 
+def meta_from_repodata(tar_path):
+    repodata = json.load(open(join(dirname(tar_path), 'repodata.json')))
+    index = repodata['packages']
+    meta = index[basename(tar_path)]
+    for key in 'date', 'md5', 'size':
+        del meta[key]
+    return meta
+
+
 def repack(tar_path):
-    repo_dir = dirname(tar_path)
-    index = json.load(open(join(repo_dir, 'repodata.json')))['packages']
-    meta1 = index[basename(tar_path)]
-    for key in 'md5', 'size':
-        del meta1[key]
+    meta1 = meta_from_repodata(tar_path)
     pprint(meta1)
 
     tmp_dir = tempfile.mkdtemp()
@@ -28,6 +33,7 @@ def repack(tar_path):
 
     show_dict_diff(meta1, meta2)
 
+    # cleanup files in info/
     for fn in 'git', 'files.json', 'recipe.json':
         rm_rf(join(info_dir, fn))
     tar_recipe(info_dir)
