@@ -40,8 +40,7 @@ def update_meta(meta1, meta2):
         if key in meta1:
             meta2[key] = meta1[key]
 
-    if old_meta2 == meta2:
-        pass # XXX
+    print 'Changed: %s' % bool(old_meta2 != meta2)
 
 
 def repack(tar_path):
