@@ -41,7 +41,8 @@ def update_meta(meta1, meta2):
             meta2[key] = meta1[key]
 
     if old_meta2 == meta2:
-        
+        pass # XXX
+
 
 def repack(tar_path):
     meta1 = meta_from_repodata(tar_path)
