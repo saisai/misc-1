@@ -1,12 +1,12 @@
+import copy
 import json
 import shutil
 import tempfile
 from pprint import pprint
 from os.path import basename, dirname, join
 
-from ll.utils import tar_cf, tar_xf, rm_rf, memoized
+from ll.utils import tar_cf, tar_xf, tar_recipe, rm_rf, memoized
 from ll.diffutils import show_dict_diff
-from bt.build import tar_recipe
 
 from anaconda_verify.package import validate_package
 
@@ -29,11 +29,19 @@ def cleanup_info_dir(info_dir):
 
 def update_meta(meta1, meta2):
     for key in 'name', 'version', 'build', 'build_number':
+        # sanity check
         assert meta1[key] == meta2[key], key
 
-    if set(meta2.get('depends')) != set(meta1['depends']):
-        meta2['depends'] = meta1['depends']
+    old_meta2 = copy.deepcopy(meta2)
+    for key in 'depends', 'license':
+        meta2[key] = meta1[key]
 
+    for key in 'license_family', :
+        if key in meta1:
+            meta2[key] = meta1[key]
+
+    if old_meta2 == meta2:
+        
 
 def repack(tar_path):
     meta1 = meta_from_repodata(tar_path)
@@ -54,8 +62,10 @@ def repack(tar_path):
         json.dump(meta2, fo, indent=2, sort_keys=True)
 
     cleanup_info_dir(info_dir)
-    tar_cf(basename(tar_path), tmp_dir, mode='w:bz2')
+    out_path = basename(tar_path)
+    tar_cf(out_path, tmp_dir, mode='w:bz2')
     shutil.rmtree(tmp_dir)
+    validate_package(out_path)
 
 
 def main():
@@ -72,7 +82,6 @@ def main():
             print 'ignoring:', path
             continue
         repack(path)
-        validate_package(path)
 
 
 if __name__ == '__main__':
