@@ -15,10 +15,13 @@ VERBOSITY = 0
 
 
 @memoized
+def read_repodata(dir_path):
+    return json.load(open(join(dir_path, 'repodata.json')))
+
+
 def meta_from_repodata(tar_path):
-    repodata = json.load(open(join(dirname(tar_path), 'repodata.json')))
-    index = repodata['packages']
-    meta = index[basename(tar_path)]
+    repodata = read_repodata(dirname(tar_path))
+    meta = repodata['packages'][basename(tar_path)]
     for key in 'date', 'md5', 'size':
         del meta[key]
     return meta
