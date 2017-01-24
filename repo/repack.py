@@ -111,8 +111,8 @@ def main():
     opts, args = p.parse_args()
     try:
         VERBOSITY = int(opts.verbosity)
-    except TypeError:
-        p.error('integer expected')
+    except ValueError:
+        p.error("integer expected for -v, not '%s', try -h" % opts.verbosity)
 
     for path in args:
         if not path.endswith('.tar.bz2'):
