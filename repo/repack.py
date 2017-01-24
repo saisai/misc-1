@@ -40,10 +40,14 @@ def update_meta(meta1, meta2):
         if key in meta1:
             meta2[key] = meta1[key]
 
-    print 'Changed: %s' % bool(old_meta2 != meta2)
+    res = bool(old_meta2 != meta2)
+    print '==> Changes: %s' % res
+    show_dict_diff(old_meta2, meta2)
+    # return if changes have been made to meta2
+    return res
 
 
-def repack(tar_path):
+def repack(tar_path, force=False):
     meta1 = meta_from_repodata(tar_path)
     pprint(meta1)
 
@@ -55,7 +59,9 @@ def repack(tar_path):
     pprint(meta2)
 
     show_dict_diff(meta1, meta2)
-    update_meta(meta1, meta2)
+    changes = update_meta(meta1, meta2)
+    if not changes and not force:
+        return
     pprint(meta2)
 
     with open(join(info_dir, 'index.json'), 'w') as fo:
@@ -75,13 +81,18 @@ def main():
         usage="usage: %prog [options] TAR [TAR ...]",
         description="repack conda packages")
 
+    p.add_option('-f', '--force',
+                 action="store_true",
+                 help="force repack, even when not necessary from metadata "
+                      "perspective")
+
     opts, args = p.parse_args()
 
     for path in args:
         if not path.endswith('.tar.bz2'):
             print 'ignoring:', path
             continue
-        repack(path)
+        repack(path, opts.force)
 
 
 if __name__ == '__main__':
