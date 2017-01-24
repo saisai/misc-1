@@ -45,7 +45,7 @@ def update_meta(meta1, meta2):
 
     res = bool(old_meta2 != meta2)
     if VERBOSITY > 0:
-        print '==> Changes: %s' % res
+        print '  Changes: %s  %s' % (res, '*' * 5 * int(res))
     if VERBOSITY > 1:
         show_dict_diff(old_meta2, meta2)
     # return if changes have been made to meta2
@@ -53,6 +53,8 @@ def update_meta(meta1, meta2):
 
 
 def repack(tar_path, force=False, dry=False):
+    if VERBOSITY > 0:
+        print '==> %s <==' % tar_path
     meta1 = meta_from_repodata(tar_path)
     if VERBOSITY > 2:
         pprint(meta1)
@@ -64,8 +66,8 @@ def repack(tar_path, force=False, dry=False):
     meta2 = json.load(open(join(info_dir, 'index.json')))
     if VERBOSITY > 2:
         pprint(meta2)
+        show_dict_diff(meta1, meta2)
 
-    show_dict_diff(meta1, meta2)
     changes = update_meta(meta1, meta2)
     if dry or (not changes and not force):
         shutil.rmtree(tmp_dir)
