@@ -1,24 +1,6 @@
-import json
-from os.path import basename, dirname, join
-
-from ll.utils import memoized
 from repo.filedb import read_repodatas
 from repo.repack import meta_from_repodata
-from repo.utils import normalize_depends
-
-
-@memoized
-def read_index(dir_path):
-    try:
-        return json.load(open(join(dir_path, 'index.json')))
-    except IOError:
-        return None
-
-def meta_from_index(tar_path):
-    index = read_index(dirname(tar_path))
-    if index is None:
-        return None
-    return index[basename(tar_path)]
+from repo.utils import normalize_depends, meta_from_index
 
 
 for path, unused_md5 in read_repodatas():
@@ -30,4 +12,6 @@ for path, unused_md5 in read_repodatas():
     depends1 = meta1['depends']
     assert normalize_depends(depends1) == depends1
     changes = (depends1 != normalize_depends(meta2.get('depends', [])))
+    for key in 'license', 'license_family':
+        changes = changes or (meta1.get(key) != meta2.get(key))
     print '%-60s %s' % (path[17:], changes)
