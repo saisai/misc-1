@@ -3,7 +3,10 @@ from repo.repack import meta_from_repodata
 from repo.utils import normalize_depends, meta_from_index
 
 
-cnt_tot = cnt_depend = cnt_lic = cnt_dl = 0
+cnt_tot = 0
+cnt_nodep = set()
+cnt_depend = set()
+cnt_lic = set()
 
 for path, unused_md5 in read_repodatas():
     meta2 = meta_from_index(path)
@@ -21,18 +24,22 @@ for path, unused_md5 in read_repodatas():
 
     cnt_tot += 1
 
-    if depends1 != normalize_depends(meta2.get('depends', [])):
-        cnt_depend += 1
-        cnt_dl += 1
+    if 'depends' not in meta2:
+        cnt_nodep.add(path)
 
-    lc = False
+    if depends1 != normalize_depends(meta2.get('depends', ['xyz'])):
+        cnt_depend.add(path)
+
     for key in 'license', 'license_family':
         if meta1.get(key) != meta2.get(key):
-            lc = True
+            cnt_lic.add(path)
 
-    if lc:
-        cnt_lic += 1
-        cnt_dl += 1
-
-for varname in 'cnt_tot', 'cnt_depend', 'cnt_lic', 'cnt_dl':
-    print '%s: %d' % (varname, eval(varname))
+print cnt_tot
+print 'no depends', len(cnt_nodep)
+print 'depends', len(cnt_depend)
+assert cnt_nodep <= cnt_depend
+print 'license', len(cnt_lic)
+print 'intersection', len(cnt_depend & cnt_lic)
+print 'union', len(cnt_depend | cnt_lic)
+print 'd - l', len(cnt_depend - cnt_lic)
+print 'l - d', len(cnt_lic - cnt_depend)
