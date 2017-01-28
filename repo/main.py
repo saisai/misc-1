@@ -8,6 +8,12 @@ for path, unused_md5 in read_repodatas():
     meta2 = meta_from_index(path)
     if meta2 is None:
         continue
+    if 'ctime' not in meta2:
+        print path, 'NO ctime'
+        continue
+    if meta2['ctime'] < 1.3E9:
+        print path, meta2['ctime']
+
     meta1 = meta_from_repodata(path)
 
     depends1 = meta1['depends']
