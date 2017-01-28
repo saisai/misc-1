@@ -27,6 +27,7 @@ for path, unused_md5 in read_repodatas():
         continue
     meta1 = meta_from_repodata(path)
 
-    changes = (meta1['depends'] !=
-               normalize_depends(meta2.get('depends', [])))
+    depends1 = meta1['depends']
+    assert normalize_depends(depends1) == depends1
+    changes = (depends1 != normalize_depends(meta2.get('depends', [])))
     print '%-60s %s' % (path[17:], changes)
