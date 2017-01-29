@@ -29,6 +29,9 @@ for path, unused_md5 in read_repodatas():
 
     if depends1 != normalize_depends(meta2.get('depends', ['xyz'])):
         set_depend.add(path)
+    for key in 'features', 'track_features':
+        if meta1.get(key) != meta2.get(key):
+            set_depend.add(path)
 
     for key in 'license', 'license_family':
         if meta1.get(key) != meta2.get(key):
