@@ -1,32 +1,34 @@
+md5 69375
+size 69375
+
+name 69375
+version 69375
+build 69375
+build_number 69375
+depends 69375
+features 2026
+track_features 943
+
+license 68441
+license_family 25590
+
+date 58316
+file_hash 2
+sig 17
+with_features_depends 278
+pub_date 3095
+space_anchor 387
+
+arch 11042
+platform 11042
+subdir 10332
+
+noarch 2
+has_prefix 2280
+
 app_cli_opts 374
 app_entry 560
 app_type 560
-arch 11042
-build 69375
-build_channel 3092
-build_number 69375
-build_target 98
-conflicts 97
-date 58316
-depends 69375
-features 2026
-file_hash 2
-has_prefix 2280
 icon 560
-license 68441
-license_family 25590
-md5 69375
-name 69375
-noarch 2
-platform 11042
-pub_date 3095
-requires 58082
-sig 17
-size 69375
-space_anchor 387
-subdir 10332
 summary 560
-track_features 943
 type 560
-version 69375
-with_features_depends 278
