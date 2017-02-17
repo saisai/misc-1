@@ -24,7 +24,9 @@ def sync_platform(channel_name, subdir='linux-64', verbose=True):
 
     index = fetch_index(tuple(channel_urls))
 
-    files_tb = set(index.iterkeys())
+    files_tb = set(fn for fn in index.iterkeys() if
+                   fn.startswith(('llvmlite-0.16.0-', 'numba-0.31.0-')))
+
     files_cr = set(fn for fn in os.listdir(dst_dir)
                    if fn.endswith('.tar.bz2'))
 
