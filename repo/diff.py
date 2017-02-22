@@ -19,6 +19,6 @@ for channel in 'free', 'pro':
             assert fn in index2
             info1 = index1[fn]
             info2 = index2[fn]
-            for key in 'md5', 'size':
+            for key in 'channel', 'md5', 'size':
                 del info1[key], info2[key]
             show_dict_diff(info1, info2)
