@@ -1,6 +1,6 @@
 from libconda.fetch import fetch_index
 
-from ll.diffutils import show_dict_diff
+from ll.diffutils import show_dict_diff, show_set_diff
 from repo.config import SUBDIRS
 
 
@@ -17,6 +17,9 @@ for channel in 'free', 'pro':
         for fn in index1:
             info1 = index1[fn]
             info2 = index2[fn]
-            for key in 'channel', 'md5', 'size':
+            dep1 = set(info1['depends'])
+            dep2 = set(info2['depends'])
+            for key in 'channel', 'md5', 'size', 'depends':
                 del info1[key], info2[key]
             show_dict_diff(info1, info2)
+            show_set_diff(dep1, dep2)
