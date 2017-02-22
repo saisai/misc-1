@@ -48,8 +48,8 @@ print 'd - l', len(set_depend - set_lic)
 print 'l - d', len(set_lic - set_depend)
 
 with open('out.txt', 'w') as fo:
-    for f in sorted(set_nodep):
+    for f in sorted(set_depend):
         if 'anaconda-' in f:
             continue
-        if '/linux-armv6l/' in f:
+        if '/linux-32/' in f:
             fo.write('%s\n' % f)
