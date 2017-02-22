@@ -13,6 +13,7 @@ for channel in 'free', 'pro':
 
         print channel, subdir, len(index1), len(index2)
 
+        assert len(index1) == len(index2)
         for fn in index1:
             assert fn in index2
             info1 = index1[fn]
