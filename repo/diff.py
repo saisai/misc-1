@@ -15,7 +15,6 @@ for channel in 'free', 'pro':
 
         assert len(index1) == len(index2)
         for fn in index1:
-            assert fn in index2
             info1 = index1[fn]
             info2 = index2[fn]
             for key in 'channel', 'md5', 'size':
