@@ -1,5 +1,6 @@
 from libconda.fetch import fetch_index
 
+from ll.diffutils import show_dict_diff
 from repo.config import SUBDIRS
 
 
@@ -13,3 +14,11 @@ for channel in 'free', 'pro':
         index2 = fetch_index(urls2)
 
         print channel, subdir, len(index1), len(index2)
+
+        for fn in index1:
+            assert fn in index2
+            info1 = index1[fn]
+            info2 = index2[fn]
+            for key in 'md5', 'size':
+                del info1[key], info2[key]
+            show_dict_diff(info1, info2)
