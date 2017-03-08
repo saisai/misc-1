@@ -13,7 +13,9 @@ for channel in 'free', 'pro':
 
         print channel, subdir, len(index1), len(index2)
 
-        assert len(index1) == len(index2)
+        #assert len(index1) == len(index2)
+        show_set_diff(set(index1), set(index2))
+
         for fn in index1:
             info1 = index1[fn]
             info2 = index2[fn]
