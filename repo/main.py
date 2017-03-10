@@ -1,6 +1,3 @@
-import re
-from os.path import basename
-
 from repo.filedb import read_repodatas
 from repo.repack import meta_from_repodata
 from repo.utils import normalize_depends, meta_from_index
@@ -51,9 +48,5 @@ print 'd - l', len(set_depend - set_lic)
 print 'l - d', len(set_lic - set_depend)
 
 with open('out.txt', 'w') as fo:
-    pat = re.compile(r'anaconda\-\d\.\d')
     for f in sorted(set_depend):
-        if pat.match(basename(f)):
-            continue
-        if '/linux-32/' in f:
-            fo.write('%s\n' % f)
+        fo.write('%s\n' % f)
