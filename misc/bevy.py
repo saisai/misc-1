@@ -35,9 +35,13 @@ Austin
 '''
 
 tot_miles = 0
+tot_hrs = 0.0
 for line in __doc__.splitlines():
     line = line.strip()
     if line[0].isdigit():
-        miles, hrs = line.split()
+        miles, t = line.split()
+        h, m = t.split('h')
         tot_miles += int(miles)
+        tot_hrs += float(h) + float(m) / 60.0
 print tot_miles
+print tot_hrs
