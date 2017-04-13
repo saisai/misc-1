@@ -13,7 +13,7 @@ BASE_URL = 'https://conda.anaconda.org'
 
 
 def sync_platform(channel_name, subdir='linux-64', verbose=True):
-    dst_dir = join('/www/pkgs/misc/de72xzu87', channel_name, subdir)
+    dst_dir = join('/www/test-pkgs-ilan/tmp', channel_name, subdir)
     if not isdir(dst_dir):
         os.makedirs(dst_dir)
     assert not isfile(join(dst_dir, 'index.json')), dst_dir
@@ -24,8 +24,8 @@ def sync_platform(channel_name, subdir='linux-64', verbose=True):
 
     index = fetch_index(tuple(channel_urls))
 
-    files_tb = set(fn for fn in index.iterkeys() if
-                   fn.startswith(('llvmlite-0.17.0-', 'numba-0.32.0-')))
+    files_tb = set(fn for fn in index.iterkeys()
+                   )#if fn.startswith(('llvmlite-0.17.0-', 'numba-0.32.0-')))
 
     files_cr = set(fn for fn in os.listdir(dst_dir)
                    if fn.endswith('.tar.bz2'))
@@ -69,5 +69,5 @@ def sync_platform(channel_name, subdir='linux-64', verbose=True):
     write_repodata(repodata, dst_dir)
 
 
-for platform in 'win-32', 'win-64':
-    sync_platform('numba', platform, verbose=1)
+for platform in 'linux-64', :
+    sync_platform('jjh_cio_testing', platform, verbose=1)
