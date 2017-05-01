@@ -42,7 +42,7 @@ South Carolina  SC x                                  07
 South Dakota    SD
 Tennessee       TN x                01                07
 Texas           TX x             00 01 02 03 04 05       08 09 10 11 12 13 14 15 16 17
-Utah            UT x       98 99             04
+Utah            UT x       98 99             04                                     17
 Vermont         VT x                               06
 Virginia        VA x    97                      05 06
 Washington      WA x 96
