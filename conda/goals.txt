@@ -1,0 +1,4 @@
+simplicity
+focus
+stability
+consistency
