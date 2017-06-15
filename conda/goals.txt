@@ -1,4 +1,4 @@
-simplicity
-focus
-stability
-consistency
+stability though
+  - simplicity
+  - focus
+  - consistency

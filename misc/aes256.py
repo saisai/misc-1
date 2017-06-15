@@ -18,7 +18,7 @@ def pad(s):
 
 def unpad(s):
     pad_len = ord(s[-1])
-    assert 1 <= pad_len <= BS 
+    assert 1 <= pad_len <= BS
     return s[:-pad_len]
 
 def encrypt(raw):
